@@ -1,5 +1,7 @@
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
+using DotNetEnv;
+using System.Diagnostics;
 
 namespace LivinParis
 {
@@ -21,7 +23,15 @@ namespace LivinParis
 
         static void ConnectToDatabase()
         {
-            string myConnectionString = "server=localhost;uid=root;pwd=rootantomat;database=world";
+            Env.Load("../../../../.env");
+
+            string HOST = Environment.GetEnvironmentVariable("HOST");
+            string USER = Environment.GetEnvironmentVariable("USER");
+            string PWD = Environment.GetEnvironmentVariable("PWD");
+            string DataBase = "world";
+            Debug.WriteLine(HOST);
+
+            string myConnectionString = $"server={HOST};uid={USER};pwd={PWD};database={DataBase}";
 
             try
             {

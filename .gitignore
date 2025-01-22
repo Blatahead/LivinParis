@@ -1,13 +1,11 @@
 *.suo
 *.user
+.env
 .vs/
 *[Bb]in/
 *[Oo]bj/
 _UpgradeReport_Files/
 [Pp]ackages/
-
 Thumbs.db
 Desktop.ini
 .DS_Store
-
-Problème_2024_2025.pdf
