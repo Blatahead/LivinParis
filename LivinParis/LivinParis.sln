@@ -17,9 +17,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary", "..\ClassLibrary\ClassLibrary.csproj", "{BF0E3CCA-7046-4E1D-93CB-E1A7276C3D87}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsRendu1", "..\WinFormsRendu1\WinFormsRendu1.csproj", "{6C0F6375-CB2E-4C5E-942B-CCA079AE73D9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A} = {4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProjectRendu1", "..\TestProjectRendu1\TestProjectRendu1.csproj", "{1F1C2E04-D570-4CF7-82D2-ACF7133D2D3F}"
 	ProjectSection(ProjectDependencies) = postProject
