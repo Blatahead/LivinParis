@@ -55,7 +55,7 @@ namespace LivinParis
                 //    var population = myReader.GetInt32("Population");
 
                 //    MessageBox.Show($"ID: {id}, Name: {name}, CountryCode: {countryCode}, Population: {population}");
-                //}
+                //
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
