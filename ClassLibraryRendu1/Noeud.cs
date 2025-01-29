@@ -4,8 +4,17 @@
     {
         int id;
         List<Noeud> voisins;
-        public int Id { get; set; }
-        public List<Noeud> Voisins { get; set; }
+
+        public int Id 
+        { 
+            get { return this.id; }
+            set { this.id = value; } 
+        }
+        public List<Noeud> Voisins 
+        {
+            get { return this.voisins; } 
+            set { this.voisins = value; }
+        }
 
         public Noeud(int id1)
         {
