@@ -10,9 +10,16 @@ namespace ClassLibraryRendu1
     {
         Noeud source;
         Noeud destination;
-        public Noeud Source { get; set; }
-        public Noeud Destination { get; set; }
-
+        public Noeud Source 
+        {
+            get { return this.source;}
+            set { this.source = value;} 
+        }
+        public Noeud Destination
+        {
+            get { return this.destination;}
+            set { this.destination = value;}
+        }
         public Lien(Noeud source1, Noeud destination1)
         {
             this.source = source1;

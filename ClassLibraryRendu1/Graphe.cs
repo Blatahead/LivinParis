@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClassLibraryRendu1;
 
 namespace ClassLibraryRendu1
 {
@@ -14,8 +15,8 @@ namespace ClassLibraryRendu1
         #endregion
 
         #region Propriétés
-        public List<Noeud> Noeuds { get; set; }
-        public List<Lien> Liens { get; set; }
+        public List<Noeud> Noeuds { get { return this.noeuds; } set {this.noeuds=value; } }
+        public List<Lien> Liens { get{ return this.liens; } set { this.liens = value; } }
         #endregion
 
         #region Constructeurs
@@ -34,23 +35,30 @@ namespace ClassLibraryRendu1
         /// <param name="idDestination"></param>
         public void NouveauLien(int idSource, int idDestination)
         {
-            Noeud source = new Noeud(idSource);
-            Noeud destination = new Noeud(idDestination);
+            Noeud source = this.noeuds.FirstOrDefault(n => n.Id == idSource);
+            Noeud destination = this.noeuds.FirstOrDefault(n => n.Id == idDestination);
 
-            if (!this.noeuds.Contains(source))
+            if (source == null)
             {
-                Noeuds.Add(source);
+                source = new Noeud(idSource);
+                this.noeuds.Add(source);
             }
-            if (!this.noeuds.Contains(destination))
+            if (destination == null)
             {
-                Noeuds.Add(destination);
+                destination = new Noeud(idDestination);
+                this.noeuds.Add(destination);
             }
 
-            source.Voisins.Add(destination);
-            destination.Voisins.Add(source);
+            // Ajouter les voisins si ce n'est pas déjà fait
+            if (!source.Voisins.Contains(destination))
+                source.Voisins.Add(destination);
+
+            if (!destination.Voisins.Contains(source))
+                destination.Voisins.Add(source);
 
             this.liens.Add(new Lien(source, destination));
         }
+
 
         /// <summary>
         /// Permet de lire un fichier .mtx
@@ -87,7 +95,7 @@ namespace ClassLibraryRendu1
         public Dictionary<int, List<int>> ListeAdjacence()
         {
             Dictionary<int, List<int>> listeAdjacence = new Dictionary<int, List<int>>();
-            foreach (var noeud in this.noeuds)
+            foreach (Noeud noeud in this.noeuds)
             {
                 listeAdjacence[noeud.Id] = noeud.Voisins.Select(v => v.Id).ToList();
             }
