@@ -8,5 +8,6 @@ namespace ClassLibraryRendu1
 {
     public class Graphe
     {
+
     }
 }
