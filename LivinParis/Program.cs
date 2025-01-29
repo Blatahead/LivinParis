@@ -28,7 +28,7 @@ namespace LivinParis
             string HOST = Environment.GetEnvironmentVariable("HOST");
             string USER = Environment.GetEnvironmentVariable("USER");
             string PWD = Environment.GetEnvironmentVariable("PWD");
-            string DataBase = "world";
+            string DataBase = "base_test";
             Debug.WriteLine(HOST);
 
             string myConnectionString = $"server={HOST};uid={USER};pwd={PWD};database={DataBase}";
@@ -42,20 +42,20 @@ namespace LivinParis
                 MySqlCommand myCommand = new MySqlCommand
                 {
                     Connection = myConnection,
-                    CommandText = @"SELECT * FROM city WHERE ID = @cityId;"
+                    //CommandText = @"SELECT * FROM city WHERE ID = @cityId;"
                 };
-                myCommand.Parameters.AddWithValue("@cityId", 1);
+                //myCommand.Parameters.AddWithValue("@cityId", 1);
 
-                using var myReader = myCommand.ExecuteReader();
-                while (myReader.Read())
-                {
-                    var id = myReader.GetInt32("ID");
-                    var name = myReader.GetString("Name");
-                    var countryCode = myReader.GetString("CountryCode");
-                    var population = myReader.GetInt32("Population");
+                //using var myReader = myCommand.ExecuteReader();
+                //while (myReader.Read())
+                //{
+                //    var id = myReader.GetInt32("ID");
+                //    var name = myReader.GetString("Name");
+                //    var countryCode = myReader.GetString("CountryCode");
+                //    var population = myReader.GetInt32("Population");
 
-                    MessageBox.Show($"ID: {id}, Name: {name}, CountryCode: {countryCode}, Population: {population}");
-                }
+                //    MessageBox.Show($"ID: {id}, Name: {name}, CountryCode: {countryCode}, Population: {population}");
+                //}
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
