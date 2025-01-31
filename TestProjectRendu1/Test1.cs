@@ -12,6 +12,8 @@ namespace TestProjectRendu1
     {
         private Graphe grapheConnexe;
         private Graphe grapheNonConnexe;
+        private Graphe grapheAvecCycle;
+        private Graphe grapheSansCycle;
 
         [TestInitialize]
         public void Setup()
@@ -28,6 +30,18 @@ namespace TestProjectRendu1
             grapheNonConnexe.NouveauLien(1, 2);
             grapheNonConnexe.NouveauLien(2, 3);
             grapheNonConnexe.NouveauLien(4, 5);
+
+            // Graphe AVEC cycle
+            grapheAvecCycle = new Graphe();
+            grapheAvecCycle.NouveauLien(1, 2);
+            grapheAvecCycle.NouveauLien(2, 3);
+            grapheAvecCycle.NouveauLien(3, 1); // Cycle !
+
+            // Graphe SANS cycle
+            grapheSansCycle = new Graphe();
+            grapheSansCycle.NouveauLien(1, 2);
+            grapheSansCycle.NouveauLien(2, 3);
+            grapheSansCycle.NouveauLien(3, 4);
         }
 
         [TestMethod]
@@ -88,6 +102,18 @@ namespace TestProjectRendu1
             bool resultat = grapheNonConnexe.EstConnexe();
 
             Assert.IsFalse(resultat, "Le graphe non connexe devrait retourner false.");
+        }
+
+        [TestMethod]
+        public void TestContientCycle_True()
+        {
+            Assert.IsTrue(grapheAvecCycle.ContientCycle(), "Le graphe avec cycle devrait retourner true.");
+        }
+
+        [TestMethod]
+        public void TestContientCycle_False()
+        {
+            Assert.IsFalse(grapheSansCycle.ContientCycle(), "Le graphe sans cycle devrait retourner false.");
         }
     }
 }

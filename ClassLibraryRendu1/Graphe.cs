@@ -257,6 +257,49 @@ namespace ClassLibraryRendu1
                 Console.WriteLine($"{lien.Source.Id} - {lien.Destination.Id}");
             }
         }
+        public bool ContientCycle()
+        {
+            HashSet<int> visites = new HashSet<int>();
+
+            // Vérifier la présence d'un cycle en lançant un DFS sur chaque composante connexe
+            foreach (var noeud in this.Noeuds)
+            {
+                if (!visites.Contains(noeud.Id))
+                {
+                    if (DFS_DetectCycle(noeud, null, visites))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        // Fonction récursive pour détecter un cycle via DFS
+        private bool DFS_DetectCycle(Noeud courant, Noeud parent, HashSet<int> visites)
+        {
+            visites.Add(courant.Id);
+
+            foreach (var voisin in courant.Voisins)
+            {
+                // Si voisin non visité, appel récursif
+                if (!visites.Contains(voisin.Id))
+                {
+                    if (DFS_DetectCycle(voisin, courant, visites))
+                    {
+                        return true;  // Cycle détecté
+                    }
+                }
+                // Si le voisin a déjà été visité et n'est pas le parent direct, il y a un cycle
+                else if (voisin != parent)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         #endregion
     }
 }
