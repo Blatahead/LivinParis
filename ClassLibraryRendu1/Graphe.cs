@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using ClassLibraryRendu1;
@@ -103,21 +104,57 @@ namespace ClassLibraryRendu1
         }
 
         /// <summary>
+        /// Affichage d'un dictionnaire dans la console
+        /// </summary>
+        /// <param name="listeAdjacence"></param>
+        public static void AfficherListeAdjacence(Dictionary<int, List<int>> listeAdjacence)
+        {
+            foreach (KeyValuePair<int,List<int>> noeud in listeAdjacence)
+            {
+                Console.Write($"Noeud {noeud.Key} : ");
+                if (noeud.Value.Count > 0)
+                {
+                    Console.WriteLine(string.Join(", ", noeud.Value));
+                }
+                else
+                {
+                    Console.WriteLine("Aucun voisin");
+                }
+            }
+        }
+
+        /// <summary>
         /// Permet de représenter les liens entre les noeuds par une matrice
         /// </summary>
         /// <returns></returns>
         public int[,] MatriceAdjacence()
         {
-            int[,] matrice = new int[this.noeuds.Count, this.noeuds.Count];
+            int taille = this.noeuds.Count;
+            int[,] matrice = new int[taille, taille];
+
             foreach (Lien lien in this.liens)
             {
-                //ptet un prblm ici de out of range entre count et ID si l'id est grand
-                matrice[lien.Source.Id - 1, lien.Destination.Id - 1] = 1;
-                matrice[lien.Destination.Id - 1, lien.Source.Id - 1] = 1;
+                int i = lien.Source.Id - 1;
+                int j = lien.Destination.Id - 1;
+
+                if (i >= 0 && i < taille && j >= 0 && j < taille)
+                {
+                    matrice[i, j] = 1;
+                    matrice[j, i] = 1;
+                }
+                else
+                {
+                    Console.WriteLine($"ID hors bornes ({lien.Source.Id}, {lien.Destination.Id})");
+                }
             }
             return matrice;
         }
 
+        /// <summary>
+        /// Affichage d'une matrice dans la console
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrice"></param>
         public static void AfficherMatrice<T>(T[,] matrice)
         {
             int lignes = matrice.GetLength(0);
@@ -127,13 +164,99 @@ namespace ClassLibraryRendu1
             {
                 for (int j = 0; j < colonnes; j++)
                 {
-                    Console.Write(matrice[i, j] + "\t"); // Utilisation de tabulation pour aligner les colonnes
+                    Console.Write(matrice[i, j]);
                 }
-                Console.WriteLine(); // Retour à la ligne après chaque ligne de la matrice
+                Console.WriteLine();
             }
         }
 
+        public List<int> ParcoursProfondeur(Noeud depart)
+        {
+            var resultat = new List<int>();
+            var pile = new Stack<Noeud>();
+            var visites = new HashSet<int>();
 
+            pile.Push(depart);
+
+            while (pile.Count > 0)
+            {
+                var courant = pile.Pop();
+                if (!visites.Contains(courant.Id))
+                {
+                    visites.Add(courant.Id);
+                    resultat.Add(courant.Id);
+
+                    foreach (var voisin in courant.Voisins)
+                    {
+                        if (!visites.Contains(voisin.Id))
+                        {
+                            pile.Push(voisin);
+                        }
+                    }
+                }
+            }
+
+            return resultat;
+        }
+
+        public List<int> ParcoursLargeur(Noeud depart)
+        {
+            List<int> resultat = new List<int>();
+            Queue<Noeud> file = new Queue<Noeud>();
+            HashSet<int> visites = new HashSet<int>();
+
+            file.Enqueue(depart);
+            visites.Add(depart.Id);
+
+            while (file.Count > 0)
+            {
+                Noeud courant = file.Dequeue();
+                resultat.Add(courant.Id);
+
+                foreach (var voisin in courant.Voisins)
+                {
+                    if (!visites.Contains(voisin.Id))
+                    {
+                        visites.Add(voisin.Id);
+                        file.Enqueue(voisin);
+                    }
+                }
+            }
+
+            return resultat;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="parcours"></param>
+        public void AfficherParcours(string type, List<int> parcours)
+        {
+            Console.WriteLine($"{type} : {string.Join(" -> ", parcours)}");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool EstConnexe()
+        {
+            List<int> visites = ParcoursLargeur(this.noeuds[0]);
+            return visites.Count == this.noeuds.Count;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void AfficherLiensGraphe()
+        {
+            Console.WriteLine("Liste des liens dans le graphe :");
+            foreach (Lien lien in this.Liens)
+            {
+                Console.WriteLine($"{lien.Source.Id} - {lien.Destination.Id}");
+            }
+        }
         #endregion
     }
 }

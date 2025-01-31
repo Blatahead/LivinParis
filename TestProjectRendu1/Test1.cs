@@ -10,6 +10,26 @@ namespace TestProjectRendu1
     [TestClass]
     public class GrapheTests
     {
+        private Graphe grapheConnexe;
+        private Graphe grapheNonConnexe;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            // graphe connexe
+            grapheConnexe = new Graphe();
+            grapheConnexe.NouveauLien(1, 2);
+            grapheConnexe.NouveauLien(2, 3);
+            grapheConnexe.NouveauLien(3, 4);
+            grapheConnexe.NouveauLien(4, 5);
+
+            // graphe non connexe
+            grapheNonConnexe = new Graphe();
+            grapheNonConnexe.NouveauLien(1, 2);
+            grapheNonConnexe.NouveauLien(2, 3);
+            grapheNonConnexe.NouveauLien(4, 5);
+        }
+
         [TestMethod]
         public void TestLectureFichierMTX()
         {
@@ -52,6 +72,22 @@ namespace TestProjectRendu1
             Assert.AreNotEqual(2, listeAdjacence[2].Count);
             Assert.IsTrue(listeAdjacence[1].Contains(2));
             Assert.IsFalse(listeAdjacence[4].Contains(34));
+        }
+
+        [TestMethod]
+        public void TestEstConnexe_True()
+        {
+            bool resultat = grapheConnexe.EstConnexe();
+
+            Assert.IsTrue(resultat, "Le graphe connexe devrait retourner true.");
+        }
+
+        [TestMethod]
+        public void TestEstConnexe_False()
+        {
+            bool resultat = grapheNonConnexe.EstConnexe();
+
+            Assert.IsFalse(resultat, "Le graphe non connexe devrait retourner false.");
         }
     }
 }
