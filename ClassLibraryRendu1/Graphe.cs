@@ -170,6 +170,11 @@ namespace ClassLibraryRendu1
             }
         }
 
+        /// <summary>
+        /// Permet le parcours d'un graphe en profondeur
+        /// </summary>
+        /// <param name="depart"></param>
+        /// <returns></returns>
         public List<int> ParcoursProfondeur(Noeud depart)
         {
             var resultat = new List<int>();
@@ -199,6 +204,11 @@ namespace ClassLibraryRendu1
             return resultat;
         }
 
+        /// <summary>
+        /// Permet le parcours d'un graphe en largeur
+        /// </summary>
+        /// <param name="depart"></param>
+        /// <returns></returns>
         public List<int> ParcoursLargeur(Noeud depart)
         {
             List<int> resultat = new List<int>();
@@ -227,7 +237,7 @@ namespace ClassLibraryRendu1
         }
 
         /// <summary>
-        /// 
+        /// Affiche les sommets parcourus selon le type de parcours
         /// </summary>
         /// <param name="type"></param>
         /// <param name="parcours"></param>
@@ -237,7 +247,7 @@ namespace ClassLibraryRendu1
         }
 
         /// <summary>
-        /// 
+        /// Renvoie un booleen si le graphe est connexe ou pas
         /// </summary>
         /// <returns></returns>
         public bool EstConnexe()
@@ -247,7 +257,7 @@ namespace ClassLibraryRendu1
         }
 
         /// <summary>
-        /// 
+        /// Affichage de tous les liens d'un graphe
         /// </summary>
         public void AfficherLiensGraphe()
         {
@@ -257,6 +267,11 @@ namespace ClassLibraryRendu1
                 Console.WriteLine($"{lien.Source.Id} - {lien.Destination.Id}");
             }
         }
+
+        /// <summary>
+        /// Renvoie un booleen pour savoir si le graph contient un ou des cycles
+        /// </summary>
+        /// <returns></returns>
         public bool ContientCycle()
         {
             HashSet<int> visites = new HashSet<int>();
@@ -299,7 +314,33 @@ namespace ClassLibraryRendu1
             }
             return false;
         }
+        /// <summary>
+        /// Regarder si un lien n'a pas de retour pour le considéré non orienté
+        /// </summary>
+        /// <returns></returns>
+        public bool EstOriente()
+        {
+            foreach (var lien in this.Liens)
+            {
+                if (!lien.Destination.Voisins.Contains(lien.Source))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
+        /// <summary>
+        /// Affiche le degre des sommets d'un graphe
+        /// </summary>
+        public void AfficherDegresSommets()
+        {
+            Console.WriteLine("\nDegré de chaque sommet :");
+            foreach (Noeud noeud in this.noeuds)
+            {
+                Console.WriteLine($"Sommet id : {noeud.Id} : {noeud.Voisins.Count} voisins");
+            }
+        }
         #endregion
     }
 }

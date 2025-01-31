@@ -115,5 +115,18 @@ namespace TestProjectRendu1
         {
             Assert.IsFalse(grapheSansCycle.ContientCycle(), "Le graphe sans cycle devrait retourner false.");
         }
+
+        [TestMethod]
+        public void TailleGraphe_True()
+        {
+            Graphe graphe = Graphe.LectureMTX("./../../../../ClassLibraryRendu1/soc-karate.mtx");
+            Assert.AreEqual(78,graphe.Liens.Count);
+        }
+        [TestMethod]
+        public void OrdreGraphe_True()
+        {
+            Graphe graphe = Graphe.LectureMTX("./../../../../ClassLibraryRendu1/soc-karate.mtx");
+            Assert.AreEqual(34, graphe.Noeuds.Count);
+        }
     }
 }

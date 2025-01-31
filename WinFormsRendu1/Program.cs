@@ -40,6 +40,11 @@ namespace WinFormsRendu1
 
             //    List<int> parcoursProfondeur = graphe.ParcoursProfondeur(depart);
             //    graphe.AfficherParcours("Parcours en Profondeur", parcoursProfondeur);
+
+            //    Console.WriteLine($"Le graphe est orienté : {graphe.EstOriente()}");
+            //    Console.WriteLine("Le graphe n'est pas pondéré.");
+            //    graphe.AfficherDegresSommets();
+
             //}
             //catch (Exception e)
             //{
