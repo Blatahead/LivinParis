@@ -59,6 +59,20 @@ namespace WinFormsRendu1
             listParcoursProfondeur.Items.AddRange(parcours.Select(p => $"{p}").ToArray());
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Graphe graphe = Graphe.LectureMTX("./../../../../ClassLibraryRendu1/soc-karate.mtx");
+
+            int largeur = pictureBox1.Width;
+            int hauteur = pictureBox1.Height;
+
+            GrapheDrawer drawer = new GrapheDrawer(graphe, largeur, hauteur);
+            drawer.DessinerGraphe();
+
+            // Afficher l’image dans un PictureBox
+            pictureBox1.Image = Image.FromFile("graphe.png");
+        }
+
         /// remettre le commentaire de l'affichage console
     }
 }

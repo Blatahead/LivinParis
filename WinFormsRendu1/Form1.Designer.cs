@@ -416,6 +416,7 @@
             Controls.Add(tableLayoutPanel1);
             Name = "Form1";
             Text = "Form1";
+            Load += Form1_Load;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
