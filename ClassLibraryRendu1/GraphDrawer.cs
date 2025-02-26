@@ -5,31 +5,40 @@ using System.Drawing;
 
 public class GrapheDrawer
 {
-    private Graphe graphe;
-    private int largeurImage;
-    private int hauteurImage;
-    private int rayonSommet = 25; // Taille des cercles des sommets
-    private int minEspacement = 60; // Distance minimale entre les sommets
-    private string cheminImage = "graphe.png";
-    private Random rand = new Random();
+    #region Attributs
+    Graphe graphe;
+    int largeurImage;
+    int hauteurImage;
+    int rayonSommet = 25;
+    int minEspacement = 60;
+    string cheminImage = "graphe.png";
+    Random r = new Random();
+    #endregion
 
-    public GrapheDrawer(Graphe graphe, int largeur, int hauteur)
+    #region Constructeur
+    public GrapheDrawer(Graphe graphe1, int largeur1, int hauteur1)
     {
-        this.graphe = graphe;
-        this.largeurImage = largeur;
-        this.hauteurImage = hauteur;
+        this.graphe = graphe1;
+        this.largeurImage = largeur1;
+        this.hauteurImage = hauteur1;
     }
+    #endregion
 
+    #region Methodes
+    /// <summary>
+    /// Trace un graphe à partir de ses liens et ses noeuds
+    /// </summary>
     public void DessinerGraphe()
     {
         Bitmap bitmap = new Bitmap(largeurImage, hauteurImage);
         Graphics g = Graphics.FromImage(bitmap);
+        // meilleure qualité de rendu
         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-        // Générer les positions des sommets en évitant les superpositions
+        // éviter les superpositions
         Dictionary<int, PointF> positions = GenererPositionsSansSuperposition();
 
-        // Dessiner les liens
+        // liens
         Pen penLien = new Pen(Color.Black, 2);
         foreach (var lien in graphe.Liens)
         {
@@ -38,7 +47,7 @@ public class GrapheDrawer
             g.DrawLine(penLien, p1, p2);
         }
 
-        // Dessiner les sommets
+        // sommets
         Brush brushSommet = Brushes.LightBlue;
         Brush brushTexte = Brushes.Black;
         Font font = new Font("Arial", 10, FontStyle.Bold);
@@ -47,17 +56,20 @@ public class GrapheDrawer
             PointF p = positions[noeud.Id];
             RectangleF cercle = new RectangleF(p.X - rayonSommet, p.Y - rayonSommet, rayonSommet * 2, rayonSommet * 2);
 
-            g.FillEllipse(brushSommet, cercle); // Remplissage du cercle
-            g.DrawEllipse(Pens.Black, cercle);  // Contour du cercle
-            g.DrawString(noeud.Id.ToString(), font, brushTexte, p.X - 10, p.Y - 10); // Numéro du sommet
+            g.FillEllipse(brushSommet, cercle);
+            // Id du sommet
+            g.DrawString(noeud.Id.ToString(), font, brushTexte, p.X - 10, p.Y - 10); 
         }
 
-        // Sauvegarde de l'image
         bitmap.Save(cheminImage, System.Drawing.Imaging.ImageFormat.Png);
         g.Dispose();
         bitmap.Dispose();
     }
 
+    /// <summary>
+    /// Génère un Dictionnaire de coordonnées non superposées
+    /// </summary>
+    /// <returns></returns>
     private Dictionary<int, PointF> GenererPositionsSansSuperposition()
     {
         Dictionary<int, PointF> positions = new Dictionary<int, PointF>();
@@ -72,12 +84,11 @@ public class GrapheDrawer
 
             do
             {
-                // Générer une position aléatoire en utilisant toute la largeur et hauteur
-                float x = rand.Next(rayonSommet, largeurImage - rayonSommet);
-                float y = rand.Next(rayonSommet, hauteurImage - rayonSommet);
+                float x = r.Next(rayonSommet, largeurImage - rayonSommet);
+                float y = r.Next(rayonSommet, hauteurImage - rayonSommet);
                 nouvellePosition = new PointF(x, y);
 
-                // Vérifier si elle est trop proche d'une autre
+                // test de distance
                 positionValide = true;
                 foreach (var point in pointsUtilises)
                 {
@@ -92,16 +103,21 @@ public class GrapheDrawer
             }
             while (!positionValide && essais < essaisMax);
 
-            // Ajouter la position validée
             positions[noeud.Id] = nouvellePosition;
             pointsUtilises.Add(nouvellePosition);
         }
-
         return positions;
     }
 
+    /// <summary>
+    /// Calcul la distance entre deux points
+    /// </summary>
+    /// <param name="p1"></param>
+    /// <param name="p2"></param>
+    /// <returns></returns>
     private float Distance(PointF p1, PointF p2)
     {
         return (float)Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
     }
+    #endregion
 }

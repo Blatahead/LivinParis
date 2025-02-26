@@ -9,49 +9,62 @@ namespace WinFormsRendu1
 {
     internal static class Program
     {
-        //ouverture d'une console même dans un projet Winforms car GUI
-        //[System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        //private static extern bool AllocConsole();
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        /// Nous avons mis la possibilté d'afficher certaines données dans la console           ///
+        /// Pour y parvenir, il faut décommenter les lignes avec 4 "/" ("regions à décommenter")///
+        /// Et passer en commentaire les lignes se terminant par 4 "/" ("regions à commenter")  ///
+        ///////////////////////////////////////////////////////////////////////////////////////////
+
+        #region A decommenter pour affichage console
+        ////[System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        ////private static extern bool AllocConsole();
+        #endregion
+
         /// <summary>
-        ///  The main entry point for the application.
+        /// Entree principale de l'app
         /// </summary>
         [STAThread]
         static void Main()
         {
-            ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
-            //AllocConsole();
+            #region A commenter pour affichage console
+            ApplicationConfiguration.Initialize();////
+            Application.Run(new Form1());////
+            #endregion
 
-            //try
-            //{
-            //    Graphe graphe = Graphe.LectureMTX("./../../../../ClassLibraryRendu1/soc-karate.mtx");
+            #region A decommenter pour affichage console
+            ////AllocConsole();
 
-            //    Console.WriteLine("Matrice d'adjacence :");
-            //    Graphe.AfficherMatrice(graphe.MatriceAdjacence());
+            ////try
+            ////{
+            ////    Graphe graphe = Graphe.LectureMTX("./../../../../ClassLibraryRendu1/soc-karate.mtx");
 
-            //    Console.WriteLine("\nListe d'adjacence :");
-            //    Graphe.AfficherListeAdjacence(graphe.ListeAdjacence());
+            ////    Console.WriteLine("Matrice d'adjacence :");
+            ////    Graphe.AfficherMatrice(graphe.MatriceAdjacence());
 
-            //    graphe.AfficherLiensGraphe();
+            ////    Console.WriteLine("\nListe d'adjacence :");
+            ////    Graphe.AfficherListeAdjacence(graphe.ListeAdjacence());
 
-            //    Noeud depart = graphe.Noeuds[0];
-            //    List<int> parcoursLargeur = graphe.ParcoursLargeur(depart);
-            //    graphe.AfficherParcours("Parcours en Largeur", parcoursLargeur);
+            ////    graphe.AfficherLiensGraphe();
 
-            //    List<int> parcoursProfondeur = graphe.ParcoursProfondeur(depart);
-            //    graphe.AfficherParcours("Parcours en Profondeur", parcoursProfondeur);
+            ////
+            ////    List<int> parcoursLargeur = graphe.ParcoursLargeur(depart);
+            ////    graphe.AfficherParcours("Parcours en Largeur", parcoursLargeur);
 
-            //    Console.WriteLine($"Le graphe est orienté : {graphe.EstOriente()}");
-            //    Console.WriteLine("Le graphe n'est pas pondéré.");
-            //    graphe.AfficherDegresSommets();
+            ////    List<int> parcoursProfondeur = graphe.ParcoursProfondeur(depart);
+            ////    graphe.AfficherParcours("Parcours en Profondeur", parcoursProfondeur);
 
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine($"Erreur : {e.Message}");
-            //}
+            ////    Console.WriteLine($"Le graphe est orienté : {graphe.EstOriente()}");
+            ////    Console.WriteLine("Le graphe n'est pas pondéré.");
+            ////    graphe.AfficherDegresSommets();
 
-            //Console.ReadLine();
+            ////}
+            ////catch (Exception e)
+            ////{
+            ////    Console.WriteLine($"Erreur : {e.Message}");
+            ////}
+
+            ////Console.ReadLine();
+            #endregion
         }
     }
 }
