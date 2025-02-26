@@ -50,16 +50,19 @@ namespace ClassLibraryRendu1
                 this.noeuds.Add(destination);
             }
 
-            // Ajouter les voisins si ce n'est pas déjà fait
+            // ajouter les voisins si ce n'est pas déjà fait
             if (!source.Voisins.Contains(destination))
+            {
                 source.Voisins.Add(destination);
+            }
 
             if (!destination.Voisins.Contains(source))
+            {
                 destination.Voisins.Add(source);
+            }
 
             this.liens.Add(new Lien(source, destination));
         }
-
 
         /// <summary>
         /// Permet de lire un fichier .mtx
@@ -80,8 +83,8 @@ namespace ClassLibraryRendu1
                 string[] parties = ligne.Split(separateur);
                 if (parties.Length == 2)
                 {
-                    int sommet1 = int.Parse(parties[0]);
-                    int sommet2 = int.Parse(parties[1]);
+                    int sommet1 = Convert.ToInt32(parties[0]);
+                    int sommet2 = Convert.ToInt32(parties[1]);
 
                     graphe.NouveauLien(sommet1, sommet2);
                 }
@@ -144,7 +147,7 @@ namespace ClassLibraryRendu1
                 }
                 else
                 {
-                    Console.WriteLine($"ID hors bornes ({lien.Source.Id}, {lien.Destination.Id})");
+                    Console.WriteLine($"ID hors de la matrice ({lien.Source.Id-1}, {lien.Destination.Id-1})");
                 }
             }
             return matrice;
@@ -177,21 +180,21 @@ namespace ClassLibraryRendu1
         /// <returns></returns>
         public List<int> ParcoursProfondeur(Noeud depart)
         {
-            var resultat = new List<int>();
-            var pile = new Stack<Noeud>();
-            var visites = new HashSet<int>();
+            List<int> resultat = new List<int>();
+            Stack<Noeud> pile = new Stack<Noeud>();
+            HashSet<int> visites = new HashSet<int>();
 
             pile.Push(depart);
 
             while (pile.Count > 0)
             {
-                var courant = pile.Pop();
+                Noeud courant = pile.Pop();
                 if (!visites.Contains(courant.Id))
                 {
                     visites.Add(courant.Id);
                     resultat.Add(courant.Id);
 
-                    foreach (var voisin in courant.Voisins)
+                    foreach (Noeud voisin in courant.Voisins)
                     {
                         if (!visites.Contains(voisin.Id))
                         {
@@ -200,7 +203,6 @@ namespace ClassLibraryRendu1
                     }
                 }
             }
-
             return resultat;
         }
 
@@ -232,7 +234,6 @@ namespace ClassLibraryRendu1
                     }
                 }
             }
-
             return resultat;
         }
 
@@ -262,22 +263,22 @@ namespace ClassLibraryRendu1
         public void AfficherLiensGraphe()
         {
             Console.WriteLine("Liste des liens dans le graphe :");
-            foreach (Lien lien in this.Liens)
+            foreach (Lien lien in this.liens)
             {
                 Console.WriteLine($"{lien.Source.Id} - {lien.Destination.Id}");
             }
         }
 
         /// <summary>
-        /// Renvoie un booleen pour savoir si le graph contient un ou des cycles
+        /// Renvoie un booleen pour savoir si le graph contient un ou des cycles.
+        /// Vérifie la présence d'un cycle en lançant un parcours en profondeur sur chaque noeud connexe
         /// </summary>
         /// <returns></returns>
         public bool ContientCycle()
         {
             HashSet<int> visites = new HashSet<int>();
 
-            // Vérifier la présence d'un cycle en lançant un DFS sur chaque composante connexe
-            foreach (var noeud in this.Noeuds)
+            foreach (var noeud in this.noeuds)
             {
                 if (!visites.Contains(noeud.Id))
                 {
@@ -287,18 +288,24 @@ namespace ClassLibraryRendu1
                     }
                 }
             }
-
             return false;
         }
 
         // Fonction récursive pour détecter un cycle via DFS
+        /// <summary>
+        /// Récursivité du parcours en profondeur jusqu'à treouver un cycle
+        /// </summary>
+        /// <param name="courant"></param>
+        /// <param name="parent"></param>
+        /// <param name="visites"></param>
+        /// <returns></returns>
         private bool DFS_DetectCycle(Noeud courant, Noeud parent, HashSet<int> visites)
         {
             visites.Add(courant.Id);
 
             foreach (var voisin in courant.Voisins)
             {
-                // Si voisin non visité, appel récursif
+                // si voisin non visité alors appel récursif
                 if (!visites.Contains(voisin.Id))
                 {
                     if (DFS_DetectCycle(voisin, courant, visites))
@@ -306,7 +313,7 @@ namespace ClassLibraryRendu1
                         return true;  // Cycle détecté
                     }
                 }
-                // Si le voisin a déjà été visité et n'est pas le parent direct, il y a un cycle
+                // aussi un cycle si le voisin a déjà été visité mais n'est pas le parent direct
                 else if (voisin != parent)
                 {
                     return true;
@@ -314,6 +321,7 @@ namespace ClassLibraryRendu1
             }
             return false;
         }
+
         /// <summary>
         /// Regarder si un lien n'a pas de retour pour le considéré non orienté
         /// </summary>
