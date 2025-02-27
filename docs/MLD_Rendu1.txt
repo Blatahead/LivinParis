@@ -1,0 +1,7 @@
+Utilisateur = (Identifiant VARCHAR(50), Mdp VARCHAR(50), Numéro_utilisateur INT, Adresse_mail_utilisateur VARCHAR(50));
+Cuisinier = (Numéro_cuisinier INT, Prénom_cuisinier VARCHAR(50), Nom_cuisinier VARCHAR(50), Adresse_cuisinier VARCHAR(50), #Identifiant);
+Client = (Numéro_client INT, #Identifiant);
+Commande = (Numéro_commande INT, Prix_commande DECIMAL(15,2), Note_commande INT, #Identifiant);
+Plat = (Numéro_plat INT, Nom_plat VARCHAR(50), Nombre_de_personne_plat VARCHAR(50), Type_plat ENUM, Nationalité_plat ENUM, Date_péremption_plat DATE, prix_plat DECIMAL(10,2), Ingrédients_plat VARCHAR(50), Régime_alimentaire_plat ENUM, Photo_plat VARCHAR(50), Date_fabrication_plat DATE, #Numéro_commande*, #Numéro_cuisinier*, #Numéro_cuisinier_1);
+Entreprise = (Numéro_siret INT, Nom_entreprise VARCHAR(50), Nom_référent VARCHAR(50), Adresse_entreprise VARCHAR(50), #Numéro_client);
+Particulier = (Numéro_particulier INT, Prénom_particulier VARCHAR(50), Nom_particulier VARCHAR(50), Adresse_particulier VARCHAR(50), #Numéro_client);
