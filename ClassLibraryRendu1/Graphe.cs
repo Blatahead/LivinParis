@@ -137,13 +137,13 @@ namespace ClassLibraryRendu1
 
             foreach (Lien lien in this.liens)
             {
-                int i = lien.Source.Id - 1;
-                int j = lien.Destination.Id - 1;
+                int source = lien.Source.Id - 1;
+                int destination = lien.Destination.Id - 1;
 
-                if (i >= 0 && i < taille && j >= 0 && j < taille)
+                if (source >= 0 && source < taille && destination >= 0 && destination < taille)
                 {
-                    matrice[i, j] = 1;
-                    matrice[j, i] = 1;
+                    matrice[source, destination] = 1;
+                    matrice[destination, source] = 1;
                 }
                 else
                 {
