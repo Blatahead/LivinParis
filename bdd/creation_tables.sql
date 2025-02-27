@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS AntoMath;
-USE AntoMath;
+CREATE DATABASE IF NOT EXISTS antomath;
+USE antomath;
 CREATE TABLE Utilisateur(
    Identifiant VARCHAR(50),
    Mdp VARCHAR(50) NOT NULL,
@@ -40,12 +40,12 @@ CREATE TABLE Plat(
    Numéro_plat INT,
    Nom_plat VARCHAR(50),
    Nombre_de_personne_plat INT,
-   Type_plat ENUM('varchar'),
-   Nationalité_plat ENUM('varchar'),
+   Type_plat ENUM('Omnivore','Carnivore','Végétarien','Végan'),
+   Nationalité_plat ENUM('Etats Unis','France','Allemagne','Italie','Chine'),
    Date_péremption_plat DATE,
    prix_plat DECIMAL(10,2),
    Ingrédients_plat VARCHAR(50),
-   Régime_alimentaire_plat ENUM('varchar'),
+   Régime_alimentaire_plat ENUM('entrée','plat principal','dessert'),
    Photo_plat VARCHAR(50),
    Date_fabrication_plat DATE,
    Numéro_commande INT,
@@ -55,6 +55,7 @@ CREATE TABLE Plat(
    FOREIGN KEY(Numéro_cuisinier) REFERENCES Cuisinier(Numéro_cuisinier),
    FOREIGN KEY(Numéro_cuisinier) REFERENCES Cuisinier(Numéro_cuisinier)
 );
+
 
 CREATE TABLE Entreprise(
    Numéro_siret INT,

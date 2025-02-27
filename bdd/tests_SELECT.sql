@@ -1,0 +1,10 @@
+SELECT Nom_plat FROM Plat WHERE Date_péremption_plat='25-03-03';
+SELECT * FROM Plat;
+SELECT * FROM Client_,Commande;
+SELECT Identifiant FROM Client_ WHERE Numéro_client>4;
+SELECT Nom_plat FROM Plat WHERE Numéro_plat>16;
+SELECT* FROM Utilisateur;
+SELECT Identifiant FROM Utilisateur WHERE Mdp='Entreprise47';
+SELECT Nom_référent FROM Entreprise WHERE Numéro_siret='569305';
+SELECT * From Commande;
+SELECT Prénom_particulier,Nom_particulier FROM Particulier WHERE Numéro_particulier='0749146679';
