@@ -28,7 +28,7 @@ namespace LivinParis
             string HOST = Environment.GetEnvironmentVariable("HOST");
             string USER = Environment.GetEnvironmentVariable("USER");
             string PWD = Environment.GetEnvironmentVariable("PWD");
-            string DataBase = "base_test";
+            string DataBase = "antomath";
             Debug.WriteLine(HOST);
 
             string myConnectionString = $"server={HOST};uid={USER};pwd={PWD};database={DataBase}";

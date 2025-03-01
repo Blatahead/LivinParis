@@ -282,7 +282,7 @@ namespace ClassLibraryRendu1
             {
                 if (!visites.Contains(noeud.Id))
                 {
-                    if (DFS_DetectCycle(noeud, null, visites))
+                    if (DFS_DetectionCycle(noeud, null, visites))
                     {
                         return true;
                     }
@@ -299,7 +299,7 @@ namespace ClassLibraryRendu1
         /// <param name="parent"></param>
         /// <param name="visites"></param>
         /// <returns></returns>
-        private bool DFS_DetectCycle(Noeud courant, Noeud parent, HashSet<int> visites)
+        private bool DFS_DetectionCycle(Noeud courant, Noeud parent, HashSet<int> visites)
         {
             visites.Add(courant.Id);
 
@@ -308,7 +308,7 @@ namespace ClassLibraryRendu1
                 // si voisin non visité alors appel récursif
                 if (!visites.Contains(voisin.Id))
                 {
-                    if (DFS_DetectCycle(voisin, courant, visites))
+                    if (DFS_DetectionCycle(voisin, courant, visites))
                     {
                         return true;  // Cycle détecté
                     }
