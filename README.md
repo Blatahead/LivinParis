@@ -1,6 +1,10 @@
 # 📌 LivinParis - Problème Scientifique & Informatique
 ## _Rendu Intermédiaire n°1_
 > **Projet réalisé en A2 - Collaborateurs : Mathieu & Antonin**
+> 
+⚠️ Afin de bien lancer le projet de rendu 1 veuillez, comme on le voit sur l'image suivante, sélectionner le projet `WinFormsRendu1`.⚠️
+> 
+![{1C961BBF-2822-4AA2-B74C-6B4F81C93A41}](https://github.com/user-attachments/assets/75aa0fcd-10cb-48f0-9d8a-f8fcc1c8949b)
 
 ---
 
