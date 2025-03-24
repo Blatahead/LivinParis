@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProjectRendu1", "..\Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibraryRendu1", "..\ClassLibraryRendu1\ClassLibraryRendu1.csproj", "{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibraryRendu2", "..\ClassLibraryRendu2\ClassLibraryRendu2.csproj", "{19498940-022E-4713-A67E-1F72E9F688BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19498940-022E-4713-A67E-1F72E9F688BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19498940-022E-4713-A67E-1F72E9F688BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19498940-022E-4713-A67E-1F72E9F688BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19498940-022E-4713-A67E-1F72E9F688BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
