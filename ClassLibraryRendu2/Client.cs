@@ -8,18 +8,18 @@ namespace ClassLibraryRendu2
 {
     public class Client<T>: Utilisateur<T>
     {
-        int numeroClient;
+        int idClient;
 
         #region constructeur
-        public Client(string identifiant, string mdp, int numero, string adresse_mail,int numeroClient): base(identifiant,mdp,numero,adresse_mail)
+        public Client(int idUser, string mdp, string adresse_mail,int idClient): base(idUser,mdp,adresse_mail)
         {
-            this.numeroClient=numeroClient;
+            this.idClient=idClient;
         }
         #endregion
         #region propriétés
-        public int NumeroClient
+        public int IdClient
         {
-            set { numeroClient=value; }
+            set { idClient=value; }
         }
         #endregion
 

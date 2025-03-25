@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace LivinParis
 {
-    internal static class Program
+    public static class Program
     {
         /// <summary>
         ///  The main entry point for the application.
@@ -21,7 +21,7 @@ namespace LivinParis
             Application.Run(new Form1());
         }
 
-        static void ConnectToDatabase()
+ public static void ConnectToDatabase()
         {
             Env.Load("../../../../.env");
 
