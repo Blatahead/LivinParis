@@ -8,29 +8,31 @@ namespace ClassLibraryRendu2
 {
     public class Cuisinier<T>:Utilisateur<T>
     {
-        string nomCuisinier;
-        string prenomCuisinier;
+        int id_Cuisinier;
+        string nom;
+        string prenom;
         int numeroCuisinier;
         string adresseCuisinier;
 
         #region constructeur
-        public Cuisinier(string identifiant, string mdp, int numero, string adresse_mail, string nomCuisinier, string prenomCuisinier, int numeroCuisinier, string adresseCuisinier): base(identifiant, mdp, numero, adresse_mail)
+        public Cuisinier(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, int numeroCuisinier, string adresseCuisinier): base(idUser, mdp, adresse_mail)
         {
-            this.nomCuisinier=nomCuisinier;
-            this.prenomCuisinier=nomCuisinier;
+            this.id_Cuisinier = id_Cuisinier;
+            this.nom=nomCuisinier;
+            this.prenom=nomCuisinier;
             this.numeroCuisinier=numeroCuisinier;
             this.adresseCuisinier=adresseCuisinier;
 
         }
         #endregion
         #region propriétés
-        public string NomCuisinier
+        public string Nom
         {
-            get { return nomCuisinier; }
+            get { return nom; }
         }
-        public string PrenomCuisinier
+        public string Prenom
         {
-            get { return prenomCuisinier; }
+            get { return prenom; }
         }
         public int NumeroCuisinier
         {

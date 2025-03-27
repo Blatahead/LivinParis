@@ -8,23 +8,23 @@ namespace ClassLibraryRendu2
 {
     public class Particulier<T>
     {
-        int numeroParticulier;
+        int idParticulier;
         string prenomParticulier;
         string nomParticulier;
         string adresseParticulier;
         #region constructeur
         public Particulier(int numeroParticulier, string prenomParticulier, string nomParticulier, string adresseParticulier)
         {
-            this.numeroParticulier = numeroParticulier;
+            this.idParticulier = numeroParticulier;
             this.prenomParticulier= prenomParticulier;
             this.nomParticulier= nomParticulier;
             this.adresseParticulier=adresseParticulier;
         }
         #endregion 
         #region propriétés
-        public int NumeroParticulier
+        public int IdParticulier
         {
-            set { numeroParticulier=value; }
+            set { idParticulier=value; }
         }
         public string PrenomParticulier
         {
