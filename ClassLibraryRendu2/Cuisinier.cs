@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,16 +12,14 @@ namespace ClassLibraryRendu2
         int id_Cuisinier;
         string nom;
         string prenom;
-        int numeroCuisinier;
         string adresseCuisinier;
 
         #region constructeur
-        public Cuisinier(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, int numeroCuisinier, string adresseCuisinier): base(idUser, mdp, adresse_mail)
+        public Cuisinier(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier): base(idUser, mdp, adresse_mail)
         {
             this.id_Cuisinier = id_Cuisinier;
             this.nom=nomCuisinier;
             this.prenom=nomCuisinier;
-            this.numeroCuisinier=numeroCuisinier;
             this.adresseCuisinier=adresseCuisinier;
 
         }
@@ -34,15 +33,47 @@ namespace ClassLibraryRendu2
         {
             get { return prenom; }
         }
-        public int NumeroCuisinier
-        {
-            set { numeroCuisinier=value; }
-        }
         public string AdresseCuisinier
         {
             set { adresseCuisinier=value; }
         }
         #endregion
+
+        public void CreerCuisinier(Cuisinier<T> p1)
+        {
+            ConnexionDB.ConnectToDatabase();
+            string demande = "INSERT INTO Cuisinier (Id_Cuisinier,Prenom_cuisinier,Nom_particulier,Adresse_cuisinier) VALUES ("+p1.id_Cuisinier+","+p1.prenom+","+p1.nom+","+p1.adresseCuisinier+")";
+            using (MySqlCommand cmd = new MySqlCommand(demande)) ;
+
+
+        }
+
+        public void ModifierCuisinier(Cuisinier<T> p1)
+        {
+
+            ConnexionDB.ConnectToDatabase();
+            string demande = "UPDATE SET Cuisinier Id_Cuisinier="+p1.id_Cuisinier+", Prenom_cuisinier="+p1.prenom+", Nom_particulier="+p1.nom+", Adresse_cuisinier="+p1.adresseCuisinier+" WHERE Id_Cuisinier="+p1.id_Cuisinier+";";
+            using (MySqlCommand cmd = new MySqlCommand(demande)) ;
+
+        }
+
+        public void DeleteCuisinier(Cuisinier<T> p1)
+        {
+
+
+            ConnexionDB.ConnectToDatabase();
+            string demande = "DELETE FROM Cuisinier WHERE ="+p1.id_Cuisinier+";";
+            using (MySqlCommand cmd = new MySqlCommand(demande)) ;
+
+
+        }
+
+
+
+
+
+
+
 
     }
 }
