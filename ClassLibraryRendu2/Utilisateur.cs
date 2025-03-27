@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
+﻿using MySql.Data.MySqlClient;
+using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
-
   
 
 namespace ClassLibraryRendu2
@@ -37,37 +37,29 @@ namespace ClassLibraryRendu2
 
         public void CreerUser(Utilisateur<T> p1)
         {
-            this.idUser=p1.idUser;
-            this.mdp=p1.mdp;
-            this.adresse_mail = p1.adresse_mail;
+            ConnexionDB.ConnectToDatabase();
+            string demande = "INSERT INTO Utilisateur (Id_utilisateur, Mdp, Mail_utilisateur) VALUES ("+p1.idUser+","+p1.mdp+","+p1.adresse_mail+")";
+            using (MySqlCommand cmd = new MySqlCommand(demande)) ;
+            
 
         }
 
         public void ModifierUser(Utilisateur<T> p1)
         {
-            if (this.idUser!=p1.idUser)
-            {
-                this.idUser=p1.idUser;
-            }
-            if (this.mdp!=p1.mdp)
-            {
-                this.mdp=p1.mdp;
-            }
-            if(this.adresse_mail!=p1.adresse_mail)
-            {
-                this.adresse_mail=p1.adresse_mail;
-            }
+            
+            ConnexionDB.ConnectToDatabase();
+            string demande = "UPDATE SET Utilisateur Id_Utilisateur="+p1.idUser+", Mdp="+p1.mdp+" WHERE Adresse_mail="+p1.adresse_mail+";";
+            using (MySqlCommand cmd = new MySqlCommand(demande)) ;
+
         }
 
         public void DeleteUser(Utilisateur<T> p1)
         {
-            if (p1.idUser==this.idUser && this.adresse_mail==p1.adresse_mail)
-            {
-               
-                
-
-            }
+            
+                ConnexionDB.ConnectToDatabase();
+                string demande = "DELETE FROM Utilisateur WHERE Id_Utilisateur="+p1.idUser+";";
+                using (MySqlCommand cmd = new MySqlCommand(demande)) ;
+       
         }
-
     }
 }
