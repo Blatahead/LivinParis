@@ -3,33 +3,33 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivinParis", "LivinParis.csproj", "{1EFE601A-7C1B-4E78-BEC7-D48CBD0E3076}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LivinParis", "LivinParis.csproj", "{1EFE601A-7C1B-4E78-BEC7-D48CBD0E3076}"
 	ProjectSection(ProjectDependencies) = postProject
-		{BF0E3CCA-7046-4E1D-93CB-E1A7276C3D87} = {BF0E3CCA-7046-4E1D-93CB-E1A7276C3D87}
+		{19498940-022E-4713-A67E-1F72E9F688BB} = {19498940-022E-4713-A67E-1F72E9F688BB}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLivinParis", "..\TestLivinParis\TestLivinParis.csproj", "{2DA23486-4836-4EE7-9D14-89FCFC3C11D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLivinParis", "..\TestLivinParis\TestLivinParis.csproj", "{2DA23486-4836-4EE7-9D14-89FCFC3C11D4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1EFE601A-7C1B-4E78-BEC7-D48CBD0E3076} = {1EFE601A-7C1B-4E78-BEC7-D48CBD0E3076}
 		{BF0E3CCA-7046-4E1D-93CB-E1A7276C3D87} = {BF0E3CCA-7046-4E1D-93CB-E1A7276C3D87}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary", "..\ClassLibrary\ClassLibrary.csproj", "{BF0E3CCA-7046-4E1D-93CB-E1A7276C3D87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibrary", "..\ClassLibrary\ClassLibrary.csproj", "{BF0E3CCA-7046-4E1D-93CB-E1A7276C3D87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsRendu1", "..\WinFormsRendu1\WinFormsRendu1.csproj", "{6C0F6375-CB2E-4C5E-942B-CCA079AE73D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsRendu1", "..\WinFormsRendu1\WinFormsRendu1.csproj", "{6C0F6375-CB2E-4C5E-942B-CCA079AE73D9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A} = {4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProjectRendu1", "..\TestProjectRendu1\TestProjectRendu1.csproj", "{1F1C2E04-D570-4CF7-82D2-ACF7133D2D3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProjectRendu1", "..\TestProjectRendu1\TestProjectRendu1.csproj", "{1F1C2E04-D570-4CF7-82D2-ACF7133D2D3F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A} = {4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}
 		{6C0F6375-CB2E-4C5E-942B-CCA079AE73D9} = {6C0F6375-CB2E-4C5E-942B-CCA079AE73D9}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibraryRendu1", "..\ClassLibraryRendu1\ClassLibraryRendu1.csproj", "{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibraryRendu1", "..\ClassLibraryRendu1\ClassLibraryRendu1.csproj", "{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibraryRendu2", "..\ClassLibraryRendu2\ClassLibraryRendu2.csproj", "{19498940-022E-4713-A67E-1F72E9F688BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibraryRendu2", "..\ClassLibraryRendu2\ClassLibraryRendu2.csproj", "{19498940-022E-4713-A67E-1F72E9F688BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,5 +68,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A52A4849-DCF6-49B9-B969-B64E435802FF}
 	EndGlobalSection
 EndGlobal
