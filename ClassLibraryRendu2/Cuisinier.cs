@@ -13,15 +13,20 @@ namespace ClassLibraryRendu2
         string nom;
         string prenom;
         string adresseCuisinier;
+        List<T> liste_commandes;
+        List<T> liste_commandes_pretes;
+        List<T> liste_commandes_livrees;
 
         #region constructeur
-        public Cuisinier(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier): base(idUser, mdp, adresse_mail)
+        public Cuisinier(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees) : base(idUser, mdp, adresse_mail)
         {
             this.id_Cuisinier = id_Cuisinier;
             this.nom=nomCuisinier;
             this.prenom=nomCuisinier;
             this.adresseCuisinier=adresseCuisinier;
-
+            this.liste_commandes=liste_commandes;
+            this.liste_commandes_pretes=liste_commandes_pretes;
+            this.liste_commandes_livrees=liste_commandes_livrees;
         }
         #endregion
         #region propriétés
@@ -37,6 +42,24 @@ namespace ClassLibraryRendu2
         {
             set { adresseCuisinier=value; }
         }
+
+        public List<T> Liste_commandes
+        {
+            get { return liste_commandes; }
+        }
+        public List<T> Liste_commandes_pretes
+        {
+            get { return liste_commandes_pretes; }
+        }
+        public List<T> Liste_commandes_livrees
+        {
+            get { return liste_commandes_livrees; }
+        }
+
+
+
+
+
         #endregion
 
         public void CreerCuisinier(Cuisinier<T> p1)
