@@ -25,7 +25,7 @@ namespace ClassLibraryRendu2
         }
         #endregion
 
-
+        #region Méthodes
         public void CreerClient(Client<T> p1)
         {
 
@@ -69,6 +69,8 @@ namespace ClassLibraryRendu2
 
 
         }
+
+        #endregion
 
     }
 

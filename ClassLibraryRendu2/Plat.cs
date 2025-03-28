@@ -63,6 +63,13 @@ namespace ClassLibraryRendu2
         public int NdpPlat
         { get { return ndpPlat; } }
         #endregion
+
+        #region Méthodes
+
+        /// <summary>
+        /// Méthode permettant de créer un plat dans la table 'Plat'
+        /// </summary>
+        /// <param name="p1"></param>
         public void CreerPlat(Plat<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
@@ -71,6 +78,10 @@ namespace ClassLibraryRendu2
 
 
         }
+        /// <summary>
+        /// Méthode permettant de modifier un plat dans la table 'Plat'
+        /// </summary>
+        /// <param name="p1"></param>
         public void ModifierPlat(Plat<T> p1)
         {
 
@@ -79,7 +90,10 @@ namespace ClassLibraryRendu2
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
-
+        /// <summary>
+        /// Méthode supprimant un plat de la table 'Plat' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
+        /// </summary>
+        /// <param name="p1"></param>
         public void DeletePlat(Plat<T> p1)
         {
 
@@ -88,6 +102,7 @@ namespace ClassLibraryRendu2
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
+        #endregion
 
 
 

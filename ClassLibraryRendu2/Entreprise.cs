@@ -46,6 +46,12 @@ namespace ClassLibraryRendu2
         }
         #endregion
 
+        #region Méthodes
+
+        /// <summary>
+        /// Méthode permettant de créer une entreprise dans la table 'Entreprise'
+        /// </summary>
+        /// <param name="p1"></param>
         public void CreerEntreprise(Entreprise<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
@@ -54,6 +60,10 @@ namespace ClassLibraryRendu2
 
 
         }
+        /// <summary>
+        /// Méthode permettant de modifier une entreprise dans la table 'Entreprise'
+        /// </summary>
+        /// <param name="p1"></param>
         public void ModifierEntreprise(Entreprise<T> p1)
         {
 
@@ -63,6 +73,10 @@ namespace ClassLibraryRendu2
 
         }
 
+        /// <summary>
+        /// Méthode supprimant une entreprise de la table 'Entreprise' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
+        /// </summary>
+        /// <param name="p1"></param>
         public void DeleteEntreprise(Entreprise<T> p1)
         {
 
@@ -71,7 +85,7 @@ namespace ClassLibraryRendu2
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
-
+        #endregion
 
 
 

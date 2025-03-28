@@ -41,7 +41,12 @@ namespace ClassLibraryRendu2
         }
         #endregion
 
+        #region Méthodes
 
+        /// <summary>
+        /// Méthode permattant de créer un particulier dans la table 'Particulier'
+        /// </summary>
+        /// <param name="p1"></param>
         public void CreerParticulier(Particulier<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
@@ -50,6 +55,11 @@ namespace ClassLibraryRendu2
 
 
         }
+
+        /// <summary>
+        /// Méthode permettant de modifier un particulier dans la table 'Particulier'
+        /// </summary>
+        /// <param name="p1"></param>
         public void ModifierParticulier(Particulier<T> p1)
         {
 
@@ -59,6 +69,10 @@ namespace ClassLibraryRendu2
 
         }
 
+        /// <summary>
+        /// Méthode supprimant un particulier de la table 'Particulier' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
+        /// </summary>
+        /// <param name="p1"></param>
         public void DeleteParticulier(Particulier<T> p1)
         {
 
@@ -67,5 +81,6 @@ namespace ClassLibraryRendu2
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
+        #endregion
     }
 }

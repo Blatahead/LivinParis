@@ -62,6 +62,12 @@ namespace ClassLibraryRendu2
 
         #endregion
 
+        #region Méthodes
+
+        /// <summary>
+        /// Méthode permettant de créer un cuisinier dans la table 'Cuisinier'
+        /// </summary>
+        /// <param name="p1"></param>
         public void CreerCuisinier(Cuisinier<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
@@ -71,6 +77,11 @@ namespace ClassLibraryRendu2
 
         }
 
+
+        /// <summary>
+        /// Méthode permettant de modifier un cuisinier dans la table 'Cuisinier'
+        /// </summary>
+        /// <param name="p1"></param>
         public void ModifierCuisinier(Cuisinier<T> p1)
         {
 
@@ -80,6 +91,11 @@ namespace ClassLibraryRendu2
 
         }
 
+
+        /// <summary>
+        /// Méthode supprimant un cuisinier de la table 'Cuisinier' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
+        /// </summary>
+        /// <param name="p1"></param>
         public void DeleteCuisinier(Cuisinier<T> p1)
         {
 
@@ -100,6 +116,7 @@ namespace ClassLibraryRendu2
 
 
         }
+        #endregion
 
 
 
