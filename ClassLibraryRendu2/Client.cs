@@ -26,6 +26,11 @@ namespace ClassLibraryRendu2
         #endregion
 
         #region Méthodes
+
+        /// <summary>
+        /// Méthode permettant de créer un client dans la table 'Client_'
+        /// </summary>
+        /// <param name="p1"></param>
         public void CreerClient(Client<T> p1)
         {
 
@@ -37,6 +42,11 @@ namespace ClassLibraryRendu2
 
         }
 
+        /// <summary>
+        /// Méthode permettant de modifier un client dans la table 'Client_'
+        /// </summary>
+        /// <param name="p1"></param>
+
         public void ModifierClient(Client<T> p1)
         {
 
@@ -46,6 +56,10 @@ namespace ClassLibraryRendu2
 
         }
 
+        /// <summary>
+        /// Méthode supprimant un client de la table 'Client_' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
+        /// </summary>
+        /// <param name="p1"></param>
         public void DeleteClient(Client<T> p1)
         {
 
