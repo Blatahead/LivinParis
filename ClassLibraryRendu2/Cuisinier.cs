@@ -85,7 +85,17 @@ namespace ClassLibraryRendu2
 
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "DELETE FROM Cuisinier WHERE ="+p1.id_Cuisinier+";";
+            try
+            {
+                string demande1 = "DELETE FROM Plat WHERE id_Cuisinier="+p1.id_Cuisinier+";";
+                using (MySqlCommand cmd = new MySqlCommand(demande1)) ;
+
+            }
+            catch
+            {
+                Exception exception = null;
+            }
+            string demande = "DELETE FROM Cuisinier WHERE Id_Cuisinier="+p1.id_Cuisinier+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
 

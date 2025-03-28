@@ -57,6 +57,28 @@ namespace ClassLibraryRendu2
         {
             
                 ConnexionDB.ConnectToDatabase();
+            try
+            {
+                string demande1 = "DELETE FROM Particulier WHERE Id_Utilisateur="+p1.idUser+";";
+                string demande2 = "DELETE FROM Entreprise WHERE Id_Utilisateur ="+p1.idUser+";";
+                string demande3 = "DELETE FROM Client_ WHERE Id_Utilisateur="+p1.idUser+";";
+                string demande4 = "DELETE FROM Plat WHERE Id_Utilisateur="+p1.idUser+";";
+                string demande5 = "DELETE FROM Cuisinier WHERE Id_Utilisateur="+p1.idUser+";";
+                string demande6 = "DELETE FROM Commande WHERE Id_Utilisateur="+p1.idUser+";";
+
+                using (MySqlCommand cmd = new MySqlCommand(demande1)) ;
+                using (MySqlCommand cmd = new MySqlCommand(demande2)) ;
+                using (MySqlCommand cmd = new MySqlCommand(demande3)) ;
+                using (MySqlCommand cmd = new MySqlCommand(demande4)) ;
+                using (MySqlCommand cmd = new MySqlCommand(demande5)) ;
+                using (MySqlCommand cmd = new MySqlCommand(demande6)) ;
+
+
+            }
+            catch
+            {
+                Exception exception = null;
+            }
                 string demande = "DELETE FROM Utilisateur WHERE Id_Utilisateur="+p1.idUser+";";
                 using (MySqlCommand cmd = new MySqlCommand(demande)) ;
        

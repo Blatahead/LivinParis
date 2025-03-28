@@ -54,7 +54,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE SET Particulier Id_particulier="+p1.idParticulier+", Prenom_particulier="+p1.prenomParticulier+", Nom_particulier="+p1.nomParticulier+" WHERE Adresse_particulier="+p1.adresseParticulier+";";
+            string demande = "UPDATE SET Particulier Id_particulier="+p1.idParticulier+", Prenom_particulier="+p1.prenomParticulier+", Nom_particulier="+p1.nomParticulier+" WHERE Id_Client="+p1.IdClient+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
@@ -63,7 +63,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "DELETE FROM Particulier WHERE id_particulier="+p1.idParticulier+";";
+            string demande = "DELETE FROM Particulier WHERE Id_Client="+p1.IdClient+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }

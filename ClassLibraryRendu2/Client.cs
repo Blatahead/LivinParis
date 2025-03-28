@@ -20,6 +20,7 @@ namespace ClassLibraryRendu2
         #region propriétés
         public int IdClient
         {
+            get { return idClient; }
             set { idClient=value; }
         }
         #endregion
@@ -31,6 +32,7 @@ namespace ClassLibraryRendu2
             ConnexionDB.ConnectToDatabase();
             string demande = "INSERT INTO Client_ (Id_Client) VALUES ("+p1.idClient+")";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
+            
 
 
         }
@@ -49,6 +51,19 @@ namespace ClassLibraryRendu2
 
 
             ConnexionDB.ConnectToDatabase();
+            try
+            {
+                string demande1 = "DELETE FROM Particulier WHERE Id_Client="+p1.idClient+";";
+                string demande2 = "DELETE FROM Entreprise WHERE Id_Client ="+p1.idClient+";";
+                using (MySqlCommand cmd = new MySqlCommand(demande1)) ;
+                using (MySqlCommand cmd = new MySqlCommand(demande2)) ;
+
+
+            }
+            catch
+            {
+                Exception exception = null;
+            }
             string demande = "DELETE FROM Client_ WHERE ="+p1.idClient+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 

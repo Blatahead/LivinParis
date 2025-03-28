@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Commande<T>
+    public class Commande<T>:Utilisateur<T>
     {
         int numeroCommande;
         float prixCommande;
         int noteCommande;
         #region constructeur
-        public Commande(int numeroCommande, int prixCommande, int noteCommande)
+        public Commande(int idUser, string mdp, string adresse_mail,int numeroCommande, int prixCommande, int noteCommande):base(idUser,mdp,adresse_mail)
         {
             this.numeroCommande = numeroCommande;
             this.prixCommande = prixCommande;
