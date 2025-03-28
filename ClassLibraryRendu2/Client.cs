@@ -27,6 +27,7 @@ namespace ClassLibraryRendu2
 
         public void CreerClient(Client<T> p1)
         {
+
             ConnexionDB.ConnectToDatabase();
             string demande = "INSERT INTO Client_ (Id_Client) VALUES ("+p1.idClient+")";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;

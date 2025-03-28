@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Particulier<T>
+    public class Particulier<T>: Client<T>
     {
         int idParticulier;
         string prenomParticulier;
         string nomParticulier;
         string adresseParticulier;
         #region constructeur
-        public Particulier(int numeroParticulier, string prenomParticulier, string nomParticulier, string adresseParticulier)
+        public Particulier(int idUser, string mdp, string adresse_mail, int idClient,int numeroParticulier, string prenomParticulier, string nomParticulier, string adresseParticulier):base(idUser, mdp, adresse_mail,idClient)
         {
             this.idParticulier = numeroParticulier;
             this.prenomParticulier= prenomParticulier;

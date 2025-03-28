@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Plat<T>
+    public class Plat<T>: Cuisinier<T>
     {
         int numPlat;
         string nomPlat;
@@ -24,7 +24,7 @@ namespace ClassLibraryRendu2
 
 
         #region constructeur
-        public Plat(int numPlat, string nomPlat, int ndpPlat, string typePlat, string nationalitePlat, string datePeremption, float prixPlat, string ingredients, string regimeAlimentaire,string photo,string dateFabrication)
+        public Plat(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees, int numPlat, string nomPlat, int ndpPlat, string typePlat, string nationalitePlat, string datePeremption, float prixPlat, string ingredients, string regimeAlimentaire,string photo,string dateFabrication): base(id_Cuisinier, idUser, mdp, adresse_mail,nomCuisinier, prenomCuisinier, adresseCuisinier, liste_commandes,liste_commandes_pretes,liste_commandes_livrees)
         {
             this.numPlat = numPlat;
             this.nomPlat = nomPlat;

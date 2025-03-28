@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Entreprise<T>
+    public class Entreprise<T>: Client<T>
     {
         int numeroSiret;
         string nomEntreprise;
@@ -15,7 +15,7 @@ namespace ClassLibraryRendu2
         string adresseEntreprise;
 
         #region constructeur
-        public Entreprise(int numeroSiret, string nomEntreprise, string nomReferent, string adresseEntreprise)
+        public Entreprise(int idUser, string mdp, string adresse_mail,int idClient,int numeroSiret, string nomEntreprise, string nomReferent, string adresseEntreprise):base(idUser,mdp,adresse_mail,idClient)
         {
             this.numeroSiret = numeroSiret;
             this.nomEntreprise=nomEntreprise;
