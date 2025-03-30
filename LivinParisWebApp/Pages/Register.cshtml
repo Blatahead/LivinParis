@@ -1,0 +1,65 @@
+﻿@page
+@model LivinParis.Pages.RegisterModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Connexion - LivinParis</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="css/site.css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+	@if (!string.IsNullOrEmpty(Model?.Message))
+	{
+		<script>
+		  alert("@Model.Message");
+		  @* window.location.href = "/Index"; *@
+		</script>
+	} 
+
+	<div class="login-container">
+		<div class="logo logo-register">
+			<p class="logo-title">LivinParis</p>
+			<img src="src/img/logo_livinparis.png" alt="">
+		</div>
+		<div class="login-content">
+			<div class="login-form">
+				<p class="title-login-form">Créer mon compte</p>
+				<div class="form-login">
+					<form method="post">
+						<div class="inputs">
+							<input asp-for="Email" placeholder="Email" />
+							<span asp-validation-for="Email" class="text-danger"></span>
+
+							<input asp-for="Password" type="password" placeholder="Mot de passe" />
+							<span asp-validation-for="Password" class="text-danger"></span>
+						</div>
+
+						<button type="submit" asp-page-handler="Register">M'enregistrer</button>
+					</form>
+				</div>
+				<div class="account">
+					<p>J'ai déjà un compte.</p>
+					<a href="/Login"><p>Me connecter !</p></a> 
+					@* faire differement *@
+				</div>
+			</div>
+			<div class="map-container">
+				<img src="src/img/map.PNG" alt="" class="img-login">
+				<p class="subtitle-img-login">Commandez et livrez à volonté !</p>
+			</div>
+		</div>
+	</div>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+</body>
+</html>
