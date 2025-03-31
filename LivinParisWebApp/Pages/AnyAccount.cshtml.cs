@@ -9,7 +9,6 @@ namespace LivinParisWebApp.Pages
         {
         }
 
-        //penser à rediriger vers le panel (login pour test)
         public IActionResult OnPostLogin()
         {
             return RedirectToPage("/Login");
