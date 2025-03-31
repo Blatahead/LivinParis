@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace LivinParis.Pages
+namespace LivinParisWebApp.Pages
 {
-    public class ChoisirTypeClientModel : PageModel
+    public class AnyAccountModel : PageModel
     {
         public void OnGet()
         {
