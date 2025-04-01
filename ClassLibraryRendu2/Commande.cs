@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Commande<T>
+    public class Commande<T>:Utilisateur<T>
     {
         int numeroCommande;
         float prixCommande;
         int noteCommande;
         #region constructeur
-        public Commande(int numeroCommande, int prixCommande, int noteCommande)
+        public Commande(int idUser, string mdp, string adresse_mail,int numeroCommande, int prixCommande, int noteCommande):base(idUser,mdp,adresse_mail)
         {
             this.numeroCommande = numeroCommande;
             this.prixCommande = prixCommande;
@@ -36,6 +36,12 @@ namespace ClassLibraryRendu2
         }
         #endregion
 
+
+        #region Méthodes
+        /// <summary>
+        /// Méthode permettant de créer une commande dans la table 'Commande'
+        /// </summary>
+        /// <param name="p1"></param>
         public void CreerCommande(Commande<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
@@ -44,6 +50,11 @@ namespace ClassLibraryRendu2
 
 
         }
+
+        /// <summary>
+        /// Méthode permettant de modifier une commande dans la table 'Commande'
+        /// </summary>
+        /// <param name="p1"></param>
 
         public void ModifierCommande(Commande<T> p1)
         {
@@ -54,6 +65,10 @@ namespace ClassLibraryRendu2
 
         }
 
+        /// <summary>
+        /// Méthode supprimant une commande de la table 'Commande' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
+        /// </summary>
+        /// <param name="p1"></param>
         public void DeleteCommande(Commande<T> p1)
         { 
 
@@ -63,6 +78,7 @@ namespace ClassLibraryRendu2
 
 
         }
+        #endregion
 
 
 

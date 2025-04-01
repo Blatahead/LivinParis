@@ -30,6 +30,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibraryRendu1", "..\ClassLibraryRendu1\ClassLibraryRendu1.csproj", "{4742B6F5-0BF0-48A7-B4B0-CF6AD18C842A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibraryRendu2", "..\ClassLibraryRendu2\ClassLibraryRendu2.csproj", "{19498940-022E-4713-A67E-1F72E9F688BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1F1C2E04-D570-4CF7-82D2-ACF7133D2D3F} = {1F1C2E04-D570-4CF7-82D2-ACF7133D2D3F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "..\UnitTestProject1\UnitTestProject1.csproj", "{C216EDB2-8556-40C0-8758-CA4E459DE842}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivinParisWebApp", "..\LivinParisWebApp\LivinParisWebApp.csproj", "{362B4A94-DA06-4610-9372-64446A193B7C}"
 EndProject

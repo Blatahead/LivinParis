@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Particulier<T>
+    public class Particulier<T>: Client<T>
     {
         int idParticulier;
         string prenomParticulier;
         string nomParticulier;
         string adresseParticulier;
         #region constructeur
-        public Particulier(int numeroParticulier, string prenomParticulier, string nomParticulier, string adresseParticulier)
+        public Particulier(int idUser, string mdp, string adresse_mail, int idClient,int numeroParticulier, string prenomParticulier, string nomParticulier, string adresseParticulier):base(idUser, mdp, adresse_mail,idClient)
         {
             this.idParticulier = numeroParticulier;
             this.prenomParticulier= prenomParticulier;
@@ -41,7 +41,12 @@ namespace ClassLibraryRendu2
         }
         #endregion
 
+        #region Méthodes
 
+        /// <summary>
+        /// Méthode permattant de créer un particulier dans la table 'Particulier'
+        /// </summary>
+        /// <param name="p1"></param>
         public void CreerParticulier(Particulier<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
@@ -50,22 +55,32 @@ namespace ClassLibraryRendu2
 
 
         }
+
+        /// <summary>
+        /// Méthode permettant de modifier un particulier dans la table 'Particulier'
+        /// </summary>
+        /// <param name="p1"></param>
         public void ModifierParticulier(Particulier<T> p1)
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE SET Particulier Id_particulier="+p1.idParticulier+", Prenom_particulier="+p1.prenomParticulier+", Nom_particulier="+p1.nomParticulier+" WHERE Adresse_particulier="+p1.adresseParticulier+";";
+            string demande = "UPDATE SET Particulier Id_particulier="+p1.idParticulier+", Prenom_particulier="+p1.prenomParticulier+", Nom_particulier="+p1.nomParticulier+" WHERE Id_Client="+p1.IdClient+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
 
+        /// <summary>
+        /// Méthode supprimant un particulier de la table 'Particulier' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
+        /// </summary>
+        /// <param name="p1"></param>
         public void DeleteParticulier(Particulier<T> p1)
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "DELETE FROM Particulier WHERE id_particulier="+p1.idParticulier+";";
+            string demande = "DELETE FROM Particulier WHERE Id_Client="+p1.IdClient+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
+        #endregion
     }
 }

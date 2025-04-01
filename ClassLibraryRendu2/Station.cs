@@ -38,6 +38,14 @@ namespace ClassLibraryRendu2
         }
         #endregion
 
+
+        #region Méthodes
+
+
+        /// <summary>
+        /// Méthode permettant de créer une station dans la table 'Station'
+        /// </summary>
+        /// <param name="p1"></param>
         public void CreerStation(Station<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
@@ -47,6 +55,10 @@ namespace ClassLibraryRendu2
 
         }
 
+        /// <summary>
+        /// Méthode permettant de modifier une station dans la table 'Station'
+        /// </summary>
+        /// <param name="p1"></param>
         public void ModifierStation(Station<T> p1)
         {
 
@@ -56,6 +68,10 @@ namespace ClassLibraryRendu2
 
         }
 
+        /// <summary>
+        /// Méthode supprimant une station de la table 'Station' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
+        /// </summary>
+        /// <param name="p1"></param>
         public void DeleteStation(Station<T> p1)
         {
 
@@ -66,7 +82,16 @@ namespace ClassLibraryRendu2
 
 
         }
+        #endregion
 
+
+
+        public static void CalculDistance(Station<T> p1, Station<T> p2)
+        {
+            double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((p2.latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(p2.latitude)*Math.Pow(Math.Sin((p2.longitude-p1.longitude)/2), 2)));
+
+
+        }
 
 
 

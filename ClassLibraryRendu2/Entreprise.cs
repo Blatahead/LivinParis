@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Entreprise<T>
+    public class Entreprise<T>: Client<T>
     {
         int numeroSiret;
         string nomEntreprise;
@@ -15,7 +15,7 @@ namespace ClassLibraryRendu2
         string adresseEntreprise;
 
         #region constructeur
-        public Entreprise(int numeroSiret, string nomEntreprise, string nomReferent, string adresseEntreprise)
+        public Entreprise(int idUser, string mdp, string adresse_mail,int idClient,int numeroSiret, string nomEntreprise, string nomReferent, string adresseEntreprise):base(idUser,mdp,adresse_mail,idClient)
         {
             this.numeroSiret = numeroSiret;
             this.nomEntreprise=nomEntreprise;
@@ -46,32 +46,46 @@ namespace ClassLibraryRendu2
         }
         #endregion
 
+        #region Méthodes
+
+        /// <summary>
+        /// Méthode permettant de créer une entreprise dans la table 'Entreprise'
+        /// </summary>
+        /// <param name="p1"></param>
         public void CreerEntreprise(Entreprise<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
-            string demande = "INSERT INTO Entreprise (Num_siret,Nom_entreprise,Nom_referent,Adresse_entreprise,) VALUES ("+p1.numeroSiret+","+p1.nomEntreprise+","+p1.nomReferent+","+p1.adresseEntreprise+")";
+            string demande = "INSERT INTO Entreprise (Num_siret,Nom_entreprise,Nom_referent,Adresse_entreprise) VALUES ("+p1.numeroSiret+","+p1.nomEntreprise+","+p1.nomReferent+","+p1.adresseEntreprise+")";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
 
         }
+        /// <summary>
+        /// Méthode permettant de modifier une entreprise dans la table 'Entreprise'
+        /// </summary>
+        /// <param name="p1"></param>
         public void ModifierEntreprise(Entreprise<T> p1)
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE SET Entreprise Num_siret="+p1.numeroSiret+", Nom_entreprise="+p1.nomEntreprise+", Nom_referent="+p1.nomReferent+" WHERE Adresse_entreprise="+p1.adresseEntreprise+";";
+            string demande = "UPDATE SET Entreprise Num_siret="+p1.numeroSiret+", Nom_entreprise="+p1.nomEntreprise+", Nom_referent="+p1.nomReferent+" WHERE Id_Client="+p1.IdClient+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
 
+        /// <summary>
+        /// Méthode supprimant une entreprise de la table 'Entreprise' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
+        /// </summary>
+        /// <param name="p1"></param>
         public void DeleteEntreprise(Entreprise<T> p1)
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "DELETE FROM Entreprise WHERE Num_siret="+p1.numeroSiret+";";
+            string demande = "DELETE FROM Entreprise WHERE Id_Client="+p1.IdClient+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
-
+        #endregion
 
 
 
