@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Cuisinier<T>:Utilisateur<T>
+    public class Cuisinier<T> : Utilisateur<T>
     {
         int id_Cuisinier;
         string nom;
@@ -16,9 +16,11 @@ namespace ClassLibraryRendu2
         List<T> liste_commandes;
         List<T> liste_commandes_pretes;
         List<T> liste_commandes_livrees;
+        List<T> liste_de_plats;
+
 
         #region constructeur
-        public Cuisinier(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees) : base(idUser, mdp, adresse_mail)
+        public Cuisinier(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees, List<T> liste_de_plats) : base(idUser, mdp, adresse_mail)
         {
             this.id_Cuisinier = id_Cuisinier;
             this.nom=nomCuisinier;
@@ -27,6 +29,8 @@ namespace ClassLibraryRendu2
             this.liste_commandes=liste_commandes;
             this.liste_commandes_pretes=liste_commandes_pretes;
             this.liste_commandes_livrees=liste_commandes_livrees;
+            this.liste_de_plats=liste_de_plats;
+
         }
         #endregion
         #region propriétés
@@ -55,6 +59,11 @@ namespace ClassLibraryRendu2
         {
             get { return liste_commandes_livrees; }
         }
+        public int Id_Cuisinier
+        {
+            get { return id_Cuisinier; }
+            set { id_Cuisinier= value; }
+        }
 
 
 
@@ -71,7 +80,7 @@ namespace ClassLibraryRendu2
         public void CreerCuisinier(Cuisinier<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
-            string demande = "INSERT INTO Cuisinier (Id_Cuisinier,Prenom_cuisinier,Nom_particulier,Adresse_cuisinier) VALUES ("+p1.id_Cuisinier+","+p1.prenom+","+p1.nom+","+p1.adresseCuisinier+")";
+            string demande = "INSERT INTO Cuisinier (Id_Cuisinier,Prenom_cuisinier,Nom_particulier,Adresse_cuisinier, Id_Utilisateur) VALUES ("+p1.id_Cuisinier+","+p1.prenom+","+p1.nom+","+p1.adresseCuisinier+","+p1.IdUser+"+)";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
 
@@ -86,7 +95,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE SET Cuisinier Id_Cuisinier="+p1.id_Cuisinier+", Prenom_cuisinier="+p1.prenom+", Nom_particulier="+p1.nom+", Adresse_cuisinier="+p1.adresseCuisinier+" WHERE Id_Cuisinier="+p1.id_Cuisinier+";";
+            string demande = "UPDATE Cuisinier SET Id_Cuisinier="+p1.id_Cuisinier+", Prenom_cuisinier="+p1.prenom+", Nom_particulier="+p1.nom+", Adresse_cuisinier="+p1.adresseCuisinier+" WHERE Id_Cuisinier="+p1.id_Cuisinier+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }

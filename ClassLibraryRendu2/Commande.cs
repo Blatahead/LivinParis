@@ -7,17 +7,19 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Commande<T>:Utilisateur<T>
+    public class Commande<T> : Utilisateur<T>
     {
         int numeroCommande;
         float prixCommande;
         int noteCommande;
+        List<T> liste_plats;
         #region constructeur
-        public Commande(int idUser, string mdp, string adresse_mail,int numeroCommande, int prixCommande, int noteCommande):base(idUser,mdp,adresse_mail)
+        public Commande(int idUser, string mdp, string adresse_mail, int numeroCommande, int prixCommande, int noteCommande, List<T> liste_plats) : base(idUser, mdp, adresse_mail)
         {
             this.numeroCommande = numeroCommande;
             this.prixCommande = prixCommande;
             this.noteCommande = noteCommande;
+            this.liste_plats=liste_plats;
         }
         #endregion
         #region propriétés
@@ -45,7 +47,7 @@ namespace ClassLibraryRendu2
         public void CreerCommande(Commande<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
-            string demande = "INSERT INTO Commande (Num_commande, Prix_commande, Note_commande) VALUES ("+p1.numeroCommande+","+p1.prixCommande+","+p1.noteCommande+")";
+            string demande = "INSERT INTO Commande (Num_commande, Prix_commande, Note_commande, Id_Utilisateur) VALUES ("+p1.numeroCommande+","+p1.prixCommande+","+p1.noteCommande+","+p1.IdUser+")";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
 
@@ -60,7 +62,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE SET Commande Num_commande="+p1.numeroCommande+", Prix_commande="+ p1.prixCommande+", Note_commande="+p1.noteCommande+" WHERE Num_commande="+p1.numeroCommande+";";
+            string demande = "UPDATE Commande SET Num_commande="+p1.numeroCommande+", Prix_commande="+ p1.prixCommande+", Note_commande="+p1.noteCommande+" WHERE Num_commande="+p1.numeroCommande+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
@@ -70,7 +72,7 @@ namespace ClassLibraryRendu2
         /// </summary>
         /// <param name="p1"></param>
         public void DeleteCommande(Commande<T> p1)
-        { 
+        {
 
             ConnexionDB.ConnectToDatabase();
             string demande = "DELETE FROM Commande WHERE ="+p1.numeroCommande+";";

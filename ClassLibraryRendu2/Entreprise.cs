@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Entreprise<T>: Client<T>
+    public class Entreprise<T> : Client<T>
     {
         int numeroSiret;
         string nomEntreprise;
@@ -15,7 +15,7 @@ namespace ClassLibraryRendu2
         string adresseEntreprise;
 
         #region constructeur
-        public Entreprise(int idUser, string mdp, string adresse_mail,int idClient,int numeroSiret, string nomEntreprise, string nomReferent, string adresseEntreprise):base(idUser,mdp,adresse_mail,idClient)
+        public Entreprise(int idUser, string mdp, string adresse_mail, int idClient, int numeroSiret, string nomEntreprise, string nomReferent, string adresseEntreprise) : base(idUser, mdp, adresse_mail, idClient)
         {
             this.numeroSiret = numeroSiret;
             this.nomEntreprise=nomEntreprise;
@@ -68,7 +68,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE SET Entreprise Num_siret="+p1.numeroSiret+", Nom_entreprise="+p1.nomEntreprise+", Nom_referent="+p1.nomReferent+" WHERE Id_Client="+p1.IdClient+";";
+            string demande = "UPDATE Entreprise SET Num_siret="+p1.numeroSiret+", Nom_entreprise="+p1.nomEntreprise+", Nom_referent="+p1.nomReferent+" WHERE Id_Client="+p1.IdClient+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }

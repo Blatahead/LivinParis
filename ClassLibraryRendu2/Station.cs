@@ -63,7 +63,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE SET Station ID_station="+p1.identifiantStation+", Nom_station="+p1.nomStation+", Longitude="+p1.longitude+", Latitude="+p1.latitude+", Libelle_ligne="+p1.libelle_ligne+" WHERE Nom_station="+p1.nomStation+";";
+            string demande = "UPDATE Station SET ID_station="+p1.identifiantStation+", Nom_station="+p1.nomStation+", Longitude="+p1.longitude+", Latitude="+p1.latitude+", Libelle_ligne="+p1.libelle_ligne+" WHERE Nom_station="+p1.nomStation+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
