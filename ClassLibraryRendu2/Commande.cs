@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Commande<T> : Utilisateur<T>
+    public class Commande<T> : Plat<T>
     {
         int numeroCommande;
         float prixCommande;
         int noteCommande;
-        List<T> liste_plats;
+        string liste_plats;
         #region constructeur
-        public Commande(int idUser, string mdp, string adresse_mail, int numeroCommande, int prixCommande, int noteCommande, List<T> liste_plats) : base(idUser, mdp, adresse_mail)
+        public Commande(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_de_plats, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees, int numPlatJ, string nomPlatJ, int ndpPlatJ, string typePlatJ, string nationalitePlatJ, string datePeremptionJ, float prixPlatJ, string ingredientsJ, string regimeAlimentaireJ, string photoJ, string dateFabricationJ, int numPlat, string nomPlat, int ndpPlat, string typePlat, string nationalitePlat, string datePeremption, float prixPlat, string ingredients, string regimeAlimentaire, string photo, string dateFabrication, int numeroCommande, float prixCommande, int noteCommande, string liste_plats) : base(id_Cuisinier, idUser, mdp, adresse_mail, nomCuisinier, prenomCuisinier, adresseCuisinier, liste_de_plats, liste_commandes, liste_commandes_pretes, liste_commandes_livrees, numPlatJ, nomPlatJ, ndpPlatJ, typePlatJ, nationalitePlatJ, datePeremptionJ, prixPlatJ, ingredientsJ, regimeAlimentaireJ, photoJ, dateFabricationJ, numPlat, nomPlat, ndpPlat, typePlat, nationalitePlat, datePeremption, prixPlat, ingredients, regimeAlimentaire, photo, dateFabrication)
         {
             this.numeroCommande = numeroCommande;
             this.prixCommande = prixCommande;
             this.noteCommande = noteCommande;
-            this.liste_plats=liste_plats;
+            this.liste_plats+=NumPlat+";";
         }
         #endregion
         #region propriétés
@@ -36,6 +36,12 @@ namespace ClassLibraryRendu2
             get { return noteCommande; }
             set { noteCommande=value; }
         }
+
+        public string Liste_plats
+        {
+            get { return liste_plats; }
+            set { liste_plats=value; }
+        }
         #endregion
 
 
@@ -47,7 +53,7 @@ namespace ClassLibraryRendu2
         public void CreerCommande(Commande<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
-            string demande = "INSERT INTO Commande (Num_commande, Prix_commande, Note_commande, Id_Utilisateur) VALUES ("+p1.numeroCommande+","+p1.prixCommande+","+p1.noteCommande+","+p1.IdUser+")";
+            string demande = "INSERT INTO Commande (Num_commande, Prix_commande, Note_commande, liste_plats, Id_Utilisateur) VALUES ("+p1.numeroCommande+","+p1.prixCommande+","+p1.noteCommande+","+p1.liste_plats+","+p1.IdUser+")";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
 
@@ -62,7 +68,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE Commande SET Num_commande="+p1.numeroCommande+", Prix_commande="+ p1.prixCommande+", Note_commande="+p1.noteCommande+" WHERE Num_commande="+p1.numeroCommande+";";
+            string demande = "UPDATE Commande SET Num_commande="+p1.numeroCommande+", Prix_commande="+ p1.prixCommande+", Note_commande="+p1.noteCommande+", liste_plats="+p1.liste_plats+", WHERE Num_commande="+p1.numeroCommande+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
