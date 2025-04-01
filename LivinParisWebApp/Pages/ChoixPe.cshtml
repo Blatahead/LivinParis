@@ -1,0 +1,23 @@
+﻿@page
+@model LivinParis.Pages.ChoixPeModel
+@{
+    Layout = "~/Pages/Shared/_ChoiceLayout.cshtml";
+    ViewData["Title"] = "ChoixPE";
+}
+<div class="choice-content">
+    <div class="choice-form">
+        <div class="titles-choice">
+            <p class="title-choice">Et je suis :</p>
+            <p class="subtitle-choice">(changement possible une fois inscrit)</p>
+        </div>
+        <div class="form-choice">
+            <form method="post">
+                <div class="btns-choice">
+                    <button class="btn-choice" type="submit" asp-page-handler="CreateParticulier"><p>Un nouveau Particulier</p></button>
+                    <button class="btn-choice" type="submit" asp-page-handler="CreateEntreprise"><p>Une nouvelle Entreprise</p></button>
+                </div>
+                <button class="btn-retour" type="submit" asp-page-handler="ChoixCC">Retour</button>
+            </form>
+        </div>
+    </div>
+</div>

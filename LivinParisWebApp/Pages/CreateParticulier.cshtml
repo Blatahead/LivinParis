@@ -1,0 +1,33 @@
+﻿@page
+@model LivinParis.Pages.CreateParticulierModel
+@{
+    Layout = "~/Pages/Shared/CreationLayout.cshtml";
+    ViewData["Title"] = "Creation Particulier";
+}
+<div class="create-content">
+    <div class="img-container">
+        <img src="/src/img/A table.svg" alt="" class="img-login" />
+        <p class="subtitle-img-login">A vos marques ! Dégustez !</p>
+    </div>
+    <div class="create-form">
+        <p class="title-create-form">Je deviens particulier</p>
+        <div class="form-create">
+            <form method="post">
+                <div class="inputs">
+                    <input asp-for="FirstName" placeholder="Prénom" />
+                    <input asp-for="Name" placeholder="Nom" />
+                </div>
+                <div class="adress-container">
+                    <p>Adresse</p>
+                    <div class="input-adress">
+                        <input asp-for="Arrondissement" placeholder="Arrondissement" />
+                        <input asp-for="Voirie" placeholder="Voirie" />
+                        <input asp-for="Numéro" placeholder="Numéro" />
+                    </div>
+                </div>
+                <button type="submit" asp-page-handler="CestParti">C'est parti !</button>
+                <button class="btn-retour" type="submit" asp-page-handler="ChoixPe">Retour</button>
+            </form>
+        </div>
+    </div>
+</div>

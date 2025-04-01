@@ -1,0 +1,31 @@
+﻿@page
+@model LivinParisWebApp.Pages.NoClientAccountModel
+@{
+	Layout = "~/Pages/Shared/_NoAccountLayout.cshtml";
+	ViewData["Title"] = "Pas de compte Client";
+}
+<div class="popup-content">
+    <div class="popup-no-account">
+        <p class="title-popup">Vous n'avez pas d'espace Client !</p>
+        <div class="popup-question">
+            <div>
+                <p class="popup-question-text">Voulez vous en créer un ?</p>
+                <form method="post">
+                    <button class="btn-yes"
+                            type="submit"
+                            asp-page-handler="ChoixPe">
+                        <p>Oui</p>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    @* rediriger vers panel cuisinier *@
+    <form method="post">
+        <button class="btn-retour"
+                type="submit"
+                asp-page-handler="CuisinierPanel">
+            Retour
+        </button>
+    </form>
+</div>
