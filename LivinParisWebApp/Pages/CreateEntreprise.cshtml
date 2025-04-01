@@ -1,0 +1,34 @@
+﻿@page
+@model LivinParis.Pages.CreateEntrepriseModel
+@{
+    Layout = "~/Pages/Shared/CreationLayout.cshtml";
+    ViewData["Title"] = "Creation Entreprise";
+}
+<div class="create-content">
+    <div class="img-container">
+        <img src="/src/img/boulot.svg" alt="" class="img-login" />
+        <p class="subtitle-img-login">Métro, boulot, mangez !</p>
+    </div>
+    <div class="create-form">
+        <p class="title-create-form">Je deviens une entreprise</p>
+        <div class="form-create">
+            <form method="post">
+                <div class="inputs">
+                    <input asp-for="NomEntreprise" placeholder="Nom de l'entreprise" />
+                    <input asp-for="NumeroSiret" placeholder="N° SIRET" />
+                    <input asp-for="NomReferent" placeholder="Nom du référent" />
+                </div>
+                <div class="adress-container">
+                    <p>Adresse</p>
+                    <div class="input-adress">
+                        <input asp-for="Arrondissement" placeholder="Arrondissement" />
+                        <input asp-for="Voirie" placeholder="Voirie" />
+                        <input asp-for="Numéro" placeholder="Numéro" />
+                    </div>
+                </div>
+                <button type="submit" asp-page-handler="CestParti">C'est parti !</button>
+                <button class="btn-retour" type="submit" asp-page-handler="ChoixPe">Retour</button>
+            </form>
+        </div>
+    </div>
+</div>
