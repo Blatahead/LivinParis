@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Text.Json;
+using System.Reflection;
 
 namespace ClassLibraryRendu2
 {
@@ -84,14 +87,34 @@ namespace ClassLibraryRendu2
         }
         #endregion
 
+        public string CalculStationProche(Station<T> p1, double longitute2, double latitude2)
+        {
+            string plusCourt = "";
+            double Min = 10000;
+            foreach (PropertyInfo prop in this.GetType().GetProperties())
+            {
+                double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(latitude)*Math.Pow(Math.Sin((longitude-p1.longitude)/2), 2)));
+                if (Min>distance)
+                {
+                    Min=distance;
+                    plusCourt=p1.nomStation;
+                }
+            }
+            return plusCourt;
 
 
-        public static void CalculDistance(Station<T> p1, Station<T> p2)
+        }
+
+
+
+        public static void CalculDistance2stations(Station<T> p1, Station<T> p2)
         {
             double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((p2.latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(p2.latitude)*Math.Pow(Math.Sin((p2.longitude-p1.longitude)/2), 2)));
 
 
         }
+        
+
 
 
 
