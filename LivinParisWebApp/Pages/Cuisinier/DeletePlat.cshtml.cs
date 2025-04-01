@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace LivinParis.Pages.Cuisinier
+namespace LivinParisWebApp.Pages.Cuisinier
 {
-    public class NouveauPlatModel : PageModel
+    public class DeletePlatModel : PageModel
     {
         public void OnGet()
         {

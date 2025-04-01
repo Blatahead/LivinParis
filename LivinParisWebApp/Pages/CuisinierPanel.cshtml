@@ -1,0 +1,192 @@
+﻿@page
+@model LivinParisWebApp.Pages.CuisinierPanelModel
+@{
+    Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
+    ViewData["Title"] = "Panel Cuisinier";
+}
+<div class="top-panel">
+    <p class="message-top-panel">Bienvenue Chef !</p>
+    <div class="right-settings-panel">
+        <form method="post">
+            <button class="btn-settings"
+                    type="submit"
+                    asp-page-handler="SettingsCuisinier">
+                Paramètres
+            </button>
+        </form>
+    </div>
+</div>
+<div class="content-panel">
+    <div class="left-colonne">
+        <div class="left-colonne-container">
+            <div class="stats-panel">
+                <div class="item1-stats-panel">
+                    <p class="title-stats-panel">Prochaine livraison prévue à</p>
+                    <!-- A automatiser -->
+                    <p class="text-stats-panel">01/04/05 à 13h30</p>
+                </div>
+                <div class="item2-stats-panel">
+                    <p class="title-stats-panel">Nb de commandes en cours</p>
+                    <!-- A automatiser -->
+                    <p class="text-stats-panel">3</p>
+                </div>
+                <div class="item3-stats-panel">
+                    <p class="title-stats-panel">Moyenne de notation</p>
+                    <!-- A automatiser -->
+                    <p class="text-stats-panel">4,5/5</p>
+                </div>
+            </div>
+            <div class="btn-see-current-commands">
+                <form method="post">
+                    <button type="submit" asp-page-handler="SeeCurrentCommands">
+                        Voir mes commandes en cours
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="mid-colonne">
+        <div class="mid-colonne-container">
+            <p class="title-mid-colonne">Plat du jour</p>
+            <div class="todays-plat">
+                <div class="nom-plat">
+                    <!-- A automatiser -->
+                    <p>Pâtes carbonara</p>
+                </div>
+                <!-- A automatiser -->
+                <div class="prix-plat">
+                    <p>Prix :</p>
+                    <p>3€</p>
+                </div>
+                <!-- A automatiser -->
+                <div class="nb-pers-plat">
+                    <p>Nb de personnes :</p>
+                    <p>4</p>
+                </div>
+                <!-- A automatiser -->
+                <div class="natio-plat rose">
+                    <p>Nationalité :</p>
+                    <p>Italie</p>
+                </div>
+                <!-- A automatiser -->
+                <div class="regime-plat rose">
+                    <p>Régime :</p>
+                    <p>aucun</p>
+                </div>
+            </div>
+            <div class="btn-change-todays-plat">
+                <form method="post">
+                    <button type="submit" asp-page-handler="ChangeTodaysPlat">
+                        Changer le plat
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="right-colonne">
+        <p class="menu-title">Plats disponibles</p>
+        <div class="dish-list">
+            <!-- Carte d’un plat -->
+            <div class="dish-card">
+                <div class="dish-info">
+                    <p>Pâtes bolognaise</p>
+                    <span class="rose">Cuisinier : Olivier</span>
+                    <span class="rose">Livraison : 15 min</span>
+                </div>
+                <div class="dish-actions">
+                    <button type="submit" class="delete-btn" asp-page-handler="DeletePlat">🗑️</button>
+                    <button type="submit" class="details-btn" asp-page-handler="DetailsPlat">Détails</button>
+                </div>
+            </div>
+
+            <div class="dish-card">
+                <div class="dish-info">
+                    <p>Pâtes carbonara</p>
+                    <span class="rose">Cuisinier : Olivier</span>
+                    <span class="rose">Livraison : 15 min</span>
+                </div>
+                <div class="dish-actions">
+                    <button type="submit" class="delete-btn" asp-page-handler="DeletePlat">🗑️</button>
+                    <button type="submit" class="details-btn" asp-page-handler="DetailsPlat">Détails</button>
+                </div>
+            </div>
+
+            <div class="dish-card">
+                <div class="dish-info">
+                    <p>Pizza Thon</p>
+                    <span class="rose">Cuisinier : Olivier</span>
+                    <span class="rose">Livraison : 15 min</span>
+                </div>
+                <div class="dish-actions">
+                    <button type="submit" class="delete-btn" asp-page-handler="DeletePlat">🗑️</button>
+                    <button type="submit" class="details-btn" asp-page-handler="DetailsPlat">Détails</button>
+                </div>
+            </div>
+            <div class="dish-card">
+                <div class="dish-info">
+                    <p>Pâtes carbonara</p>
+                    <span class="rose">Cuisinier : Olivier</span>
+                    <span class="rose">Livraison : 15 min</span>
+                </div>
+                <div class="dish-actions">
+                    <button type="submit" class="delete-btn" asp-page-handler="DeletePlat">🗑️</button>
+                    <button type="submit" class="details-btn" asp-page-handler="DetailsPlat">Détails</button>
+                </div>
+            </div>
+
+            <div class="dish-card">
+                <div class="dish-info">
+                    <p>Pizza Thon</p>
+                    <span class="rose">Cuisinier : Olivier</span>
+                    <span class="rose">Livraison : 15 min</span>
+                </div>
+                <div class="dish-actions">
+                    <button type="submit" class="delete-btn" asp-page-handler="DeletePlat">🗑️</button>
+                    <button type="submit" class="details-btn" asp-page-handler="DetailsPlat">Détails</button>
+                </div>
+            </div>
+
+            <div class="dish-card">
+                <div class="dish-info">
+                    <p>Cassoulet</p>
+                    <span class="rose">Cuisinier : Olivier</span>
+                    <span class="rose">Livraison : 15 min</span>
+                </div>
+                <div class="dish-actions">
+                    <button type="submit" class="delete-btn" asp-page-handler="DeletePlat">🗑️</button>
+                    <button type="submit" class="details-btn" asp-page-handler="DetailsPlat">Détails</button>
+                </div>
+            </div>
+            <div class="dish-card">
+                <div class="dish-info">
+                    <p>Cassoulet</p>
+                    <span class="rose">Cuisinier : Olivier</span>
+                    <span class="rose">Livraison : 15 min</span>
+                </div>
+                <div class="dish-actions">
+                    <button type="submit" class="delete-btn" asp-page-handler="DeletePlat">🗑️</button>
+                    <button type="submit" class="details-btn" asp-page-handler="DetailsPlat">Détails</button>
+                </div>
+            </div>
+            <div class="dish-card">
+                <div class="dish-info">
+                    <p>Cassoulet</p>
+                    <span class="rose">Cuisinier : Olivier</span>
+                    <span class="rose">Livraison : 15 min</span>
+                </div>
+                <div class="dish-actions">
+                    <button type="submit" class="delete-btn" asp-page-handler="DeletePlat">🗑️</button>
+                    <button type="submit" class="details-btn" asp-page-handler="DetailsPlat">Détails</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-add-plat">
+            <form method="post">
+                <button type="submit" asp-page-handler="AddPlat">
+                    Proposer un plat
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
