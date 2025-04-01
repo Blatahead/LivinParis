@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class Plat<T>: Cuisinier<T>
+    public class Plat<T>: Plat_du_Jour<T>
     {
         int numPlat;
         string nomPlat;
@@ -24,7 +24,7 @@ namespace ClassLibraryRendu2
 
 
         #region constructeur
-        public Plat(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees, List<T> liste_de_plats, int numPlat, string nomPlat, int ndpPlat, string typePlat, string nationalitePlat, string datePeremption, float prixPlat, string ingredients, string regimeAlimentaire,string photo,string dateFabrication): base(id_Cuisinier, idUser, mdp, adresse_mail,nomCuisinier, prenomCuisinier, adresseCuisinier, liste_commandes,liste_commandes_pretes,liste_commandes_livrees, liste_de_plats)
+        public Plat(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees, List<T> liste_de_plats, int numPlatJ, string nomPlatJ, int ndpPlatJ, string typePlatJ, string nationalitePlatJ, string datePeremptionJ, float prixPlatJ, string ingredientsJ, string regimeAlimentaireJ, string photoJ, string dateFabricationJ,  int numPlat, string nomPlat, int ndpPlat, string typePlat, string nationalitePlat, string datePeremption, float prixPlat, string ingredients, string regimeAlimentaire,string photo,string dateFabrication): base(id_Cuisinier, idUser, mdp, adresse_mail,nomCuisinier, prenomCuisinier, adresseCuisinier, liste_commandes,liste_commandes_pretes,liste_commandes_livrees, liste_de_plats, numPlatJ, nomPlatJ, ndpPlatJ, typePlatJ, nationalitePlatJ, datePeremptionJ, prixPlatJ, ingredientsJ, regimeAlimentaireJ, photoJ, dateFabricationJ)
         {
             this.numPlat = numPlat;
             this.nomPlat = nomPlat;
@@ -73,7 +73,7 @@ namespace ClassLibraryRendu2
         public void CreerPlat(Plat<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
-            string demande = "INSERT INTO Plat (Num_plat, Nom_plat, Nombre_de_personne_plat, Type_plat, Nationalite_plat, Date_peremption_plat, prix_plat, Ingredients_plat, Regime_alimentaire_plat, Photo_plat, Dae_fabrication_plat) VALUES ("+p1.numPlat+","+p1.nomPlat+","+p1.ndpPlat+","+p1.typePlat+","+p1.nationalitePlat+","+p1.datePeremption+","+p1.prixPlat+","+p1.ingredients+","+p1.regimeAlimentaire+","+p1.photo+","+p1.dateFabrication+")";
+            string demande = "INSERT INTO Plat (Num_plat, Nom_plat, Nombre_de_personne_plat, Type_plat, Nationalite_plat, Date_peremption_plat, prix_plat, Ingredients_plat, Regime_alimentaire_plat, Photo_plat, Date_fabrication_plat, Num_platJ, Id_Cuisinier) VALUES ("+p1.numPlat+","+p1.nomPlat+","+p1.ndpPlat+","+p1.typePlat+","+p1.nationalitePlat+","+p1.datePeremption+","+p1.prixPlat+","+p1.ingredients+","+p1.regimeAlimentaire+","+p1.photo+","+p1.dateFabrication+","+p1.NumPlatJ+","+p1.Id_Cuisinier+")";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
 
