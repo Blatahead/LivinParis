@@ -833,117 +833,371 @@ button {
 }
 }
 
-.right-colonne {
-    display: flex;
-    height: 100%;
-    width: 45%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    .right-colonne {
+        display: flex;
+        height: 100%;
+        width: 45%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 
-        .rose{
-        color: #e0aaff;
+            .rose{
+            color: #e0aaff;
+            font-size: 1.2vw;
+        }
+
+    .menu-title {
+        height: 10%;
+        font-size: 1.5vw;
+        margin-top: 3vh;
+    }
+
+    .dish-list {
+        height: 47.5vh;
+        width: 80%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .dish-card {
+        background-color: rgba(255, 255, 255, 0.25);
+        border-radius: 15px;
+        margin-right: 1vw;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .dish-info {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        margin-left: 2vw;
+        gap: 0.2rem;
         font-size: 1.2vw;
     }
 
-.menu-title {
-    height: 10%;
-    font-size: 1.5vw;
-    margin-top: 3vh;
+    .dish-actions {
+        display: flex;
+        flex-direction: row;
+        margin-right: 1vw;
+        gap: 0.3rem;
+        height: 70%;
+        width: 50%;
+    }
+
+    .delete-btn {
+        background-color: transparent;
+        border: none;
+        font-size: 1.2vw;
+        cursor: pointer;
+        height: 100%;
+        width: 5vw;
+        background-color: #5a189a;
+        border-radius: 15px;
+    }
+
+    .details-btn {
+        background-color: #e0aaff;
+        color: #fffefe;
+        border: none;
+        height: 100%;
+        width: 60%;
+        border-radius: 15px;
+        font-family: "Lilita One", sans-serif;
+        font-style:normal;
+        font-size: 1.2vw;
+        cursor: pointer;
+    }
+
+        .btn-add-plat {
+            display: flex;
+            align-items: center;
+            height: 20%;
+            width: 100%;
+
+            form{
+                height: 100%;
+                width: 100%;
+                display: flex;
+                align-items: center;
+
+                button{
+                    height: 6vh;
+                    background-color: #E0AAFF;
+                    color: #fffefe;
+                    border: none;
+                    border-radius: 10px;
+                    font-size: 1.5vw;
+                    font-family: "Lilita One", sans-serif;
+                    text-align: center;
+                    margin-left: auto;
+                    margin-right: auto;
+                    width: 50%;
+                    box-sizing: border-box;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
 }
 
-.dish-list {
-    height: 47.5vh;
-    width: 80%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
+    .content-see-command {
+        width: 90%;
+        height: 90vh;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
 
-.dish-card {
-    background-color: rgba(255, 255, 255, 0.25);
-    border-radius: 15px;
-    margin-right: 1vw;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .left-colonne{
+            display: flex;
+            height: 100%;
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
 
-.dish-info {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    margin-left: 2vw;
-    gap: 0.2rem;
-    font-size: 1.2vw;
-}
+            .rose{
+                color: #e0aaff;
+                font-size: 1.2vw;
+            }
 
-.dish-actions {
-    display: flex;
-    flex-direction: row;
-    margin-right: 1vw;
-    gap: 0.3rem;
-    height: 70%;
-    width: 50%;
-}
+            .menu-title {
+                height: 10%;
+                font-size: 1.5vw;
+                margin-top: 3vh;
+            }
 
-.delete-btn {
-    background-color: transparent;
-    border: none;
-    font-size: 1.2vw;
-    cursor: pointer;
-    height: 100%;
-    width: 5vw;
-    background-color: #5a189a;
-    border-radius: 15px;
-}
+            .command-list {
+                height: 47.5vh;
+                width: 80%;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
 
-.details-btn {
-    background-color: #e0aaff;
-    color: #fffefe;
-    border: none;
-    height: 100%;
-    width: 60%;
-    border-radius: 15px;
-    font-family: "Lilita One", sans-serif;
-    font-style:normal;
-    font-size: 1.2vw;
-    cursor: pointer;
-}
+            .command-card {
+                background-color: rgba(255, 255, 255, 0.25);
+                border-radius: 15px;
+                margin-right: 1vw;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
 
-.btn-add-plat {
-    display: flex;
-    align-items: center;
-    height: 20%;
-    width: 100%;
-    form
+            .command-info {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                margin-left: 2vw;
+                gap: 0.2rem;
+                font-size: 1.2vw;
+            }
 
-{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    button
+            .command-actions {
+                display: flex;
+                flex-direction: row;
+                gap: 0.3rem;
+                height: 70%;
+                width: 60%;
 
-{
-    height: 6vh;
-    background-color: #E0AAFF;
-    color: #fffefe;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.5vw;
-    font-family: "Lilita One", sans-serif;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-    box-sizing: border-box;
-    cursor: pointer;
-}
+                form{
 
-}
-}
-}
-}
+                    display: flex;
+                    flex-direction: row;
+                    width: 100%;
+                    margin-right: 1vw;
+                    justify-content: space-evenly;
+
+                    .delete-btn{
+                        display: flex;
+                        background-color: transparent;
+                        border: none;
+                        font-size: 1.2vw;
+                        cursor: pointer;
+                        height: 100%;
+                        width: 45%;
+                        background-color: #5a189a;
+                        color: #fffefe;
+                        border-radius: 15px;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .details-btn {
+                        display: flex;
+                        background-color: #e0aaff;
+                        color: #fffefe;
+                        border: none;
+                        height: 100%;
+                        width: 45%;
+                        padding: 0.3rem 0.6rem;
+                        border-radius: 15px;
+                        font-size: 1.2vw;
+                        cursor: pointer;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+
+            .delete-btn {
+                background-color: transparent;
+                border: none;
+                font-size: 1.2vw;
+                cursor: pointer;
+                height: 100%;
+                width: 50%;
+                color: #fffefe;
+                background-color: #5a189a;
+                border-radius: 15px;
+            }
+
+            .details-btn {
+                background-color: #e0aaff;
+                color: #fffefe;
+                border: none;
+                height: 100%;
+                width: 50%;
+                padding: 0.3rem 0.6rem;
+                border-radius: 15px;
+                font-size: 1.2vw;
+                cursor: pointer;
+            }
+        }
+
+        .right-colonne {
+            display: flex;
+            height: 100%;
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+        
+            .rose{
+                color: #e0aaff;
+                font-size: 1.2vw;
+            }
+
+            .menu-title {
+                height: 10%;
+                font-size: 1.5vw;
+                margin-top: 3vh;
+            }
+
+            .command-list {
+                height: 47.5vh;
+                width: 80%;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .command-card {
+                background-color: rgba(255, 255, 255, 0.25);
+                border-radius: 15px;
+                margin-right: 1vw;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .command-info {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                margin-left: 2vw;
+                gap: 0.2rem;
+                font-size: 1.2vw;
+            }
+
+            .command-actions {
+                display: flex;
+                flex-direction: row;
+                gap: 0.3rem;
+                height: 70%;
+                width: 60%;
+
+                form
+                {
+                    display: flex;
+                    flex-direction: row;
+                    width: 100%;
+                    margin-right:1vw;
+                    justify-content:space-evenly;
+
+                    .delete-btn{
+                        display: flex;
+                        background-color: transparent;
+                        border: none;
+                        font-size: 1.2vw;
+                        cursor: pointer;
+                        height: 100%;
+                        width: 45%;
+                        background-color: #5a189a;
+                        color: #fffefe;
+                        border-radius: 15px;
+                        align-items:center;
+                        justify-content:center;
+                    }
+
+                    .details-btn {
+                        display: flex;
+                        background-color: #e0aaff;
+                        color: #fffefe;
+                        border: none;
+                        height: 100%;
+                        width: 45%;
+                        padding: 0.3rem 0.6rem;
+                        border-radius: 15px;
+                        font-size: 1.2vw;
+                        cursor: pointer;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+
+            }
+
+            
+        }
+    }
+
+    .btn-add-plat {
+        display: flex;
+        align-items: center;
+        height: 20%;
+        width: 100%;
+
+        form{
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+
+            button{
+                height: 6vh;
+                background-color: #5a189a;
+                color: #fffefe;
+                border: none;
+                border-radius: 10px;
+                font-size: 1.5vw;
+                font-family: "Lilita One", sans-serif;
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+                width: 15%;
+                box-sizing: border-box;
+                cursor: pointer;
+            }
+        }
+    }
 }
