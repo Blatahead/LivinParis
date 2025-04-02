@@ -85,35 +85,103 @@ namespace ClassLibraryRendu2
 
 
         }
+        
+        /// <summary>
+        /// Méthode retournant le nom de la station la plus proche d'un particulier
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        public async void CalculStationProcheParticulier(Station<T> p1, Particulier<T> p2)
+        {
+            var (latitude, longitude)= await Convertisseur_coordonnees.GetCoordinatesAsync(p2.AdresseParticulier);
+            {
+                string plusCourt = "";
+                double Min = 10000;
+                foreach (PropertyInfo prop in this.GetType().GetProperties())
+                {
+                    double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(latitude)*Math.Pow(Math.Sin((longitude-p1.longitude)/2), 2)));
+                    if (Min>distance)
+                    {
+                        Min=distance;
+                        plusCourt=p1.nomStation;
+                    }
+                }
+
+
+            }
+        }
+
+
+
+        /// <summary>
+        /// Méthode retournant le nom de la station la plus proche d'une entreprise
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        public async void CalculStationProcheEntreprise(Station<T> p1, Entreprise<T> p2)
+        {
+            var (latitude, longitude)= await Convertisseur_coordonnees.GetCoordinatesAsync(p2.AdresseEntreprise);
+            {
+                string plusCourt = "";
+                double Min = 10000;
+                foreach (PropertyInfo prop in this.GetType().GetProperties())
+                {
+                    double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(latitude)*Math.Pow(Math.Sin((longitude-p1.longitude)/2), 2)));
+                    if (Min>distance)
+                    {
+                        Min=distance;
+                        plusCourt=p1.nomStation;
+                    }
+                }
+
+
+            }
+        }
+
+        /// <summary>
+        /// Méthode retournant le nom de la station la plus proche d'un cuisinier
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        public async void CalculStationProcheCuisinier(Station<T> p1, Cuisinier<T> p2)
+        {
+            var (latitude, longitude)= await Convertisseur_coordonnees.GetCoordinatesAsync(p2.AdresseCuisinier);
+            {
+                string plusCourt = "";
+                double Min = 10000;
+                foreach (PropertyInfo prop in this.GetType().GetProperties())
+                {
+                    double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(latitude)*Math.Pow(Math.Sin((longitude-p1.longitude)/2), 2)));
+                    if (Min>distance)
+                    {
+                        Min=distance;
+                        plusCourt=p1.nomStation;
+                    }
+                }
+
+
+            }
+        }
+
+
+
+
+
+        /// <summary>
+        /// Méthode calculant la distance entre deux stations
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        static void CalculDistance2stations(Station<T> p1, Station<T> p2)
+            {
+                double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((p2.latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(p2.latitude)*Math.Pow(Math.Sin((p2.longitude-p1.longitude)/2), 2)));
+
+
+            }
+
         #endregion
 
-        public string CalculStationProche(Station<T> p1, double longitute2, double latitude2)
-        {
-            string plusCourt = "";
-            double Min = 10000;
-            foreach (PropertyInfo prop in this.GetType().GetProperties())
-            {
-                double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(latitude)*Math.Pow(Math.Sin((longitude-p1.longitude)/2), 2)));
-                if (Min>distance)
-                {
-                    Min=distance;
-                    plusCourt=p1.nomStation;
-                }
-            }
-            return plusCourt;
 
-
-        }
-
-
-
-        public static void CalculDistance2stations(Station<T> p1, Station<T> p2)
-        {
-            double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((p2.latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(p2.latitude)*Math.Pow(Math.Sin((p2.longitude-p1.longitude)/2), 2)));
-
-
-        }
-        
 
 
 
