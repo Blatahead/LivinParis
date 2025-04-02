@@ -45,6 +45,7 @@ namespace ClassLibraryRendu2
         public string AdresseCuisinier
         {
             set { adresseCuisinier=value; }
+            get { return adresseCuisinier; }
         }
 
         public List<T> Liste_commandes

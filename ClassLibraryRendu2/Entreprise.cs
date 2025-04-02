@@ -43,6 +43,7 @@ namespace ClassLibraryRendu2
         public string AdresseEntreprise
         {
             set { adresseEntreprise=value; }
+            get {  return adresseEntreprise; }
         }
         #endregion
 

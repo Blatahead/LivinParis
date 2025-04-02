@@ -38,6 +38,7 @@ namespace ClassLibraryRendu2
         public string AdresseParticulier
         {
             set { adresseParticulier=value; }
+            get { return adresseParticulier; }
         }
         #endregion
 
