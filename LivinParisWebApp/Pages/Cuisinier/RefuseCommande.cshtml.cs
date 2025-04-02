@@ -8,5 +8,14 @@ namespace LivinParisWebApp.Pages.Cuisinier
         public void OnGet()
         {
         }
+        public IActionResult OnPostSeeCurrentCommandNo()
+        {
+            return RedirectToPage("/Cuisinier/SeeCurrentCommand");
+        }
+
+        public IActionResult OnPostSeeCurrentCommandYes()
+        {
+            return RedirectToPage("/Cuisinier/SeeCurrentCommand");
+        }
     }
 }

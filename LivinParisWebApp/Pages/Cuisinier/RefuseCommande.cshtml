@@ -2,5 +2,29 @@
 @model LivinParisWebApp.Pages.Cuisinier.RefuseCommandeModel
 @{
     Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
-    ViewData["Title"] = "Refuse Commande";
+    ViewData["Title"] = "Refuser commande";
 }
+<head>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<div class="popup-content">
+    <div class="popup-two">
+        <p class="title-popup">Etes-vous sûr de refuser cette commande ?</p>
+        <div class="popup-question">
+            <div class="popup-two-div">
+                <form method="post">
+                    <button class="btn-yes"
+                            type="submit"
+                            asp-page-handler="SeeCurrentCommandYes">
+                        <p>Oui</p>
+                    </button>
+                    <button class="btn-no"
+                            type="submit"
+                            asp-page-handler="SeeCurrentCommandNo">
+                        <p>Non</p>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
