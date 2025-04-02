@@ -91,7 +91,7 @@ namespace ClassLibraryRendu2
         /// </summary>
         /// <param name="p1"></param>
         /// <param name="p2"></param>
-        public async void CalculStationProcheParticulier(Station<T> p1, Particulier<T> p2)
+        public async void StationProcheParticulier(Station<T> p1, Particulier<T> p2)
         {
             var (latitude, longitude)= await Convertisseur_coordonnees.GetCoordinatesAsync(p2.AdresseParticulier);
             {
@@ -118,7 +118,7 @@ namespace ClassLibraryRendu2
         /// </summary>
         /// <param name="p1"></param>
         /// <param name="p2"></param>
-        public async void CalculStationProcheEntreprise(Station<T> p1, Entreprise<T> p2)
+        public async void StationProcheEntreprise(Station<T> p1, Entreprise<T> p2)
         {
             var (latitude, longitude)= await Convertisseur_coordonnees.GetCoordinatesAsync(p2.AdresseEntreprise);
             {
@@ -143,7 +143,7 @@ namespace ClassLibraryRendu2
         /// </summary>
         /// <param name="p1"></param>
         /// <param name="p2"></param>
-        public async void CalculStationProcheCuisinier(Station<T> p1, Cuisinier<T> p2)
+        public async void StationProcheCuisinier(Station<T> p1, Cuisinier<T> p2)
         {
             var (latitude, longitude)= await Convertisseur_coordonnees.GetCoordinatesAsync(p2.AdresseCuisinier);
             {

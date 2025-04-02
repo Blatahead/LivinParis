@@ -177,15 +177,17 @@ namespace TestProjectRendu1
         [TestMethod]
         public async Task TestGetCoordinatesAsync()
         {
-            // Arrange
+            
             string address = "15 rue de la Paix, Paris, 75002";
 
-            // Act
-            var (latitude, longitude) = await GeocodingHelper.GetCoordinatesAsync(address);
+            
+            var (latitude, longitude) = await Convertisseur_coordonnees.GetCoordinatesAsync(address);
 
             // Assert
             Assert.IsTrue(latitude > 48 && latitude < 49, "Latitude inattendue");//48.86935043334961
             Assert.IsTrue(longitude > 2 && longitude < 3, "Longitude inattendue");//2.3313136100769043
         }
     }
+
+    
 }
