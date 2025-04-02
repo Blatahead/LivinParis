@@ -1,4 +1,108 @@
 ﻿@page
 @model LivinParisWebApp.Pages.Cuisinier.ChangeTodaysPlatModel
 @{
+    Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
+    ViewData["Title"] = "Plat du jour";
 }
+<head>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<div class="top-panel-plat">
+	<p class="message-top-panel">Détails de votre plat</p>
+	<div class="confirm-btn">
+		<form method="post">
+			<button class="btn-confirm"
+					type="submit"
+					asp-page-handler="CuisinierPanelConfirm">
+				Confirmer
+			</button>
+		</form>
+	</div>
+	<div class="back-btn">
+		<form method="post">
+			<button class="btn-back"
+					type="submit"
+					asp-page-handler="CuisinierPanelRetour">
+				Retour
+			</button>
+		</form>
+	</div>
+	<!-- boutons confirmer et retour -->
+</div>
+<div class="content-today-plat">
+	<div class="left-colonne">
+		<div class="ligne1">
+			<form method="post">
+				<div class="inputs">
+					<input asp-for="NomDuPlat" placeholder="Nom du Plat" />
+					<input asp-for="Prix" placeholder="Prix" />
+				</div>
+			</form>
+		</div>
+		<div class="ligne2">
+			<form method="post">
+				<div class="inputs">
+					<input asp-for="NbDePersonnes" placeholder="Nb de Personnes" />
+					<input asp-for="Type" placeholder="Type" />
+				</div>
+			</form>
+		</div>
+		<div class="ligne3">
+			<form method="post">
+				<div class="creation-container">
+					<p>Création</p>
+					<div class="input-creation">
+						<input asp-for="JourCreation"
+							   placeholder="Jour" />
+						<input asp-for="MoisCreation" placeholder="Mois" />
+						<input asp-for="AnneeCreation" placeholder="Année" />
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="ligne4">
+			<form method="post">
+				<div class="peremption-container">
+					<p>Péremption</p>
+					<div class="input-peremption">
+						<input asp-for="JourPerem"
+							   placeholder="Arrondissement" />
+						<input asp-for="MoisPerem" placeholder="Mois" />
+						<input asp-for="AnneePerem" placeholder="Année" />
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="right-colonne">
+		<div class="ligne1">
+			<div class="charge">
+				<p>Photo</p>
+				<button class="load-img"><p>Charger</p></button>
+				<!-- suppr la photo de l'aperçu et ne pas la prendre en compte-->
+				<button><p>Supprimer</p></button>
+			</div>
+			<div class="img-container">
+				<p>Aperçu</p>
+				<img src="/src/img/plat.png" alt="">
+			</div>
+		</div>
+		<div class="ligne2">
+			<form method="post">
+				<div class="inputs">
+					<input asp-for="NbDePersonnes" placeholder="Nb de Personnes" />
+					<input asp-for="Type" placeholder="Type" />
+				</div>
+			</form>
+		</div>
+		<div class="ligne3">
+			<form method="post">
+				<div class="ingre-container">
+					<p>Ingrédients</p>
+					<div class="input-ingre">
+						<input asp-for="Ingredients" placeholder="Ingrédients" />
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>

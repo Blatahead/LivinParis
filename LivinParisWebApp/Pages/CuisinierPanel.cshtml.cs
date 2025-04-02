@@ -28,7 +28,7 @@ namespace LivinParisWebApp.Pages
 
         public IActionResult OnPostDetailsPlat()
         {
-            return RedirectToPage("Cuisinier/DetailsPlat");
+            return RedirectToPage("/Cuisinier/DetailsPlat");
 
         }
 

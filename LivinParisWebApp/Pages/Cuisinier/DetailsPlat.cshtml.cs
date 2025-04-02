@@ -8,5 +8,10 @@ namespace LivinParisWebApp.Pages.Cuisinier
         public void OnGet()
         {
         }
+
+        public IActionResult OnPostCuisinierPanel()
+        {
+            return RedirectToPage("/CuisinierPanel");
+        }
     }
 }
