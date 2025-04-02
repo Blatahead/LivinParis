@@ -1,4 +1,30 @@
 ﻿@page
 @model LivinParisWebApp.Pages.Cuisinier.DeletePlatModel
 @{
+    Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
+    ViewData["Title"] = "Suppression plat";
 }
+<head>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<div class="popup-content">
+    <div class="popup-two">
+        <p class="title-popup">Etes-vous sûr de supprimer ce plat ?</p>
+        <div class="popup-question">
+            <div class="popup-two-div">
+                <form method="post">
+                    <button class="btn-yes"
+                            type="submit"
+                            asp-page-handler="CuisinierPanelYes">
+                        <p>Oui</p>
+                    </button>
+                    <button class="btn-no"
+                            type="submit"
+                            asp-page-handler="CuisinierPanelNo">
+                        <p>Non</p>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
