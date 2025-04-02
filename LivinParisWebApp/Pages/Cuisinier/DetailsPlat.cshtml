@@ -1,4 +1,42 @@
 ﻿@page
 @model LivinParisWebApp.Pages.Cuisinier.DetailsPlatModel
 @{
+    Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
+    ViewData["Title"] = "Détails Plat";
 }
+<head>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<div class="top-panel">
+    <p class="message-top-panel">Détails de votre plat</p>
+</div>
+<div class="content-details-plat">
+    <div class="box">
+        <div class="ligne1">
+            <!-- a automatiser -->
+            <p class="nom">Pâtes carbonara</p>
+            <p class="natio rose">Nationalité : Italie</p>
+            <p class="fab rose">Fabrication : 01/04/25</p>
+            <p class="regime rose">Régime : aucun</p>
+        </div>
+        <div class="ligne2">
+            <p class="prix">Prix : 5€</p>
+            <p class="perem rose">Péremption : 02/04/25</p>
+        </div>
+        <div class="ligne3">
+            <p class="nb">Nb de personnes : 4</p>
+            <p class="ing rose">Ingrédients : pâte, sauce tomate, viande hachée</p>
+        </div>
+    </div>
+    <div class="img-container">
+        <img src="/src/img/plat.png" alt="" />
+    </div>
+</div>
+<p class="msg-bottom">Pour modifier, veuillez le supprimer et en recréer un ! Merci !</p>
+<div class="btn-back-cuisinier">
+    <form method="post">
+        <button type="submit" asp-page-handler="CuisinierPanel">
+            Retour
+        </button>
+    </form>
+</div>
