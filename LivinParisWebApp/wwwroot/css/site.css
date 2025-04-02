@@ -1792,4 +1792,187 @@ input {
 
 }
 }
+
+.content-settings-cuisinier {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+
+    .rose{
+        color: #e0aaff;
+    }
+
+    .left {
+        height: 90%;
+        width: 45%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+
+        .logo-title{
+            font-size: 3vw;
+            width: 100%;
+            text-align: center;
+        }
+
+        .ligne1,
+        .ligne2,
+        .ligne3,
+        .ligne4 {
+            font-size: 1.5vw;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+        }
+
+        .ligne3 {
+            flex-direction: column;
+            height: 30%;
+
+            .clients-list{
+                width: 50%;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 1.2vw;
+            }
+
+            .tri-form {
+                height: 5vh;
+                background-color: #5a189a;
+                color: #fffefe;
+                border-radius: 0.75rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: Arial, sans-serif;
+            }
+
+            .tri-form label {
+                margin-right: 0.5rem;
+                font-weight: bold;
+            }
+
+            .tri-select {
+                width: 30%;
+                background-color: #fffefe;
+                color: #5a189a;
+                border: none;
+                border-radius: 0.5rem;
+                font-weight: bold;
+                cursor: pointer;
+
+                option{
+                    color: #5a189a;
+                }
+            }
+        }
+
+        .ligne4 {
+            .btn-add-plat{
+                display: flex;
+                align-items: center;
+                height: 20%;
+                width: 30%;
+
+                form{
+                    height: 100%;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+
+                    button{
+                        height: 6vh;
+                        background-color: #5a189a;
+                        color: #fffefe;
+                        border: none;
+                        border-radius: 10px;
+                        font-size: 1.2vw;
+                        font-family: "Lilita One", sans-serif;
+                        text-align: center;
+                        margin-left: auto;
+                        margin-right: auto;
+                        width: 50%;
+                        box-sizing: border-box;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+
+    .right {
+        height: 90%;
+        width: 45%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+
+        .create-form{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+
+            input{
+                border: none;
+            }
+        }
+
+        .adress-container {
+            justify-content: space-evenly;
+        }
+
+        .input-adress {
+            margin-bottom: 6.5vh;
+        }
+
+        .btns-deco {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            button{
+                display: flex;
+                height: 6vh;
+                width: 45%;
+                color: #fffefe;
+                border: none;
+                border-radius: 10px;
+                font-size: 1.2vw;
+                font-family: "Lilita One", sans-serif;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                box-sizing: border-box;
+                cursor: pointer;
+
+                p{
+                    margin-top: auto;
+                    margin-bottom: auto;
+                    text-align: center;
+                }
+            }
+
+            .dec {
+                background-color: #5a189a;
+            }
+
+            .sup {
+                background-color: #ff8d2f;
+            }
+        }
+    }
+}
+/**/
 }

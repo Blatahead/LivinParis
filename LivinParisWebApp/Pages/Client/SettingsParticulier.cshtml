@@ -1,8 +1,8 @@
 ﻿@page
-@model LivinParisWebApp.Pages.Cuisinier.SettingsCuisinierModel
+@model LivinParisWebApp.Pages.Client.SettingsParticulierModel
 @{
     Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
-    ViewData["Title"] = "Paramètres Cuisinier";
+    ViewData["Title"] = "Paramètres Particulier";
 }
 <head>
     <link rel="stylesheet" href="../css/site.css" />
@@ -26,10 +26,12 @@
                     <select id="tri" name="tri" class="tri-select">
                         <option value="nc">Nom croissant</option>
                         <option value="nd">Nom décroissant</option>
-                        <option value="noc">Note croissante</option>
-                        <option value="nod">Note décroissante</option>
+                        <option value="npc">Nb personnes croissant</option>
+                        <option value="npd">Nb personnes décroissant</option>
                         <option value="pm">Plus récente - moins récente</option>
                         <option value="mp">Moins récente - plus récente</option>
+                        <option value="pc">Prix croissante</option>
+                        <option value="pd">Prix décroissante</option>
                     </select>
                 </form>
             </div>
@@ -37,47 +39,17 @@
                 <!-- Carte d’un client -->
                 <div class="client-card">
                     <div class="dish-info">
-                        <p>Lysa</p>
+                        <p>Pâtes bolognaise</p>
                     </div>
                 </div>
                 <div class="client-card">
                     <div class="dish-info">
-                        <p>Lysa</p>
+                        <p>Pâtes bolognaise</p>
                     </div>
                 </div>
                 <div class="client-card">
                     <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
+                        <p>Pâtes bolognaise</p>
                     </div>
                 </div>
             </div>

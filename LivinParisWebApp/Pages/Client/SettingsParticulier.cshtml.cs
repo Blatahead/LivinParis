@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
 
-namespace LivinParisWebApp.Pages.Cuisinier
+namespace LivinParisWebApp.Pages.Client
 {
-    public class SettingsCuisinierModel : PageModel
+    public class SettingsParticulierModel : PageModel
     {
         [BindProperty]
         public string Email { get; set; }
