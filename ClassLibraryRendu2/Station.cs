@@ -30,13 +30,14 @@ namespace ClassLibraryRendu2
         #endregion
 
         #region propriétés
-        public int IdentifiantStation { get { return identifiantStation; } }
-        public string NomStation { get { return nomStation; } }
-        public double Longitude { get { return longitude; } }
-        public double Latitude { get { return latitude; } }
+        public int IdentifiantStation { get { return identifiantStation; }  set { identifiantStation=value; } }
+        public string NomStation { get { return nomStation; } set { nomStation=value; } }
+        public double Longitude { get { return longitude; } set { Longitude=value; } }
+        public double Latitude { get { return latitude; } set { Latitude=value; } }
         public int Libelle_ligne
         {
             get { return libelle_ligne; }
+            set { libelle_ligne=value; }
 
         }
         #endregion
