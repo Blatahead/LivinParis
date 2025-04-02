@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClassLibraryRendu1\ClassLibraryRendu1.csproj" />
+    <ProjectReference Include="..\ClassLibraryRendu2\ClassLibraryRendu2.csproj" />
   </ItemGroup>
 
   <ItemGroup>

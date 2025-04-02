@@ -24,11 +24,5 @@ namespace LivinParis
 
             Application.Run(new Form1());
         }
-
-
-
-
-    
     }
-    
 }

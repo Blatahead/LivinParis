@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ClassLibraryRendu1;
+using ClassLibraryRendu2;
+
 
 namespace TestProjectRendu1
 {
+
     [TestClass]
     public class GrapheTests
     {
@@ -165,6 +168,24 @@ namespace TestProjectRendu1
         {
             Graphe graphe = Graphe.LectureMTX("./../../../../ClassLibraryRendu1/soc-karate.mtx");
             Assert.AreEqual(34, graphe.Noeuds.Count);
+        }
+    }
+
+    [TestClass]
+    public class GeocodingHelperTests
+    {
+        [TestMethod]
+        public async Task TestGetCoordinatesAsync()
+        {
+            // Arrange
+            string address = "15 rue de la Paix, Paris, 75002";
+
+            // Act
+            var (latitude, longitude) = await GeocodingHelper.GetCoordinatesAsync(address);
+
+            // Assert
+            Assert.IsTrue(latitude > 48 && latitude < 49, "Latitude inattendue");//48.86935043334961
+            Assert.IsTrue(longitude > 2 && longitude < 3, "Longitude inattendue");//2.3313136100769043
         }
     }
 }

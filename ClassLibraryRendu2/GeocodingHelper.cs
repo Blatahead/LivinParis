@@ -2,13 +2,18 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text.Json;
+using DotNetEnv;
+using System.Configuration;
 
 public static class GeocodingHelper
 {
-    private const string ApiKey = "VOTRE_CLE_API"; // Remplacez par votre clé Google Maps
+    private static string ApiKey; // plus "const"
 
     public static async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string address)
     {
+        DotNetEnv.Env.Load("../.env");
+        ApiKey = Environment.GetEnvironmentVariable("CLEMAPG1");
+
         using HttpClient client = new();
         string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={ApiKey}";
 
