@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace LivinParisWebApp.Pages.Cuisinier
+namespace LivinParisWebApp.Pages.Client
 {
     public class DetailsCommandeModel : PageModel
     {
@@ -10,14 +10,12 @@ namespace LivinParisWebApp.Pages.Cuisinier
         }
         public IActionResult OnPostRetour()
         {
-            return RedirectToPage("/Cuisinier/SeeCurrentCommand");
+            return RedirectToPage("/Client/ClientPanel");
         }
 
         public IActionResult OnPostLivrerCommande()
         {
-            //pas de redirection ici (le valider ajoute juste à la liste de commandes pretes)
-            //ici test avec seecurrentcommand
-            return RedirectToPage("/Cuisinier/SeeCurrentCommand");
+            return RedirectToPage("/Client/LivrerCommande");
         }
     }
 }

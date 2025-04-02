@@ -1,0 +1,30 @@
+﻿@page
+@model LivinParisWebApp.Pages.Cuisinier.SupprimerCuisinierModel
+@{
+    Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
+    ViewData["Title"] = "Suppression Cuisinier";
+}
+<head>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<div class="popup-content">
+    <div class="popup-two">
+        <p class="title-popup">Etes-vous sûr de supprimer votre compte cuisinier ?</p>
+        <div class="popup-question">
+            <div class="popup-two-div">
+                <form method="post">
+                    <button class="btn-yes"
+                            type="submit"
+                            asp-page-handler="Yes">
+                        <p>Oui</p>
+                    </button>
+                    <button class="btn-no"
+                            type="submit"
+                            asp-page-handler="No">
+                        <p>Non</p>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
