@@ -1221,9 +1221,8 @@ header {
             }
         }
     }
-
-    .content-details-plat {
-        width: 95%;
+    .content-details-commande {
+        width: 65%;
         height: 90vh;
         margin-left: auto;
         margin-right: auto;
@@ -1238,12 +1237,69 @@ header {
             display: flex;
             flex-direction: column;
             height: 90%;
+            width: 100%;
+            margin-left: 2vw;
+            margin-right: 2vw;
+            justify-content: space-evenly;
+
+            .ligne1, .ligne2{
+                font-size: 1.5vw;
+                display: flex;
+                justify-content:space-between;
+                flex-direction: row;
+                gap: 10px;
+            }
+
+            .btn-validate {
+                display: flex;
+                
+                width: 25%;
+                
+                align-items: center;
+                justify-content: center;
+
+                form{
+                    width:100%;
+
+                    button
+                    {
+                        width: 100%;
+                        padding: 0.3rem 0.6rem;
+                        border-radius: 15px;
+                        font-size: 1.2vw;
+                        font-family: "Lilita One", sans-serif;
+                        cursor: pointer;
+                        background-color: #e0aaff;
+                        color: #fffefe;
+                        border: none;
+                    }
+                }
+            }
+        }
+    }
+    .content-details-plat{
+        width: 95%;
+        height: 90vh;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+        border-radius: 15px;
+        background-color: rgba(255, 254, 254, 0.22);
+
+        .box
+        {
+            display: flex;
+            flex-direction: column;
+            height: 90%;
             width: 55%;
             margin-left: 2vw;
             margin-right: 2vw;
             justify-content: space-evenly;
 
-            .ligne1, .ligne2, .ligne3{
+            .ligne1, .ligne2, .ligne3, .btn-validate{
                 font-size: 1.5vw;
                 display: flex;
                 flex-direction: row;
