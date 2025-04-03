@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace LivinParisWebApp.Pages.Client
 {
-    public class SettingsParticulierModel : PageModel
+    public class SettingsEntrepriseModel : PageModel
     {
         [BindProperty]
         public string Email { get; set; }
@@ -11,10 +11,12 @@ namespace LivinParisWebApp.Pages.Client
         [BindProperty]
         public string Password { get; set; }
         [BindProperty]
-        public string Prenom { get; set; }
+        public string NomEntre { get; set; }
 
         [BindProperty]
-        public string Nom { get; set; }
+        public string Siret { get; set; }
+        [BindProperty]
+        public string NomRef { get; set; }
         [BindProperty]
         public string Arrondissement { get; set; }
         [BindProperty]
@@ -22,11 +24,6 @@ namespace LivinParisWebApp.Pages.Client
 
         [BindProperty]
         public string Numero { get; set; }
-
-        public void OnGet()
-        {
-        }
-
         public IActionResult OnPostActionPage()
         {
             //faire le tri
@@ -50,7 +47,7 @@ namespace LivinParisWebApp.Pages.Client
         public IActionResult OnPostSupprimer()
         {
             //faire le delete dans la bdd
-            return RedirectToPage("/Client/SupprimerParticulier");
+            return RedirectToPage("/Client/SupprimerEntreprise");
         }
     }
 }
