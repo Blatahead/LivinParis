@@ -10,12 +10,12 @@ namespace LivinParisWebApp.Pages.Client
         }
         public IActionResult OnPostRetour()
         {
-            return RedirectToPage("/Client/ClientPanel");
+            return RedirectToPage("/ClientPanel");
         }
 
         public IActionResult OnPostLivrerCommande()
         {
-            return RedirectToPage("/Client/LivrerCommande");
+            return RedirectToPage("/Client/LivraisonClient");
         }
     }
 }
