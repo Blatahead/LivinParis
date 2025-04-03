@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace LivinParisWebApp.Pages.Client
+namespace LivinParisWebApp.Pages
 {
-    public class LivrerCommandeModel : PageModel
+    public class ClientPanelModel : PageModel
     {
         public void OnGet()
         {

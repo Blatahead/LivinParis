@@ -1,8 +1,8 @@
 ﻿@page
-@model LivinParisWebApp.Pages.Client.SettingsParticulierModel
+@model LivinParisWebApp.Pages.Client.SettingsEntrepriseModel
 @{
     Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
-    ViewData["Title"] = "Paramètres Particulier";
+    ViewData["Title"] = "Paramètres Entreprise";
 }
 <head>
     <link rel="stylesheet" href="../css/site.css" />
@@ -17,17 +17,17 @@
             </div>
             <div>
                 <p class="nb rose">Argent :</p>
-                <p>125€</p>
+                <p>135 €</p>
             </div>
         </div>
         <div class="ligne2">
             <div>
-                <p class="revenus rose">Dépenses totales : :</p>
+                <p class="revenus rose">Dépenses totales :</p>
                 <p>35€</p>
             </div>
             <div>
-                <p class="revenus rose">Prix moy. de commande : :</p>
-                <p>10€</p>
+                <p class="revenus rose">Prix moy. de commande :</p>
+                <p>35€</p>
             </div>
         </div>
         <div class="ligne3">
@@ -98,8 +98,11 @@
                                placeholder="Mot de passe" />
                     </div>
                     <div class="inputs">
-                        <input asp-for="Prenom" placeholder="Prénom"/>
-                        <input asp-for="Nom" placeholder="Nom"/>
+                        <input id="inputNomEntre" asp-for="NomEntre" placeholder="Nom de l'entreprise" />
+                    </div>
+                    <div class="inputs">
+                        <input asp-for="Siret" placeholder="N° Siret" />
+                        <input asp-for="NomRef" placeholder="Nom référent" />
                     </div>
                     <div class="adress-container">
                         <p>Adresse</p>

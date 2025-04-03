@@ -34,7 +34,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
         public IActionResult OnPostLivrerCommande()
         {
-            return RedirectToPage("/Cuisinier/LivrerCommande");
+            return RedirectToPage("/Cuisinier/LivraisonCuisinier");
         }
     }
 }
