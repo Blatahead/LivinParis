@@ -17,15 +17,28 @@ namespace ClassLibraryRendu2
         double longitude;
         double latitude;
         int libelle_ligne;
+        int code_postal;
+        int temps_2_station;
+        int depart;
+        int arrivee;
+        int sens;
+        double distance;
+        
 
         #region constructeur
-        public Station(int identifiantStation, string nomStation, double longitude, double latitude, int libelle_ligne)
+        public Station(int identifiantStation, string nomStation, double longitude, double latitude, int libelle_ligne, int code_postal, int temps_2_station, int depart, int arrivee, int sens, double distance)
         {
             this.identifiantStation = identifiantStation;
             this.nomStation = nomStation;
             this.longitude = longitude;
             this.latitude = latitude;
             this.libelle_ligne = libelle_ligne;
+            this.code_postal=code_postal;
+            this.temps_2_station=temps_2_station;
+            this.depart=depart;
+            this.arrivee=arrivee;
+            this.sens=sens;
+            this.distance=distance;
         }
         #endregion
 
@@ -40,6 +53,35 @@ namespace ClassLibraryRendu2
             set { libelle_ligne=value; }
 
         }
+        public int Code_postal
+        {
+            get { return code_postal; }
+            set { code_postal=value; }
+
+        }
+        public int Temps_2_station
+        {
+            get { return temps_2_station; }
+            set { temps_2_station=value; }
+        }
+        public int Depart
+        { get { return depart; } set { depart=value; } }
+        public int Arrivee
+        {
+            get { return arrivee; }
+            set { arrivee=value; }
+        }
+        public int Sens
+        {
+            get { return sens; }
+            set { sens=value; }
+        }
+        public double Distance
+        { get { return distance; } set { distance=value; } }    
+
+
+
+
         #endregion
 
 
@@ -53,7 +95,7 @@ namespace ClassLibraryRendu2
         public void CreerStation(Station<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
-            string demande = "INSERT INTO Station (ID_station, Nom_station, Longitude, Latitude, Libelle_ligne) VALUES ("+p1.identifiantStation+","+p1.nomStation+","+p1.longitude+","+p1.latitude+","+p1.libelle_ligne+")";
+            string demande = "INSERT INTO Station (ID_station, Nom_station, Longitude, Latitude, Libelle_ligne, Depart, Arrivee, Sens, Temps_2_stations, Commune_code, Distance) VALUES ("+p1.identifiantStation+","+p1.nomStation+","+p1.longitude+","+p1.latitude+","+p1.libelle_ligne+","+p1.Depart+","+p1.Arrivee+","+p1.Sens+","+p1.temps_2_station+","+p1.code_postal+","+p1.distance+")";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
 
@@ -67,7 +109,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE Station SET ID_station="+p1.identifiantStation+", Nom_station="+p1.nomStation+", Longitude="+p1.longitude+", Latitude="+p1.latitude+", Libelle_ligne="+p1.libelle_ligne+" WHERE Nom_station="+p1.nomStation+";";
+            string demande = "UPDATE Station SET ID_station="+p1.identifiantStation+", Nom_station="+p1.nomStation+", Longitude="+p1.longitude+", Latitude="+p1.latitude+", Libelle_ligne="+p1.libelle_ligne+", Depart="+p1.depart+", Arrivee="+p1.arrivee+", Sens="+p1.sens+", Temps_2_stations="+p1.temps_2_station+", Commune_code="+p1.code_postal+", Distance="+p1.distance+" WHERE ID_station="+p1.identifiantStation+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
