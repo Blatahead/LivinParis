@@ -35,16 +35,16 @@ namespace ClassLibraryRendu2
         /// <summary>
         /// Algorithme de Dijkstra pour calculer le plus court chemin
         /// </summary>
-        public Dictionary<int, double> Dijkstra(int idDepart)
+        public Dictionary<int, double> Dijkstra(int idDepart, List<Station<object>> stations)
         {
             var distances = new Dictionary<int, double>();
             var precedent = new Dictionary<int, int?>();
             var file = new SortedSet<SommetPrioritaire>();
 
-            foreach (var noeud in graphe.Noeuds)
+            foreach (var station in stations)
             {
-                distances[noeud.Id] = double.PositiveInfinity;
-                precedent[noeud.Id] = null;
+                distances[station.IdentifiantStation] = double.PositiveInfinity;
+                precedent[station.IdentifiantStation] = null;
             }
 
             distances[idDepart] = 0;
@@ -55,19 +55,21 @@ namespace ClassLibraryRendu2
                 var actuel = file.Min;
                 file.Remove(actuel);
 
-                var noeudActuel = graphe.Noeuds.First(n => n.Id == actuel.Id);
+                var stationActuelle = stations.First(s => s.IdentifiantStation == actuel.Id);
 
-                foreach (var voisin in noeudActuel.Voisins)
+                foreach (var voisin in stations.Where(s => s.Depart == stationActuelle.IdentifiantStation))
                 {
-                    double poids = 1; // À remplacer par le poids réel entre actuel.Id et voisin.Id
-                    double tentativeDistance = distances[actuel.Id] + poids;
+                    if (voisin.Sens == 1 && voisin.Arrivee < stationActuelle.IdentifiantStation)
+                        continue; // Respecter le sens de circulation
 
-                    if (tentativeDistance < distances[voisin.Id])
+                    double tentativeDistance = distances[actuel.Id] + voisin.Distance;
+
+                    if (tentativeDistance < distances[voisin.Arrivee])
                     {
-                        file.RemoveWhere(x => x.Id == voisin.Id);
-                        distances[voisin.Id] = tentativeDistance;
-                        precedent[voisin.Id] = actuel.Id;
-                        file.Add(new SommetPrioritaire(voisin.Id, tentativeDistance));
+                        file.RemoveWhere(x => x.Id == voisin.Arrivee);
+                        distances[voisin.Arrivee] = tentativeDistance;
+                        precedent[voisin.Arrivee] = actuel.Id;
+                        file.Add(new SommetPrioritaire(voisin.Arrivee, tentativeDistance));
                     }
                 }
             }
@@ -75,44 +77,53 @@ namespace ClassLibraryRendu2
             return distances;
         }
 
+
+
         /// <summary>
         /// Squelette de l'algorithme de Bellman-Ford pour gérer des graphes avec poids négatifs
         /// </summary>
-        public Dictionary<int, double> BellmanFord(int idDepart)
+        public Dictionary<int, double> BellmanFord(int idDepart, List<Station<object>> stations)
         {
             var distances = new Dictionary<int, double>();
 
-            foreach (var noeud in graphe.Noeuds)
+            foreach (var station in stations)
             {
-                distances[noeud.Id] = double.PositiveInfinity;
+                distances[station.IdentifiantStation] = double.PositiveInfinity;
             }
             distances[idDepart] = 0;
 
-            int nombreNoeuds = graphe.Noeuds.Count;
+            int nombreStations = stations.Count;
 
-            for (int i = 0; i < nombreNoeuds - 1; i++)
+            for (int i = 0; i < nombreStations - 1; i++)
             {
-                foreach (var lien in graphe.Liens)
+                foreach (var station in stations)
                 {
-                    double poids = 1; // À remplacer par le poids réel entre Source et Destination
-                    if (distances[lien.Source.Id] + poids < distances[lien.Destination.Id])
+                    foreach (var voisin in stations.Where(s => s.Depart == station.IdentifiantStation))
                     {
-                        distances[lien.Destination.Id] = distances[lien.Source.Id] + poids;
+                        double poids = voisin.Distance; // Utilisation de la distance réelle
+                        if (distances[station.IdentifiantStation] + poids < distances[voisin.Arrivee])
+                        {
+                            distances[voisin.Arrivee] = distances[station.IdentifiantStation] + poids;
+                        }
                     }
                 }
             }
 
             // Vérification des cycles de poids négatif
-            foreach (var lien in graphe.Liens)
+            foreach (var station in stations)
             {
-                double poids = 1; // Même remarque ici
-                if (distances[lien.Source.Id] + poids < distances[lien.Destination.Id])
+                foreach (var voisin in stations.Where(s => s.Depart == station.IdentifiantStation))
                 {
-                    throw new Exception("Le graphe contient un cycle de poids négatif.");
+                    double poids = voisin.Distance;
+                    if (distances[station.IdentifiantStation] + poids < distances[voisin.Arrivee])
+                    {
+                        throw new Exception("Le graphe contient un cycle de poids négatif.");
+                    }
                 }
             }
 
             return distances;
         }
+
     }
 }
