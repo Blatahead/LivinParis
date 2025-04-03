@@ -1,4 +1,70 @@
 ﻿@page
 @model LivinParisWebApp.Pages.Cuisinier.LivraisonCuisinierModel
 @{
+    Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
+    ViewData["Title"] = "Livraison Cuisinier";
 }
+<head>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<div class="content-settings-cuisinier">
+    <div class="left">
+        <p class="logo-title">Statistiques</p>
+        <div class="livraison-l1">
+            <p>Itinéraire de votre livraison</p>
+            <div class="inside">
+                <div>
+                    <p class="lines-trav rose">Lignes de métro traversées :</p>
+                    <p>10,8,3,9</p>
+                </div>
+                <div>
+                    <p class="nb rose">Nb de stations traversées :</p>
+                    <p>7</p>
+                </div>
+                <div>
+                    <p class="dist rose">Distance parcourue :</p>
+                    <p>10 km</p>
+                </div>
+            </div>
+        </div>
+        <div class="ligne2">
+            <div>
+                <p class="revenus rose">Temps de livraison estimé :</p>
+                <p>31 min</p>
+            </div>
+        </div>
+        <div class="montant-l3">
+            <div>
+                <p class="revenus rose">Montant débité :</p>
+                <p>15€</p>
+            </div>
+        </div>
+        <div class="ligne4">
+            <div class="btn-back">
+                <form method="post">
+                    <button type="submit" asp-page-handler="ClientPanel">
+                        Confirmer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <p class="logo-title">Aperçu de l'itinéraire</p>
+        <div class="img-container">
+            <!-- <img src="./src/img/map.PNG" alt=""> -->
+            <div id="map" style="height: 600px; width: 100%; border-radius: 10px;"></div>
+        </div>
+        @* <div class="zoom"> *@
+        @*     <span class="plus">+</span> *@
+        @*     <span class="moins">-</span> *@
+        @* </div> *@
+        <div class="btn-back">
+            <form method="post">
+                <button type="submit" asp-page-handler="Back">
+                    Retour
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

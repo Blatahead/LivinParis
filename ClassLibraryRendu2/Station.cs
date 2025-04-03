@@ -95,7 +95,7 @@ namespace ClassLibraryRendu2
         public void CreerStation(Station<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
-            string demande = "INSERT INTO Station (ID_station, Nom_station, Longitude, Latitude, Libelle_ligne, Depart, Arrivee, Sens, Temps_2_stations, Commune_code, Distance) VALUES ("+p1.identifiantStation+","+p1.nomStation+","+p1.longitude+","+p1.latitude+","+p1.libelle_ligne+","+p1.Depart+","+p1.Arrivee+","+p1.Sens+","+p1.temps_2_station+","+p1.code_postal+","+p1.distance+")";
+            string demande = "INSERT INTO Station (ID_station, Libelle_station, Longitude, Latitude, Libelle_ligne, Depart, Arrivee, Sens, Temps_2_stations, Commune_code, Distance) VALUES (" + p1.identifiantStation+","+p1.nomStation+","+p1.longitude+","+p1.latitude+","+p1.libelle_ligne+","+p1.Depart+","+p1.Arrivee+","+p1.Sens+","+p1.temps_2_station+","+p1.code_postal+","+p1.distance+")";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
 
@@ -109,7 +109,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE Station SET ID_station="+p1.identifiantStation+", Nom_station="+p1.nomStation+", Longitude="+p1.longitude+", Latitude="+p1.latitude+", Libelle_ligne="+p1.libelle_ligne+", Depart="+p1.depart+", Arrivee="+p1.arrivee+", Sens="+p1.sens+", Temps_2_stations="+p1.temps_2_station+", Commune_code="+p1.code_postal+", Distance="+p1.distance+" WHERE ID_station="+p1.identifiantStation+";";
+            string demande = "UPDATE Station SET ID_station="+p1.identifiantStation+ ", Libelle_station=" + p1.nomStation+", Longitude="+p1.longitude+", Latitude="+p1.latitude+", Libelle_ligne="+p1.libelle_ligne+", Depart="+p1.depart+", Arrivee="+p1.arrivee+", Sens="+p1.sens+", Temps_2_stations="+p1.temps_2_station+", Commune_code="+p1.code_postal+", Distance="+p1.distance+" WHERE ID_station="+p1.identifiantStation+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
@@ -207,9 +207,6 @@ namespace ClassLibraryRendu2
         }
 
 
-
-
-
         /// <summary>
         /// Méthode calculant la distance entre deux stations
         /// </summary>
@@ -223,13 +220,5 @@ namespace ClassLibraryRendu2
             }
 
         #endregion
-
-
-
-
-
-
-
-
     }
 }

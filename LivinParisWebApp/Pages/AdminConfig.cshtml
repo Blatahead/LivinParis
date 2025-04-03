@@ -1,0 +1,18 @@
+﻿@page
+@model LivinParisWebApp.Pages.AdminConfigModel
+@{
+    Layout = "~/Pages/Shared/_LayoutVoidNavBar.cshtml";
+    ViewData["Title"] = "Panel Admin";
+}
+<head>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<div>
+    <form method="post">
+        <button type="submit" asp-page-handler="LoadStationInBDD">
+            Charger la BDD avec les stations
+        </button>
+        <button type="submit" asp-page-handler="DeleteContenuStations">Vider la table Station</button>
+    </form>
+    
+</div>
