@@ -20,6 +20,11 @@
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="MySql.Data" Version="9.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClassLibraryRendu2\ClassLibraryRendu2.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +34,10 @@
     <Content Update="wwwroot\js\site.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\data\" />
   </ItemGroup>
 
 </Project>

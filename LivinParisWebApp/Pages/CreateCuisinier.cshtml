@@ -1,5 +1,5 @@
 ﻿@page
-@model LivinParis.Pages.CreateCuisinierModel
+@model LivinParisWebApp.Pages.CreateCuisinierModel
 @{
     Layout = "~/Pages/Shared/CreationLayout.cshtml";
     ViewData["Title"] = "Creation Cuisinier";
@@ -14,8 +14,8 @@
         <div class="form-create">
             <form method="post">
                 <div class="inputs">
-                    <input asp-for="FirstName" placeholder="Email" />
-                    <input asp-for="Name" placeholder="Mot de passe" />
+                    <input asp-for="FirstName" placeholder="Prénom" />
+                    <input asp-for="Name" placeholder="Nom" />
                 </div>
                 <div class="adress-container">
                     <p>Adresse</p>

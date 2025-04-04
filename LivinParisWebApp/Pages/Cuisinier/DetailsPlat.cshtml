@@ -14,18 +14,19 @@
     <div class="box">
         <div class="ligne1">
             <!-- a automatiser -->
-            <p class="nom">Pâtes carbonara</p>
-            <p class="natio rose">Nationalité : Italie</p>
-            <p class="fab rose">Fabrication : 01/04/25</p>
-            <p class="regime rose">Régime : aucun</p>
+            <p class="nom">@Model.NomPlat</p>
+            <p class="natio rose">Nationalité : @Model.Nationalite</p>
+
+            <p class="fab rose">Fabrication : @Model.Fabrication</p>
+            <p class="regime rose">Régime : @Model.Regime</p>
         </div>
         <div class="ligne2">
-            <p class="prix">Prix : 5€</p>
-            <p class="perem rose">Péremption : 02/04/25</p>
+            <p class="prix">Prix : @Model.Prix €</p>
+            <p class="perem rose">Péremption : @Model.Peremption</p>
         </div>
         <div class="ligne3">
-            <p class="nb">Nb de personnes : 4</p>
-            <p class="ing rose">Ingrédients : pâte, sauce tomate, viande hachée</p>
+            <p class="nb">Nb de personnes : @Model.NbPersonnes</p>
+            <p class="ing rose">Ingrédients : @Model.Ingredients</p>
         </div>
     </div>
     <div class="img-container">

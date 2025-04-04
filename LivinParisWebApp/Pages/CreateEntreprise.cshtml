@@ -13,6 +13,7 @@
         <p class="title-create-form">Je deviens une entreprise</p>
         <div class="form-create">
             <form method="post">
+                <input type="hidden" asp-for="Email" />
                 <div class="inputs">
                     <input asp-for="NomEntreprise" placeholder="Nom de l'entreprise" />
                     <input asp-for="NumeroSiret" placeholder="N° SIRET" />
