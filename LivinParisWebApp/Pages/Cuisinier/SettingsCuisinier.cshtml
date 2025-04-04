@@ -12,11 +12,11 @@
         <p class="logo-title">Statistiques</p>
         <div class="ligne1">
             <p class="nb rose">Nombre de plats vendus :</p>
-            <p>10</p>
+            <p>@Model.NbPlatsVendus</p>
         </div>
         <div class="ligne2">
             <p class="revenus rose">Revenus totaux :</p>
-            <p>35€</p>
+            <p>@Model.RevenusTotaux €</p>
         </div>
         <div class="ligne3">
             <p class="clients rose">Clients servis :</p>
@@ -34,57 +34,19 @@
                 </form>
             </div>
             <div class="clients-list">
-                <!-- Carte d’un client -->
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
+                @foreach (var client in Model.ClientsServis)
+                {
+                    <div class="client-card">
+                        <div class="dish-info">
+                            <p>@client</p>
+                        </div>
                     </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Lysa</p>
-                    </div>
-                </div>
+                }
             </div>
         </div>
         <div class="ligne4">
             <p class="temps rose">Temps passés en livraison :</p>
-            <p>2 h 5 min</p>
+            <p>@Model.TempsLivraison</p>
             <div class="btn-add-plat">
                 <form method="post">
                     <button type="submit" asp-page-handler="CuisinierPanel">
@@ -106,16 +68,16 @@
                                placeholder="Mot de passe" />
                     </div>
                     <div class="inputs">
-                        <input asp-for="Prenom" placeholder="Prénom"/>
-                        <input asp-for="Nom" placeholder="Nom"/>
+                        <input asp-for="Prenom" placeholder="Prénom" />
+                        <input asp-for="Nom" placeholder="Nom" />
                     </div>
                     <div class="adress-container">
                         <p>Adresse</p>
                         <div class="input-adress">
                             <input asp-for="Arrondissement"
-                                   placeholder="Arrondissement" />
-                            <input asp-for="Voirie" placeholder="Voirie" />
-                            <input asp-for="Numero" placeholder="Numéro" />
+                                   placeholder="Arrondissement" value="@Model.Arrondissement" />
+                            <input asp-for="Voirie" placeholder="Voirie" value="@Model.Voirie" />
+                            <input asp-for="Numero" placeholder="Numéro" value="@Model.Numero" />
                         </div>
                     </div>
                     <button type="submit" asp-page-handler="Validate">

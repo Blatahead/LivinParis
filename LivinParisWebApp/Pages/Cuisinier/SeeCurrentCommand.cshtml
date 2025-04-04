@@ -51,6 +51,7 @@
                     </div>
                     <div class="command-actions">
                         <form method="post">
+                            <input type="hidden" name="commandeId" value="@commande" />
                             <button class="delete-btn" type="submit" asp-page-handler="CancelCommande">
                                 Annuler
                             </button>
@@ -61,6 +62,7 @@
                     </div>
                 </div>
             }
+
         </div>
 
     </div>
