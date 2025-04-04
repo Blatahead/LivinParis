@@ -35,17 +35,17 @@ namespace LivinParis.Pages
 
             string connStr = _config.GetConnectionString("MyDb");
 
-
             using var conn = new MySqlConnection(connStr);
-            conn.Open();
+            await conn.OpenAsync();
 
-            var cmd = new MySqlCommand("SELECT COUNT(*) FROM Utilisateur WHERE Mail_Utilisateur = @Email AND Mdp = @Pwd", conn);
+            // Récupérer l'ID utilisateur si les identifiants sont corrects
+            var cmd = new MySqlCommand("SELECT Id_Utilisateur FROM Utilisateur WHERE Mail_Utilisateur = @Email AND Mdp = @Pwd", conn);
             cmd.Parameters.AddWithValue("@Email", Email);
             cmd.Parameters.AddWithValue("@Pwd", Password);
 
             var reader = await cmd.ExecuteReaderAsync();
 
-            if (!reader.Read())
+            if (!await reader.ReadAsync())
             {
                 Message = "Identifiants incorrects.";
                 return Page();
@@ -54,21 +54,25 @@ namespace LivinParis.Pages
             int userId = reader.GetInt32(0);
             reader.Close();
 
+            // Stocker l'ID en session
+            HttpContext.Session.SetInt32("UserId", userId);
+
+            // Check rôles
+            // Vérifier les rôles (Client / Cuisinier)
             // check client
-            bool isClient = false;
             cmd = new MySqlCommand("SELECT COUNT(*) FROM Client_ WHERE Id_Utilisateur = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", userId);
-            isClient = Convert.ToInt32(await cmd.ExecuteScalarAsync()) > 0;
+            bool isClient = Convert.ToInt32(await cmd.ExecuteScalarAsync()) > 0;
 
             // check cuisinier
-            bool isCuisinier = false;
             cmd = new MySqlCommand("SELECT COUNT(*) FROM Cuisinier WHERE Id_Utilisateur = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", userId);
-            isCuisinier = Convert.ToInt32(await cmd.ExecuteScalarAsync()) > 0;
+            bool isCuisinier = Convert.ToInt32(await cmd.ExecuteScalarAsync()) > 0;
 
-            // Redirection
+
+            // Redirection selon le rôle
             if (isClient && isCuisinier)
-                return RedirectToPage("/ClientPanel");
+                return RedirectToPage("/CuisinierPanel"); // par défaut Cuisinier
             else if (isClient)
                 return RedirectToPage("/ClientPanel");
             else if (isCuisinier)
@@ -79,4 +83,3 @@ namespace LivinParis.Pages
         }
     }
 }
-

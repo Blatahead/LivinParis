@@ -1,37 +1,158 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MySql.Data.MySqlClient;
 using System.ComponentModel.DataAnnotations;
 
 namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class SettingsCuisinierModel : PageModel
     {
-        [BindProperty]
-        public string Email { get; set; }
+        private readonly IConfiguration _config;
 
-        [BindProperty]
-        public string Password { get; set; }
-        [BindProperty]
-        public string Prenom { get; set; }
-
-        [BindProperty]
-        public string Nom { get; set; }
-        [BindProperty]
-        public string Arrondissement { get; set; }
-        [BindProperty]
-        public string Voirie { get; set; }
-
-        [BindProperty]
-        public string Numero { get; set; }
-
-        public void OnGet()
+        public SettingsCuisinierModel(IConfiguration config)
         {
+            _config = config;
         }
 
-        public IActionResult OnPostActionPage()
+        [BindProperty] public string Email { get; set; }
+        [BindProperty] public string Password { get; set; }
+        [BindProperty] public string Prenom { get; set; }
+        [BindProperty] public string Nom { get; set; }
+        [BindProperty] public string Arrondissement { get; set; }
+        [BindProperty] public string Voirie { get; set; }
+        [BindProperty] public string Numero { get; set; }
+
+        public int NbPlatsVendus { get; set; }
+        public decimal RevenusTotaux { get; set; }
+        public List<string> ClientsServis { get; set; } = new();
+        public string TempsLivraison { get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
         {
-            //faire le tri
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            if (userId == 0) return RedirectToPage("/Login");
+
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            await conn.OpenAsync();
+
+            // Infos utilisateur
+            var userCmd = new MySqlCommand("SELECT Mail_Utilisateur, Mdp FROM Utilisateur WHERE Id_Utilisateur = @Uid", conn);
+            userCmd.Parameters.AddWithValue("@Uid", userId);
+            using var userReader = await userCmd.ExecuteReaderAsync();
+            if (await userReader.ReadAsync())
+            {
+                Email = userReader["Mail_Utilisateur"].ToString();
+                Password = userReader["Mdp"].ToString();
+            }
+            userReader.Close();
+
+            // Infos cuisinier
+            var cuisCmd = new MySqlCommand("SELECT Prenom_cuisinier, Nom_particulier, Adresse_cuisinier, Liste_commandes_livrees FROM Cuisinier WHERE Id_Utilisateur = @Uid", conn);
+            cuisCmd.Parameters.AddWithValue("@Uid", userId);
+            string? livrees = null;
+
+            using var cuisReader = await cuisCmd.ExecuteReaderAsync();
+            if (await cuisReader.ReadAsync())
+            {
+                Prenom = cuisReader["Prenom_cuisinier"]?.ToString();
+                Nom = cuisReader["Nom_particulier"]?.ToString();
+
+                var adresse = cuisReader["Adresse_cuisinier"]?.ToString()?.Split(',');
+                if (adresse != null && adresse.Length == 2)
+                {
+                    var numeroEtVoirie = adresse[0].Trim().Split(' ', 2); // Séparer le premier espace
+                    if (numeroEtVoirie.Length == 2)
+                    {
+                        Numero = numeroEtVoirie[0];
+                        Voirie = numeroEtVoirie[1];
+                    }
+                    else
+                    {
+                        Numero = "";
+                        Voirie = adresse[0].Trim();
+                    }
+                    Arrondissement = adresse[1].Trim();
+                }
+
+                livrees = cuisReader["Liste_commandes_livrees"]?.ToString();
+            }
+            cuisReader.Close();
+
+            // Statistiques
+            if (!string.IsNullOrEmpty(livrees))
+            {
+                var commandes = livrees.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToList();
+                NbPlatsVendus = commandes.Count;
+
+                TimeSpan totalLivraison = TimeSpan.Zero;
+
+                foreach (var id in commandes)
+                {
+                    var cmdDetails = new MySqlCommand("SELECT Prix_Commande, Nom_Client FROM Commande WHERE Num_commande = @id", conn);
+                    cmdDetails.Parameters.AddWithValue("@id", id);
+
+                    using var cmdReader = await cmdDetails.ExecuteReaderAsync();
+                    if (await cmdReader.ReadAsync())
+                    {
+                        if (decimal.TryParse(cmdReader["Prix_Commande"].ToString(), out decimal prix))
+                        {
+                            RevenusTotaux += prix;
+                        }
+                        string client = cmdReader["Nom_Client"]?.ToString();
+                        if (!string.IsNullOrEmpty(client) && !ClientsServis.Contains(client))
+                            ClientsServis.Add(client);
+                    }
+                    cmdReader.Close();
+
+                    totalLivraison += TimeSpan.FromMinutes(15); // Hypothèse : 15 min / livraison
+                }
+
+                TempsLivraison = $"{(int)totalLivraison.TotalHours} h {totalLivraison.Minutes} min";
+            }
+
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostValidate()
+        {
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            if (userId == 0) return RedirectToPage("/Login");
+
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            await conn.OpenAsync();
+
+            if (!string.IsNullOrEmpty(Email) || !string.IsNullOrEmpty(Password))
+            {
+                var updateUser = new MySqlCommand("UPDATE Utilisateur SET Mail_Utilisateur = COALESCE(NULLIF(@mail, ''), Mail_Utilisateur), Mdp = COALESCE(NULLIF(@mdp, ''), Mdp) WHERE Id_Utilisateur = @Uid", conn);
+                updateUser.Parameters.AddWithValue("@mail", Email ?? "");
+                updateUser.Parameters.AddWithValue("@mdp", Password ?? "");
+                updateUser.Parameters.AddWithValue("@Uid", userId);
+                await updateUser.ExecuteNonQueryAsync();
+            }
+
+            if (!string.IsNullOrEmpty(Prenom) || !string.IsNullOrEmpty(Nom) || !string.IsNullOrEmpty(Arrondissement) || !string.IsNullOrEmpty(Voirie) || !string.IsNullOrEmpty(Numero))
+            {
+                string adresseComplete = $"{Numero} {Voirie}, {Arrondissement}";
+
+                var updateCuis = new MySqlCommand(@"
+                    UPDATE Cuisinier 
+                    SET Prenom_cuisinier = COALESCE(NULLIF(@prenom, ''), Prenom_cuisinier),
+                        Nom_particulier = COALESCE(NULLIF(@nom, ''), Nom_particulier),
+                        Adresse_cuisinier = COALESCE(NULLIF(@adresse, ''), Adresse_cuisinier)
+                    WHERE Id_Utilisateur = @Uid", conn);
+
+                updateCuis.Parameters.AddWithValue("@prenom", Prenom ?? "");
+                updateCuis.Parameters.AddWithValue("@nom", Nom ?? "");
+                updateCuis.Parameters.AddWithValue("@adresse", adresseComplete);
+                updateCuis.Parameters.AddWithValue("@Uid", userId);
+
+                await updateCuis.ExecuteNonQueryAsync();
+            }
+
+            TempData["Message"] = "Modifications enregistrées !";
+            return RedirectToPage();
         }
 
         public IActionResult OnPostCuisinierPanel()
@@ -39,19 +160,20 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return RedirectToPage("/CuisinierPanel");
         }
 
-        public IActionResult OnPostValidate()
-        {
-            //afficher une popup alerte en mm temps que la sauvegarde
-            return Page();
-        }
         public IActionResult OnPostDeconnexion()
         {
+            HttpContext.Session.Clear();
             return RedirectToPage("/Login");
         }
+
         public IActionResult OnPostSupprimer()
         {
-            //faire le delete dans la bdd
             return RedirectToPage("/Cuisinier/SupprimerCuisinier");
+        }
+
+        public IActionResult OnPostActionPage()
+        {
+            return Page();
         }
     }
 }

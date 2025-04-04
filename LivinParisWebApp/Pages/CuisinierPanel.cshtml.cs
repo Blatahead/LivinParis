@@ -102,6 +102,12 @@ namespace LivinParisWebApp.Pages
             return Page();
         }
 
+        public IActionResult OnPostSettingsCuisinier()
+        {
+            return RedirectToPage("/Cuisinier/SettingsCuisinier");
+        }
+
+
         public IActionResult OnPostChangeTodaysPlat()
         {
             return RedirectToPage("/Cuisinier/ChangeTodaysPlat");
