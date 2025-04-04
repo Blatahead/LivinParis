@@ -60,7 +60,7 @@ namespace ClassLibraryRendu2
         {
             
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE SET Utilisateur Id_Utilisateur="+p1.idUser+", Mdp="+p1.mdp+" WHERE Adresse_mail="+p1.adresse_mail+";";
+            string demande = "UPDATE Utilisateur SET Id_Utilisateur="+p1.idUser+", Mdp="+p1.mdp+" WHERE Adresse_mail="+p1.adresse_mail+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }
