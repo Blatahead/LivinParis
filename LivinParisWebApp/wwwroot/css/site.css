@@ -1422,7 +1422,9 @@ header {
 
 }
 }
-
+    .form-plat{
+        height:90vh;
+    
 .content-today-plat {
     height: 100%;
     width: 100%;
@@ -1448,15 +1450,6 @@ header {
     width: 90%;
     margin-left: auto;
     margin-right: auto;
-    form
-
-{
-    height: 100%;
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
     .inputs
 
 {
@@ -1519,17 +1512,12 @@ button {
     cursor: pointer;
 }
 
-}
+
 }
 
 .ligne3,
 .ligne4 {
     height: 20%;
-    form
-
-{
-    height: 100%;
-}
 
 }
 
@@ -1657,15 +1645,6 @@ button {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    form
-
-{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
     .inputs
 
 {
@@ -1728,16 +1707,11 @@ button {
     cursor: pointer;
 }
 
-}
+
 }
 
 .ligne3 {
     height: 20%;
-    form
-
-{
-    height: 100%;
-}
 
 }
 
@@ -1792,6 +1766,26 @@ input {
 
 }
 }
+.bottom-actions {
+    display: flex;
+    width: 20%;
+    margin-right: auto;
+    margin-left: auto;
+    .btn-confirm
+
+{
+    z-index: 10;
+    position: relative;
+    pointer-events: auto; 
+}
+}
+    }
+
+    .form-bottom-plat{
+        width:100%;
+        display:flex;
+        justify-content:space-evenly;
+    }
 
 .content-settings-cuisinier {
     width: 100%;
@@ -2285,4 +2279,23 @@ input {
         }
     }
 }
+}
+
+a.leaflet-control-zoom-in,
+a.leaflet-control-zoom-out {
+    background-color: #7b2cbf;
+    font-size: 22px;
+    border: none;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    transition: all 0.2s ease-in-out;
+
+    span{
+        color: #fffefe;
+    }
+}
+
+a.leaflet-control-zoom-in:hover,
+a.leaflet-control-zoom-out:hover {
+    background-color: #e0aaff;
+    cursor: pointer;
 }

@@ -15,318 +15,54 @@
         <p class="menu-title">Liste des commandes</p>
         <!-- A synchro avec la bonne liste -->
         <div class="command-list">
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">NB de plats : 2</span>
+            @foreach (var commande in Model.ListeCommandes)
+            {
+                <div class="command-card">
+                    <div class="command-info">
+                        <p>Commande n°@commande</p>
+                        <span class="rose">Client : ???</span>
+                        <span class="rose">Nb de plats : ???</span>
+                    </div>
+                    <div class="command-actions">
+                        <form method="post">
+                            <button class="delete-btn" type="submit" asp-page-handler="RefuseCommande">
+                                Refuser
+                            </button>
+                            <button class="details-btn" type="submit" asp-page-handler="DetailsCommande">
+                                Détails
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="RefuseCommande">
-                            Refuser
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="DetailsCommande">
-                            Détails
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">NB de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="RefuseCommande">
-                            Refuser
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="DetailsCommande">
-                            Détails
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">NB de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="RefuseCommande">
-                            Refuser
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="DetailsCommande">
-                            Détails
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">NB de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="RefuseCommande">
-                            Refuser
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="DetailsCommande">
-                            Détails
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">NB de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="RefuseCommande">
-                            Refuser
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="DetailsCommande">
-                            Détails
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">NB de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="RefuseCommande">
-                            Refuser
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="DetailsCommande">
-                            Détails
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">NB de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="RefuseCommande">
-                            Refuser
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="DetailsCommande">
-                            Détails
-                        </button>
-                    </form>
-                </div>
-            </div>
+            }
         </div>
     </div>
     <div class="right-colonne">
         <p class="menu-title">Commandes prêtes à livrer</p>
         <!-- A syncrho avec la bonne liste-->
         <div class="command-list">
-            <!-- A syncrho -->
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">Nb de plats : 2</span>
+            @foreach (var commande in Model.ListeCommandesPretes)
+            {
+                <div class="command-card">
+                    <div class="command-info">
+                        <p>Commande n°@commande</p>
+                        <span class="rose">Client : ???</span>
+                        <span class="rose">Nb de plats : ???</span>
+                    </div>
+                    <div class="command-actions">
+                        <form method="post">
+                            <button class="delete-btn" type="submit" asp-page-handler="CancelCommande">
+                                Annuler
+                            </button>
+                            <button class="details-btn" type="submit" asp-page-handler="LivrerCommande">
+                                Livrer
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="CancelCommande">
-                            Annuler
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="LivrerCommande">
-                            Livrer
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">Nb de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="CancelCommande">
-                            Annuler
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="LivrerCommande">
-                            Livrer
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">Nb de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="CancelCommande">
-                            Annuler
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="LivrerCommande">
-                            Livrer
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">Nb de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="CancelCommande">
-                            Annuler
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="LivrerCommande">
-                            Livrer
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">Nb de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="CancelCommande">
-                            Annuler
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="LivrerCommande">
-                            Livrer
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">Nb de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="CancelCommande">
-                            Annuler
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="LivrerCommande">
-                            Livrer
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">Nb de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="CancelCommande">
-                            Annuler
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="LivrerCommande">
-                            Livrer
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">Nb de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="CancelCommande">
-                            Annuler
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="LivrerCommande">
-                            Livrer
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="command-card">
-                <div class="command-info">
-                    <p>Commande n°1</p>
-                    <span class="rose">Client : Olivier</span>
-                    <span class="rose">Nb de plats : 2</span>
-                </div>
-                <div class="command-actions">
-                    <form method="post">
-                        <button class="delete-btn" type="submit"
-                                asp-page-handler="CancelCommande">
-                            Annuler
-                        </button>
-                        <button class="details-btn" type="submit"
-                                asp-page-handler="LivrerCommande">
-                            Livrer
-                        </button>
-                    </form>
-                </div>
-            </div>
+            }
         </div>
+
     </div>
 </div>
 <div class="btn-add-plat">

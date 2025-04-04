@@ -6,6 +6,17 @@ DotNetEnv.Env.Load("../.env");
 
 // Razor Pages
 builder.Services.AddRazorPages();
+builder.Services.AddRazorPages()
+    .AddSessionStateTempDataProvider();
+
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 
 builder.Configuration.AddEnvironmentVariables();
 
@@ -27,6 +38,7 @@ app.Use(async (context, next) =>
 
 app.UseStaticFiles();
 app.UseRouting();
+app.UseSession();
 app.UseAuthorization();
 
 app.MapRazorPages();

@@ -52,7 +52,6 @@
     <div class="right">
         <p class="logo-title">Aperçu de l'itinéraire</p>
         <div class="img-container">
-            <!-- <img src="./src/img/map.PNG" alt=""> -->
             <div id="map" style="height: 600px; width: 100%; border-radius: 10px;"></div>
         </div>
         @* <div class="zoom"> *@
@@ -66,5 +65,69 @@
                 </button>
             </form>
         </div>
+        @section Scripts {
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+            <script>
+                const ligneColors = {
+                    1: "#FFCD00",  // jaune
+                    2: "#003CA6",  // bleu
+                    3: "#837902",  // kaki
+                    "3bis": "#6EC4E8", // bleu clair
+                    4: "#CF009E",  // rose/magenta
+                    5: "#FF7E2E",  // orange
+                    6: "#6ECEB2",  // vert d’eau
+                    7: "#F5A9BB",  // rose clair
+                    "7bis": "#6ECA97", // vert pastel
+                    8: "#E19BDF",  // violet clair
+                    9: "#B6BD00",  // jaune/vert
+                    10: "#C9910D", // ocre
+                    11: "#704B1C", // brun
+                    12: "#007852", // vert foncé
+                    13: "#99D4E4", // bleu glacier
+                    14: "#62259D", // violet foncé
+                }
+
+                const stations = @Html.Raw(ViewData["Stations"]);
+
+                const arcs = @Html.Raw(ViewData["Arcs"]);
+
+                const map = L.map('map').setView([48.8566, 2.3522], 12); 
+
+                //fond de carte
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                stations.forEach(station => {
+                    const marker = L.circleMarker([station.latitude, station.longitude], {
+                        radius: 5,
+                        fillColor: "#ff5e5e",
+                        color: "#000",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    }).addTo(map);
+                    marker.bindPopup(`<strong>${station.nom}</strong><br/>ID: ${station.id}`);
+                });
+
+                arcs.forEach(arc => {
+                    const src = arc.source;
+                    const dest = arc.destination;
+                    const ligne = arc.ligne;
+
+                    const color = ligneColors[ligne] || "#000";
+
+                    L.polyline([
+                        [src.latitude, src.longitude],
+                        [dest.latitude, dest.longitude]
+                    ], {
+                        color: color,
+                        weight: 4,
+                        opacity: 0.8
+                    }).addTo(map);
+                });
+            </script>
+        }
     </div>
 </div>

@@ -23,22 +23,22 @@
                 <div class="item1-stats-panel">
                     <p class="title-stats-panel">Prochaine livraison prévue à</p>
                     <!-- A automatiser -->
-                    <p class="text-stats-panel">01/04/05 à 13h30</p>
+                    <p class="text-stats-panel">@Model.ProchaineLivraison</p>
                 </div>
                 <div class="item2-stats-panel">
                     <p class="title-stats-panel">Nb de commandes en cours</p>
                     <!-- A automatiser -->
-                    <p class="text-stats-panel">3</p>
+                    <p class="text-stats-panel">@Model.NbCommandesEnCours</p>
                 </div>
                 <div class="item3-stats-panel">
                     <p class="title-stats-panel">Moyenne de notation</p>
                     <!-- A automatiser -->
-                    <p class="text-stats-panel">4,5/5</p>
+                    <p class="text-stats-panel">@Model.MoyenneNotation</p>
                 </div>
             </div>
             <div class="btn-see-current-commands">
                 <form method="post">
-                    <button type="submit" asp-page-handler="SeeCurrentCommands">
+                    <button type="submit" asp-page-handler="SeeCurrentCommand">
                         Voir mes commandes en cours
                     </button>
                 </form>
@@ -51,27 +51,27 @@
             <div class="todays-plat">
                 <div class="nom-plat">
                     <!-- A automatiser -->
-                    <p>Pâtes carbonara</p>
+                    <p>@Model.PlatDuJour?.Nom</p>
                 </div>
                 <!-- A automatiser -->
                 <div class="prix-plat">
                     <p>Prix :</p>
-                    <p>3€</p>
+                    <p>@Model.PlatDuJour?.Prix</p>
                 </div>
                 <!-- A automatiser -->
                 <div class="nb-pers-plat">
                     <p>Nb de personnes :</p>
-                    <p>4</p>
+                    <p>@Model.PlatDuJour?.NbPersonnes</p>
                 </div>
                 <!-- A automatiser -->
                 <div class="natio-plat rose">
                     <p>Nationalité :</p>
-                    <p>Italie</p>
+                    <p>@Model.PlatDuJour?.Nationalite</p>
                 </div>
                 <!-- A automatiser -->
                 <div class="regime-plat rose">
                     <p>Régime :</p>
-                    <p>aucun</p>
+                    <p>@Model.PlatDuJour?.Regime</p>
                 </div>
             </div>
             <div class="btn-change-todays-plat">
@@ -86,20 +86,29 @@
     <div class="right-colonne">
         <p class="menu-title">Plats disponibles</p>
         <div class="dish-list">
-            <!-- Carte d’un plat -->
-            <div class="dish-card">
-                <div class="dish-info">
-                    <p>Pâtes bolognaise</p>
-                    <span class="rose">Cuisinier : Olivier</span>
-                    <span class="rose">Livraison : 15 min</span>
+            @foreach (var plat in Model.PlatsDisponibles)
+            {
+                <div class="dish-card">
+                    <div class="dish-info">
+                        <p>@plat.Nom</p>
+                        <span class="rose">Cuisinier : @plat.Cuisinier</span>
+                        <span class="rose">Livraison : 15 min</span>
+                    </div>
+                    <div class="dish-actions">
+                        <form method="get" asp-page="/Cuisinier/DeletePlat">
+                            <input type="hidden" name="NomPlat" value="@plat.Nom" />
+                            <button type="submit" class="delete-btn">🗑️</button>
+                        </form>
+                        <form method="get" asp-page="/Cuisinier/DetailsPlat">
+                            <input type="hidden" name="nomPlat" value="@plat.Nom" />
+                            <button type="submit" class="details-btn">Détails</button>
+                        </form>
+
+                    </div>
+
                 </div>
-                <div class="dish-actions">
-                    <form method="post">
-                        <button type="submit" class="delete-btn" asp-page-handler="DeletePlat">🗑️</button>
-                        <button type="submit" class="details-btn" asp-page-handler="DetailsPlat">Détails</button>
-                    </form>
-                </div>
-            </div>
+            }
+
         </div>
 
         <div class="btn-add-plat">

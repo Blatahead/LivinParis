@@ -9,21 +9,19 @@
 </head>
 <div class="popup-content">
     <div class="popup-two">
-        <p class="title-popup">Etes-vous sûr de supprimer ce plat ?</p>
+        <p class="title-popup">Êtes-vous sûr de supprimer le plat <strong>@Model.NomPlat</strong> ?</p>
         <div class="popup-question">
             <div class="popup-two-div">
                 <form method="post">
-                    <button class="btn-yes"
-                            type="submit"
-                            asp-page-handler="CuisinierPanelYes">
+                    <input type="hidden" name="NomPlat" value="@Model.NomPlat" />
+                    <button class="btn-yes" type="submit" asp-page-handler="CuisinierPanelYes">
                         <p>Oui</p>
                     </button>
-                    <button class="btn-no"
-                            type="submit"
-                            asp-page-handler="CuisinierPanelNo">
+                    <button class="btn-no" type="submit" asp-page-handler="CuisinierPanelNo">
                         <p>Non</p>
                     </button>
                 </form>
+
             </div>
         </div>
     </div>

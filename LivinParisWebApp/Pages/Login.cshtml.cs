@@ -43,20 +43,39 @@ namespace LivinParis.Pages
             cmd.Parameters.AddWithValue("@Email", Email);
             cmd.Parameters.AddWithValue("@Pwd", Password);
 
-            var count = Convert.ToInt32(cmd.ExecuteScalar());
+            var reader = await cmd.ExecuteReaderAsync();
 
-            if (count > 0)
-            {
-                Message = "Connexion réussie !";
-                //voir les infos à garder de la connexion (si faut la balaser ou pas)
-                // puis changer le /register (c'était un test)
-                return RedirectToPage("/Register");
-            }
-            else
+            if (!reader.Read())
             {
                 Message = "Identifiants incorrects.";
                 return Page();
             }
+
+            int userId = reader.GetInt32(0);
+            reader.Close();
+
+            // check client
+            bool isClient = false;
+            cmd = new MySqlCommand("SELECT COUNT(*) FROM Client_ WHERE Id_Utilisateur = @Id", conn);
+            cmd.Parameters.AddWithValue("@Id", userId);
+            isClient = Convert.ToInt32(await cmd.ExecuteScalarAsync()) > 0;
+
+            // check cuisinier
+            bool isCuisinier = false;
+            cmd = new MySqlCommand("SELECT COUNT(*) FROM Cuisinier WHERE Id_Utilisateur = @Id", conn);
+            cmd.Parameters.AddWithValue("@Id", userId);
+            isCuisinier = Convert.ToInt32(await cmd.ExecuteScalarAsync()) > 0;
+
+            // Redirection
+            if (isClient && isCuisinier)
+                return RedirectToPage("/ClientPanel");
+            else if (isClient)
+                return RedirectToPage("/ClientPanel");
+            else if (isCuisinier)
+                return RedirectToPage("/CuisinierPanel");
+
+            Message = "Aucun rôle associé à ce compte.";
+            return Page();
         }
     }
 }
