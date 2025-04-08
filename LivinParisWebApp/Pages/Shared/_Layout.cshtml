@@ -1,48 +1,12 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - LivinParis</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="/css/site.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">LivinParis</a>
-                <button class="navbar-toggler" type="button">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="footer">
-        <div class="container">
-            &copy; 2025 - LivinParis - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
-
-    <script src="/lib/jquery/dist/jquery.min.js"></script>
-    <script src="/js/site.js"></script>
-
-    @await RenderSectionAsync("Scripts", required: false)
+    @* Ce Layout est appelé dans _ViewStart pour lancer l'app mais la redirection se fait instantanément *@
+    @* sur la page Login et donc sur aucun Layout, car les premières pages n'en utilisent pas. *@
+    @* C'est ensuite le layout bar nav qui prend le relai. Donc celui ci ne sert qu'à lancer l'appli. *@
 </body>
 </html>

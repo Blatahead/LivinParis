@@ -22,5 +22,4 @@ namespace ClassLibraryRendu2
             Longitude = longitude;
         }
     }
-
 }

@@ -1,7 +1,7 @@
 ﻿namespace TestLivinParis
 {
     [TestClass]
-    public sealed class Test1
+    public sealed class TestUnitaires
     {
         [TestMethod]
         public void TestMethod1()

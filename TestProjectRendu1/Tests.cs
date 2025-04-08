@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ClassLibraryRendu1;
-using ClassLibraryRendu2;
 
 
 namespace TestProjectRendu1
@@ -187,11 +186,5 @@ namespace TestProjectRendu1
             Assert.IsTrue(latitude > 48 && latitude < 49, "Latitude inattendue");//48.86935043334961
             Assert.IsTrue(longitude > 2 && longitude < 3, "Longitude inattendue");//2.3313136100769043
         }
-
-      
-
-        
     }
-
-    
 }
