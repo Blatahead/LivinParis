@@ -5,6 +5,7 @@ using static Org.BouncyCastle.Math.EC.ECCurve;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using System.Security.Cryptography.X509Certificates;
 
 namespace LivinParisWebApp.Pages
 {
@@ -18,12 +19,15 @@ namespace LivinParisWebApp.Pages
             _env = env;
             _config = config;
         }
+        public List<StationNoeud> Chemin { get; set; }
         public void OnGet()
         {
+            
             var graphe = new Graphe();
             string connStr = _config.GetConnectionString("MyDb");
             graphe.ChargerDepuisBDD(connStr);
-
+            Chemin=graphe.Dijkstra(1, 33);
+            
             var settings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
@@ -32,6 +36,7 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Stations"] = JsonConvert.SerializeObject(graphe.Stations, settings);
             ViewData["Arcs"] = JsonConvert.SerializeObject(graphe.Arcs, settings);
+            Console.WriteLine("Longueur du chemin trouvé : " + Chemin.Count);
         }
 
         public IActionResult OnPostDeleteContenuStations()
@@ -82,6 +87,8 @@ namespace LivinParisWebApp.Pages
             TempData["Message"] = "Graphe généré avec succès.";
             return Page();
         }
+
+
 
     }
 }
