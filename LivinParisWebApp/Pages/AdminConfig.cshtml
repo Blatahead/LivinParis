@@ -60,8 +60,8 @@
                 fillColor: "#ff5e5e",
                 color: "#000",
                 weight: 1,
-                opacity: 0.3,
-                fillOpacity: 0.3
+                opacity: 0.8,
+                fillOpacity: 0.8
             }).addTo(map);
             marker.bindPopup(`<strong>${station.nom}</strong><br/>ID: ${station.id}`);
         });
@@ -79,7 +79,7 @@
             ], {
                 color: color,
                 weight: 4,
-                opacity: 0.5
+                opacity: 0.8
             }).addTo(map);
         });
         
@@ -95,168 +95,83 @@
                 });
             });
         });
-
-        function ajouterCorrespondancesFixes(stations, arcs) {
-            const correspondances = [
-                [44, 45], [65, 66], [69, 70],
-                [95, 96], [113, 114], [141, 142], [171, 172],
-                [180, 181], [209, 210], [240, 241], [261, 262],
-                [273, 274], [299, 300], [319, 320]
-            ];
-
-            correspondances.forEach(([id1, id2]) => {
-                const station1 = stations.find(s => s.id === id1);
-                const station2 = stations.find(s => s.id === id2);
-
-                if (station1 && station2) {
-                    arcs.push({
-                        source: station1,
-                        destination: station2,
-                        ligne: "correspondance",
-                        distance: 0
-                    });
-                    arcs.push({
-                        source: station2,
-                        destination: station1,
-                        ligne: "correspondance",
-                        distance: 0
-                    });
-                } else {
-                    console.warn(`Stations non trouvées pour la correspondance : ${id1}, ${id2}`);
-                }
-            });
-
-            console.log("✅ Correspondances fixes ajoutées !");
-        }
-
         
-        ajouterCorrespondancesFixes(stations, arcs);
-
-
        
+
 
     </script>
 
     <script>
-
+        // === Création du graphe ===
         const graph = {};
-
         stations.forEach(st => {
             graph[st.id] = [];
         });
 
         arcs.forEach(arc => {
+            if (!arc.source?.id || !arc.destination?.id) return;
+
             graph[arc.source.id].push({
                 id: arc.destination.id,
                 distance: arc.distance
             });
+
+            if (arc.sens === 0) {
+                graph[arc.destination.id].push({
+                    id: arc.source.id,
+                    distance: arc.distance
+                });
+            }
         });
-
         
-        function dijkstra(graph, startId) {
-            const distances = {};
-            const previous = {};
-            const visited = new Set();
-
-            stations.forEach(st => {
-                distances[st.id] = Infinity;
-                previous[st.id] = null;
-            });
-
-            distances[startId] = 0;
-
-            while (visited.size < stations.length) {
-                let closest = null;
-                let minDistance = Infinity;
-
-                for (let id in distances) {
-                    if (!visited.has(+id) && distances[id] < minDistance) {
-                        closest = +id;
-                        minDistance = distances[id];
-                    }
-                }
-
-                if (closest === null) break;
-
-                visited.add(closest);
-
-                for (const neighbor of graph[closest]) {
-                    const tentative = distances[closest] + neighbor.distance;
-                    if (tentative < distances[neighbor.id]) {
-                        distances[neighbor.id] = tentative;
-                        previous[neighbor.id] = closest;
-                    }
-                }
-            }
-
-            return { distances, previous };
-        }
-
-        
-        function getShortestPath(previous, endId) {
-            const path = [];
-            let current = endId;
-
-            while (current !== null) {
-                path.unshift(current);
-                current = previous[current];
-            }
-            
-            return path;
-        }
-
-        /
-         const departId = 1;
-        const arriveeId = 300;
-
-        const result = dijkstra(graph, departId);
-        const pathIds = getShortestPath(result.previous, arriveeId);
-
-        
-        const latlngs = pathIds.map(id => {
-        const st = stations.find(s => s.id === id);
-        return [st.latitude, st.longitude];
-    });
-
-        console.log("Coordonnées du chemin :", latlngs);
-        L.polyline(latlngs, {
-            color: "black",
-            weight: 5,
-            opacity: 1.2,
-            dashArray: "5, 10"
-        }).addTo(map);
+       // const chemin = @Html.Raw(Json.Serialize(Model.Chemin));
+        //console.log("Chemin reçu depuis C# :", chemin);
 
 
-    
+        //if (chemin && chemin.length > 1) 
+        //{ const latlngs = chemin.map(s => [s.latitude, s.longitude]); L.polyline(latlngs, { color: 'black', weight: 5, opacity: 0.9, dashArray: '5, 10'}).addTo(map);}
+        // const line = L.polyline(latlngs, {
+        //     color: 'black',
+        //     weight: 5,
+        //     opacity: 0.9
+        // }).addTo(map);
 
-        function afficherChemin(cheminIds) {
-            const latlngs = cheminIds.map(id => {
-                const station = stations.find(s => s.id === id);
-                return [station.latitude, station.longitude];
-            });
-
-            
-            L.polyline(latlngs, {
-                color: 'black',
-                weight: 6,
-                opacity: 1.3,
-                dashArray: '10, 10' 
+        // map.fitBounds(line.getBounds());
+        const chemin = @Html.Raw(Json.Serialize(Model.Chemin)); 
+        console.log("Chemin reçu depuis C# :", chemin); 
+        if(chemin && chemin.length > 1)
+        {
+            const latlngs = chemin.map(s => [parseFloat(s.latitude), parseFloat(s.longitude)]);
+            console.log("Coordonnées du chemin :", latlngs); 
+            const polyline = L.polyline(latlngs, {
+                 color: 'black',
+                 weight: 6,
+                 opacity: 0.9 
             }).addTo(map);
+            map.fitBounds(polyline.getBounds()); 
+        }
+        else {console.warn("Aucun chemin trouvé ou chemin trop court."); }
+
+        const station1 = stations.find(s => s.id === 1);
+        if (station1) {
+            console.log("Station 1 - arcs sortants : ", station1.arcsSortants?.length ?? 0);
+        } else {
+            console.warn("Station 1 non trouvée dans la liste des stations.");
         }
 
         
 
-        const { distances, previous } = dijkstra(graph, departId);
-        const chemin = getShortestPath(previous, arriveeId);
 
-        if (chemin.length > 1) {
-            afficherChemin(chemin);
-        } else {
-            console.warn("Aucun chemin trouvé entre les deux stations.");
-        }
+        
 
+            
 
-        </script>
+       
 
+            
 
-        }
+        
+    </script>
+
+       
+}

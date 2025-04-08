@@ -35,47 +35,14 @@ namespace ClassLibraryRendu2
         /// <summary>
         /// Algorithme de Dijkstra pour calculer le plus court chemin
         /// </summary>
-        public Dictionary<int, double> Dijkstra(int idDepart, List<Station<object>> stations)
-        {
-            var distances = new Dictionary<int, double>();
-            var precedent = new Dictionary<int, int?>();
-            var file = new SortedSet<SommetPrioritaire>();
+        
 
-            foreach (var station in stations)
-            {
-                distances[station.IdentifiantStation] = double.PositiveInfinity;
-                precedent[station.IdentifiantStation] = null;
-            }
 
-            distances[idDepart] = 0;
-            file.Add(new SommetPrioritaire(idDepart, 0));
 
-            while (file.Count > 0)
-            {
-                var actuel = file.Min;
-                file.Remove(actuel);
+            
+        
 
-                var stationActuelle = stations.First(s => s.IdentifiantStation == actuel.Id);
 
-                foreach (var voisin in stations.Where(s => s.Depart == stationActuelle.IdentifiantStation))
-                {
-                    if (voisin.Sens == 1 && voisin.Arrivee < stationActuelle.IdentifiantStation)
-                        continue; // Respecter le sens de circulation
-
-                    double tentativeDistance = distances[actuel.Id] + voisin.Distance;
-
-                    if (tentativeDistance < distances[voisin.Arrivee])
-                    {
-                        file.RemoveWhere(x => x.Id == voisin.Arrivee);
-                        distances[voisin.Arrivee] = tentativeDistance;
-                        precedent[voisin.Arrivee] = actuel.Id;
-                        file.Add(new SommetPrioritaire(voisin.Arrivee, tentativeDistance));
-                    }
-                }
-            }
-
-            return distances;
-        }
 
 
 

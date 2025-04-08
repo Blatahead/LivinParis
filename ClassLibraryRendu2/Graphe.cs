@@ -71,5 +71,74 @@ namespace ClassLibraryRendu2
                 }
             }
         }
+
+
+        public List<StationNoeud> Dijkstra(int idDepart, int idArrivee)
+        {
+            var distances = new Dictionary<int, double>();
+            var precedent = new Dictionary<int, int?>();
+            var visite = new HashSet<int>();
+            var file = new SortedSet<(double distance, int idStation)>(new DistanceComparer());
+            var stationsParId = Stations.ToDictionary(s => s.Id);
+
+            foreach (var station in Stations)
+            {
+                distances[station.Id] = double.PositiveInfinity;
+                precedent[station.Id] = null;
+            }
+
+            distances[idDepart] = 0;
+            file.Add((0, idDepart));
+
+            while (file.Count > 0)
+            {
+                var (distanceActuelle, idActuel) = file.Min;
+                file.Remove(file.Min);
+
+                if (visite.Contains(idActuel))
+                    continue;
+
+                visite.Add(idActuel);
+
+                if (idActuel == idArrivee)
+                    break;
+
+                var stationActuelle = stationsParId[idActuel];
+
+                foreach (var arc in stationActuelle.ArcsSortants)
+                {
+                    var voisin = arc.Destination;
+                    double nouvelleDistance = distanceActuelle + arc.Distance;
+
+                    if (nouvelleDistance < distances[voisin.Id])
+                    {
+                        file.Remove((distances[voisin.Id], voisin.Id)); // supprimer ancienne entrée
+                        distances[voisin.Id] = nouvelleDistance;
+                        precedent[voisin.Id] = idActuel;
+                        file.Add((nouvelleDistance, voisin.Id));
+                    }
+                }
+            }
+
+            // Reconstruire le chemin
+            var chemin = new List<StationNoeud>();
+            int? courant = idArrivee;
+
+            while (courant != null)
+            {
+                chemin.Insert(0, stationsParId[courant.Value]);
+                courant = precedent[courant.Value];
+            }
+
+            // Si le premier nœud n’est pas le départ, aucun chemin trouvé
+            if (chemin.Count == 0 || chemin[0].Id != idDepart)
+                return new List<StationNoeud>(); // chemin vide = pas de chemin
+
+            return chemin;
+        }
+
+
+
+
     }
 }
