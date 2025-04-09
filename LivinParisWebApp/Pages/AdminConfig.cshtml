@@ -1,177 +1,115 @@
 ﻿@page
 @model LivinParisWebApp.Pages.AdminConfigModel
 @{
-    Layout = "~/Pages/Shared/_LayoutVoidNavBar.cshtml";
-    ViewData["Title"] = "Panel Admin";
+	Layout = "~/Pages/Shared/_LayoutVoidNavBar.cshtml";
+	ViewData["Title"] = "Panel Admin";
 }
 <head>
-    <link rel="stylesheet" href="/css/site.css" />
+	<link rel="stylesheet" href="/css/site.css" />
 </head>
+
 <div>
-    <form method="post">
-        <button type="submit" asp-page-handler="LoadStationInBDD">
-            Charger la BDD avec les stations
-        </button>
-        <button type="submit" asp-page-handler="DeleteContenuStations">Vider la table Station</button>
-        <button type="submit" asp-page-handler="GenererGraphe">Générer le graphe</button>
-    </form>
+	<form method="post">
+		<button type="submit" asp-page-handler="LoadStationInBDD">Charger la BDD avec les stations</button>
+		<button type="submit" asp-page-handler="DeleteContenuStations">Vider la table Station</button>
+		<button type="submit" asp-page-handler="GenererGraphe">Générer le graphe</button>
+	</form>
 </div>
-<div class="img-container"> 
-     <p>Visualisation du graphe complet du projet</p>
-     <div id="map" style="height: 600px; width: 100%; border-radius: 10px;"></div>
+
+<div class="img-container">
+	<p>Visualisation du graphe complet du projet</p>
+	<div id="map" style="height: 600px; width: 100%; border-radius: 10px;"></div>
 </div>
+
 @section Scripts {
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
-    <script>
-        const ligneColors = {
-            1: "#FFCD00",  // jaune
-            2: "#003CA6",  // bleu
-            3: "#837902",  // kaki
-            "3bis": "#6EC4E8", // bleu clair
-            4: "#CF009E",  // rose/magenta
-            5: "#FF7E2E",  // orange
-            6: "#6ECEB2",  // vert d’eau
-            7: "#F5A9BB",  // rose clair
-            "7bis": "#6ECA97", // vert pastel
-            8: "#E19BDF",  // violet clair
-            9: "#B6BD00",  // jaune/vert
-            10: "#C9910D", // ocre
-            11: "#704B1C", // brun
-            12: "#007852", // vert foncé
-            13: "#99D4E4", // bleu glacier
-            14: "#62259D", // violet foncé
-        }
+	<script>
+		const ligneColors = {
+			1: "#FFCD00", 
+			2: "#003CA6", 
+			3: "#837902", 
+			"3bis": "#6EC4E8",
+			4: "#CF009E", 
+			5: "#FF7E2E", 
+			6: "#6ECEB2", 
+			7: "#F5A9BB",
+			"7bis": "#6ECA97", 
+			8: "#E19BDF", 
+			9: "#B6BD00", 
+			10: "#C9910D",
+			11: "#704B1C", 
+			12: "#007852", 
+			13: "#99D4E4", 
+			14: "#62259D"
+		};
 
-        const stations = @Html.Raw(ViewData["Stations"]);
+		const chemin = @Html.Raw(Model.CheminJson);
+		// console.log("Chemin JS :", chemin);
 
-        const arcs = @Html.Raw(ViewData["Arcs"]);
+		const stations = @Html.Raw(ViewData["Stations"]);
+		// console.log("Stations :", stations);
 
-        const map = L.map('map').setView([48.8566, 2.3522], 12);
-
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        stations.forEach(station => {
-            const marker = L.circleMarker([station.latitude, station.longitude], {
-                radius: 5,
-                fillColor: "#ff5e5e",
-                color: "#000",
-                weight: 1,
-                opacity: 0.8,
-                fillOpacity: 0.8
-            }).addTo(map);
-            marker.bindPopup(`<strong>${station.nom}</strong><br/>ID: ${station.id}`);
-        });
-
-        arcs.forEach(arc => {
-            const src = arc.source;
-            const dest = arc.destination;
-            const ligne = arc.ligne;
-
-            const color = ligneColors[ligne] || "#000";
-
-            L.polyline([
-                [src.latitude, src.longitude],
-                [dest.latitude, dest.longitude]
-            ], {
-                color: color,
-                weight: 4,
-                opacity: 0.8
-            }).addTo(map);
-        });
-        
-        stations.forEach(station => {
-            const correspondances = stations.filter(s => s.nom === station.nom && s.id !== station.id);
-
-            correspondances.forEach(corresp => {
-                arcs.push({
-                    source: station,
-                    destination: corresp,
-                    ligne: "correspondance",
-                    distance: 0.1,
-                });
-            });
-        });
-        
-       
+		const arcs = @Html.Raw(ViewData["Arcs"]);
+		// console.log("Arcs :", arcs);
 
 
-    </script>
+		// Création de la map
+		const map = L.map('map').setView([48.8566, 2.3522], 12);
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '© OpenStreetMap contributors'
+		}).addTo(map);
 
-    <script>
-        // === Création du graphe ===
-        const graph = {};
-        stations.forEach(st => {
-            graph[st.id] = [];
-        });
+		// Pour retrouver les stations par ID
+		const stationMap = {};
+		stations.forEach(st => {
+			stationMap[st.id] = st;
 
-        arcs.forEach(arc => {
-            if (!arc.source?.id || !arc.destination?.id) return;
+			const marker = L.circleMarker([st.Latitude, st.Longitude], {
+				radius: 5,
+				fillColor: "#ff5e5e",
+				color: "#000",
+				weight: 1,
+				opacity: 0.8,
+				fillOpacity: 0.8
+			}).addTo(map);
+			marker.bindPopup(`<strong>${st.nom}</strong><br/>ID: ${st.id}`);
+		});
 
-            graph[arc.source.id].push({
-                id: arc.destination.id,
-                distance: arc.distance
-            });
+		// Ajout des arcs
+		arcs.forEach(arc => {
+			const srcLat = arc.SourceLat;
+			const srcLong = arc.SourceLong;
+			const destLat = arc.DestLat;
+			const destLong = arc.DestLong;
+			const ligne = arc.Ligne;
 
-            if (arc.sens === 0) {
-                graph[arc.destination.id].push({
-                    id: arc.source.id,
-                    distance: arc.distance
-                });
-            }
-        });
-        
-       // const chemin = @Html.Raw(Json.Serialize(Model.Chemin));
-        //console.log("Chemin reçu depuis C# :", chemin);
+			const color = ligneColors[ligne] || "#000";
 
+			L.polyline([
+				[srcLat, srcLong],
+				[destLat, destLong]
+			], {
+				color: color,
+				weight: 4,
+				opacity: 0.8
+			}).addTo(map);
+		});
 
-        //if (chemin && chemin.length > 1) 
-        //{ const latlngs = chemin.map(s => [s.latitude, s.longitude]); L.polyline(latlngs, { color: 'black', weight: 5, opacity: 0.9, dashArray: '5, 10'}).addTo(map);}
-        // const line = L.polyline(latlngs, {
-        //     color: 'black',
-        //     weight: 5,
-        //     opacity: 0.9
-        // }).addTo(map);
+		// Affichage du chemin trouvé en noir
+		if (chemin && chemin.length > 1) {
+			// console.log("Coordonnées utilisées dans latlngs :", chemin.map(s => [s.Latitude, s.Longitude]));
 
-        // map.fitBounds(line.getBounds());
-        const chemin = @Html.Raw(Json.Serialize(Model.Chemin)); 
-        console.log("Chemin reçu depuis C# :", chemin); 
-        if(chemin && chemin.length > 1)
-        {
-            const latlngs = chemin.map(s => [parseFloat(s.latitude), parseFloat(s.longitude)]);
-            console.log("Coordonnées du chemin :", latlngs); 
-            const polyline = L.polyline(latlngs, {
-                 color: 'black',
-                 weight: 6,
-                 opacity: 0.9 
-            }).addTo(map);
-            map.fitBounds(polyline.getBounds()); 
-        }
-        else {console.warn("Aucun chemin trouvé ou chemin trop court."); }
+			const latlngs = chemin.map(s => [parseFloat(s.Latitude), parseFloat(s.Longitude)]);
 
-        const station1 = stations.find(s => s.id === 1);
-        if (station1) {
-            console.log("Station 1 - arcs sortants : ", station1.arcsSortants?.length ?? 0);
-        } else {
-            console.warn("Station 1 non trouvée dans la liste des stations.");
-        }
-
-        
-
-
-        
-
-            
-
-       
-
-            
-
-        
-    </script>
-
-       
+			L.polyline(latlngs, {
+				color: 'black',
+				weight: 6,
+				opacity: 0.9
+			}).addTo(map);
+			map.fitBounds(L.polyline(latlngs).getBounds());
+		} else {
+			console.log("Aucun chemin trouvé ou chemin trop court.");
+		}
+	</script>
 }

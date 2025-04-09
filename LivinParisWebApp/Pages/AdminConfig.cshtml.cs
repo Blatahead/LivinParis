@@ -19,24 +19,50 @@ namespace LivinParisWebApp.Pages
             _env = env;
             _config = config;
         }
+        public string CheminJson { get; set; }
+
         public List<StationNoeud> Chemin { get; set; }
         public void OnGet()
         {
-            
             var graphe = new Graphe();
             string connStr = _config.GetConnectionString("MyDb");
             graphe.ChargerDepuisBDD(connStr);
-            Chemin=graphe.Dijkstra(1, 33);
-            
-            var settings = new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            };
 
-            ViewData["Stations"] = JsonConvert.SerializeObject(graphe.Stations, settings);
-            ViewData["Arcs"] = JsonConvert.SerializeObject(graphe.Arcs, settings);
-            Console.WriteLine("Longueur du chemin trouvé : " + Chemin.Count);
+
+            //var cheminNoeuds = graphe.Dijkstra(1, 170);
+            //var cheminNoeuds = graphe.Dijkstra(96, 300);
+            //var cheminNoeuds = graphe.Dijkstra(210, 66);
+            //var cheminNoeuds = graphe.Dijkstra(258, 332);
+            var cheminNoeuds = graphe.Dijkstra(1, 332);
+
+
+            // Conversion en DTO pour casser les cycles
+            var cheminDTOs = cheminNoeuds.Select(StationConvertisseurs.ToDTO).ToList();
+            CheminJson = JsonConvert.SerializeObject(cheminDTOs);
+
+            var stationDTOs = graphe.Stations.Select(st => new StationDTO
+                {
+                    Id = st.Id,
+                    Nom = st.Nom,
+                    Latitude = st.Latitude,
+                    Longitude = st.Longitude
+                })
+                .ToList();
+
+            var arcDTOs = graphe.Arcs.Select(arc => new ArcDTO
+                {
+                    SourceId = arc.Source.Id,
+                    SourceLat = arc.Source.Latitude,
+                    SourceLong = arc.Source.Longitude,
+                    DestLat = arc.Destination.Latitude,
+                    DestLong = arc.Destination.Longitude,
+                    DestinationId = arc.Destination.Id,
+                    Distance = arc.Distance,
+                    Ligne = arc.Ligne
+                }).ToList();
+
+            ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
+            ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
         }
 
         public IActionResult OnPostDeleteContenuStations()
@@ -52,7 +78,6 @@ namespace LivinParisWebApp.Pages
             TempData["Message"] = "La table Station a été vidée avec succès.";
             return RedirectToPage();
         }
-
         public IActionResult OnPostLoadStationInBDD()
         {
             var import = new ImportStations(_config);
@@ -77,7 +102,6 @@ namespace LivinParisWebApp.Pages
 
             return Page();
         }
-
         public IActionResult OnPostGenererGraphe()
         {
             var graphe = new Graphe();
@@ -87,8 +111,5 @@ namespace LivinParisWebApp.Pages
             TempData["Message"] = "Graphe généré avec succès.";
             return Page();
         }
-
-
-
     }
 }
