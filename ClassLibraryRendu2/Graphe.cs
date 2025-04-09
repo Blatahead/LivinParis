@@ -38,7 +38,7 @@ namespace ClassLibraryRendu2
             conn.Open();
 
             // stations
-            var cmdStations = new MySqlCommand("SELECT ID_station, Libelle_station, Latitude, Longitude FROM Station", conn);
+            var cmdStations = new MySqlCommand("SELECT ID_station, Libelle_station, Latitude, Longitude, Libelle_ligne FROM Station", conn);
             using var readerStations = cmdStations.ExecuteReader();
             while (readerStations.Read())
             {
@@ -46,13 +46,14 @@ namespace ClassLibraryRendu2
                 string nom = readerStations.GetString(1);
                 double lat = readerStations.GetDouble(2);
                 double lon = readerStations.GetDouble(3);
+                string ligne = readerStations.GetString(4);
 
-                var station = new StationNoeud(id, nom, lat, lon);
+                var station = new StationNoeud(id, nom, lat, lon, ligne);
                 AjouterStation(station);
             }
             readerStations.Close();
 
-            // arcs
+            // arcs en lien direct (adjacence)
             var cmdArcs = new MySqlCommand("SELECT Depart, Arrivee, Distance, Libelle_ligne FROM Station WHERE Depart != 0 AND Arrivee != 0", conn);
             using var readerArcs = cmdArcs.ExecuteReader();
             while (readerArcs.Read())
@@ -66,12 +67,30 @@ namespace ClassLibraryRendu2
                 {
                     AjouterArc(depart, arrivee, distance, ligne);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
             }
-        }
+            readerArcs.Close();
 
+            // arcs de correspondances (stations aux mêmes coordonnées)
+            var groupesParCoord = Stations
+                .GroupBy(s => $"{Math.Round(s.Latitude, 5)}|{Math.Round(s.Longitude, 5)}")
+                .Where(g => g.Count() > 1);
+
+            foreach (var groupe in groupesParCoord)
+            {
+                var stations = groupe.ToList();
+                for (int i = 0; i < stations.Count; i++)
+                {
+                    for (int j = i + 1; j < stations.Count; j++)
+                    {
+                        AjouterArc(stations[i].Id, stations[j].Id, 0.1, stations[i].Ligne);
+                        AjouterArc(stations[j].Id, stations[i].Id, 0.1, stations[j].Ligne);
+                    }
+                }
+            }
+        }
 
         public List<StationNoeud> Dijkstra(int idDepart, int idArrivee)
         {
@@ -130,15 +149,11 @@ namespace ClassLibraryRendu2
                 courant = precedent[courant.Value];
             }
 
-            // Si le premier nœud n’est pas le départ, aucun chemin trouvé
+            // Si le premier noeud n’est pas le départ, aucun chemin trouvé
             if (chemin.Count == 0 || chemin[0].Id != idDepart)
-                return new List<StationNoeud>(); // chemin vide = pas de chemin
+                return new List<StationNoeud>(); // chemin vide donc pas de chemin
 
             return chemin;
         }
-
-
-
-
     }
 }

@@ -6,5 +6,12 @@ using System.Threading.Tasks;
 
 namespace ClassLibraryRendu2
 {
-    public class DistanceComparer : IComparer<(double distance, int id)> { public int Compare((double distance, int id) x, (double distance, int id) y) { int comp = x.distance.CompareTo(y.distance); if (comp == 0) return x.id.CompareTo(y.id); return comp; } }
+    public class DistanceComparer : IComparer<(double distance, int id)> { 
+        public int Compare((double distance, int id) x, (double distance, int id) y) { 
+            int comp = x.distance.CompareTo(y.distance); 
+            if (comp == 0) 
+                return x.id.CompareTo(y.id); 
+            return comp; 
+        } 
+    }
 }

@@ -149,12 +149,8 @@ namespace ClassLibraryRendu2
                         plusCourt=p1.nomStation;
                     }
                 }
-
-
             }
         }
-
-
 
         /// <summary>
         /// Méthode retournant le nom de la station la plus proche d'une entreprise
@@ -176,8 +172,6 @@ namespace ClassLibraryRendu2
                         plusCourt=p1.nomStation;
                     }
                 }
-
-
             }
         }
 
@@ -201,8 +195,6 @@ namespace ClassLibraryRendu2
                         plusCourt=p1.nomStation;
                     }
                 }
-
-
             }
         }
 
