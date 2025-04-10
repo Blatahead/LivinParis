@@ -88,45 +88,67 @@
                     14: "#62259D", // violet foncé
                 }
 
+                const chemin = @Html.Raw(Model.CheminJson);
+
                 const stations = @Html.Raw(ViewData["Stations"]);
 
                 const arcs = @Html.Raw(ViewData["Arcs"]);
 
                 const map = L.map('map').setView([48.8566, 2.3522], 12); 
-
-                //fond de carte
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors'
                 }).addTo(map);
 
-                stations.forEach(station => {
-                    const marker = L.circleMarker([station.latitude, station.longitude], {
+                const stationMap = {};
+                stations.forEach(st => {
+                    stationMap[st.id] = st;
+
+                    const marker = L.circleMarker([st.Latitude, st.Longitude], {
                         radius: 5,
                         fillColor: "#ff5e5e",
                         color: "#000",
                         weight: 1,
-                        opacity: 1,
+                        opacity: 0.8,
                         fillOpacity: 0.8
                     }).addTo(map);
-                    marker.bindPopup(`<strong>${station.nom}</strong><br/>ID: ${station.id}`);
+                    marker.bindPopup(`<strong>${st.nom}</strong><br/>ID: ${st.id}`);
                 });
 
+                        // Ajout des arcs
                 arcs.forEach(arc => {
-                    const src = arc.source;
-                    const dest = arc.destination;
-                    const ligne = arc.ligne;
+                    const srcLat = arc.SourceLat;
+                    const srcLong = arc.SourceLong;
+                    const destLat = arc.DestLat;
+                    const destLong = arc.DestLong;
+                    const ligne = arc.Ligne;
 
                     const color = ligneColors[ligne] || "#000";
 
                     L.polyline([
-                        [src.latitude, src.longitude],
-                        [dest.latitude, dest.longitude]
+                        [srcLat, srcLong],
+                        [destLat, destLong]
                     ], {
                         color: color,
                         weight: 4,
                         opacity: 0.8
                     }).addTo(map);
                 });
+
+                        // Affichage du chemin trouvé en noir
+                if (chemin && chemin.length > 1) {
+                    // console.log("Coordonnées utilisées dans latlngs :", chemin.map(s => [s.Latitude, s.Longitude]));
+
+                    const latlngs = chemin.map(s => [parseFloat(s.Latitude), parseFloat(s.Longitude)]);
+
+                    L.polyline(latlngs, {
+                        color: 'black',
+                        weight: 6,
+                        opacity: 0.9
+                    }).addTo(map);
+                    map.fitBounds(L.polyline(latlngs).getBounds());
+                } else {
+                    console.log("Aucun chemin trouvé ou chemin trop court.");
+                }
             </script>
         }
     </div>

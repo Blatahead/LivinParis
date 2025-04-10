@@ -82,30 +82,55 @@ namespace LivinParisWebApp.Pages.Cuisinier
             // Statistiques
             if (!string.IsNullOrEmpty(livrees))
             {
-                var commandes = livrees.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToList();
+                var commandes = livrees.Split(',').Select(commande => commande.Trim()).ToList();
                 NbPlatsVendus = commandes.Count;
 
                 TimeSpan totalLivraison = TimeSpan.Zero;
 
                 foreach (var id in commandes)
                 {
-                    var cmdDetails = new MySqlCommand("SELECT Prix_Commande, Nom_Client FROM Commande WHERE Num_commande = @id", conn);
+                    var cmdDetails = new MySqlCommand(@"
+                    SELECT 
+                        c.Prix_commande,
+                        p.Prenom_particulier,
+                        p.Nom_particulier,
+                        e.Nom_referent,
+                        e.Nom_entreprise
+                    FROM Commande c
+                    LEFT JOIN Client_ cl ON c.id_Utilisateur = cl.Id_Utilisateur
+                    LEFT JOIN Particulier p ON cl.Id_Client = p.Id_Client
+                    LEFT JOIN Entreprise e ON cl.Id_Client = e.Id_Client
+                    WHERE c.Num_commande = @id", conn);
+
                     cmdDetails.Parameters.AddWithValue("@id", id);
 
-                    using var cmdReader = await cmdDetails.ExecuteReaderAsync();
-                    if (await cmdReader.ReadAsync())
+                    using var reader = await cmdDetails.ExecuteReaderAsync();
+                    if (await reader.ReadAsync())
                     {
-                        if (decimal.TryParse(cmdReader["Prix_Commande"].ToString(), out decimal prix))
+                        if (decimal.TryParse(reader["Prix_commande"].ToString(), out decimal prix))
                         {
                             RevenusTotaux += prix;
                         }
-                        string client = cmdReader["Nom_Client"]?.ToString();
-                        if (!string.IsNullOrEmpty(client) && !ClientsServis.Contains(client))
-                            ClientsServis.Add(client);
-                    }
-                    cmdReader.Close();
 
-                    totalLivraison += TimeSpan.FromMinutes(15); // Hypothèse : 15 min / livraison
+                        string nomPrenom = null;
+
+                        // Si c’est un particulier
+                        if (reader["Prenom_particulier"] != DBNull.Value && reader["Nom_particulier"] != DBNull.Value)
+                        {
+                            nomPrenom = $"{reader["Prenom_particulier"]} {reader["Nom_particulier"]}";
+                        }
+                        // Sinon si c’est une entreprise
+                        else if (reader["Nom_referent"] != DBNull.Value && reader["Nom_entreprise"] != DBNull.Value)
+                        {
+                            nomPrenom = $"{reader["Nom_referent"]} ({reader["Nom_entreprise"]})";
+                        }
+
+                        if (!string.IsNullOrEmpty(nomPrenom) && !ClientsServis.Contains(nomPrenom))
+                            ClientsServis.Add(nomPrenom);
+                    }
+                    reader.Close();
+
+                    totalLivraison += TimeSpan.FromMinutes(15); // 15 min pour une livraison pour l'instant
                 }
 
                 TempsLivraison = $"{(int)totalLivraison.TotalHours} h {totalLivraison.Minutes} min";

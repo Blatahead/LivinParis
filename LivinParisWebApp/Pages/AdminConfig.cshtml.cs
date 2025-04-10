@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ClassLibraryRendu2;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
-using System.Security.Cryptography.X509Certificates;
 
 namespace LivinParisWebApp.Pages
 {
@@ -21,7 +19,7 @@ namespace LivinParisWebApp.Pages
         }
         public string CheminJson { get; set; }
 
-        public List<StationNoeud> Chemin { get; set; }
+        //public List<StationNoeud> Chemin { get; set; }
         public void OnGet()
         {
             var graphe = new Graphe();
