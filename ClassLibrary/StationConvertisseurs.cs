@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using ClassLibrary;
 
-namespace ClassLibraryRendu2
+namespace ClassLibrary
 {
     public static class StationConvertisseurs
     {
@@ -43,7 +44,6 @@ namespace ClassLibraryRendu2
                 Ligne = station.Ligne,
             };
         }
-
         public static ArcDTO ArcToDTO(Arc arc)
         {
             return new ArcDTO
