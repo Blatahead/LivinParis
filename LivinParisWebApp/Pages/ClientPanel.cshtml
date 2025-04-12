@@ -1,4 +1,276 @@
 ﻿@page
 @model LivinParisWebApp.Pages.ClientPanelModel
 @{
+    Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
+    ViewData["Title"] = "Panel Client";
+}
+<div class="top-panel" style="justify-content:end;">
+    <div class="right-settings-panel">
+        <form method="post">
+            <button class="btn-settings"
+                    type="submit"
+                    asp-page-handler="SettingsCuisinier">
+                Paramètres
+            </button>
+        </form>
+    </div>
+</div>
+<div class="content-panel-client">
+	<div class="top-line">
+		<div class="left-colonne">
+			<div class="left-colonne-container">
+				<div id="map"></div>
+			</div>
+		</div>
+		<div class="mid-colonne">
+			<p class="menu-title">Plats disponibles</p>
+			<div class="dish-list">
+				<!-- Carte d’un plat -->
+				<div class="dish-card">
+					<div class="dish-info">
+						<p>Pâtes bolognaise</p>
+						<span class="rose">Cuisinier : Olivier</span>
+						<span class="rose">Livraison : 15 min</span>
+					</div>
+					<div class="dish-actions">
+						<button class="details-btn">Détails</button>
+					</div>
+				</div>
+				<div class="dish-card">
+					<div class="dish-info">
+						<p>Pâtes bolognaise</p>
+						<span class="rose">Cuisinier : Olivier</span>
+						<span class="rose">Livraison : 15 min</span>
+					</div>
+					<div class="dish-actions">
+						<button class="details-btn">Détails</button>
+					</div>
+				</div>
+				<div class="dish-card">
+					<div class="dish-info">
+						<p>Pâtes bolognaise</p>
+						<span class="rose">Cuisinier : Olivier</span>
+						<span class="rose">Livraison : 15 min</span>
+					</div>
+					<div class="dish-actions">
+						<button class="details-btn">Détails</button>
+					</div>
+				</div>
+				<div class="dish-card">
+					<div class="dish-info">
+						<p>Pâtes bolognaise</p>
+						<span class="rose">Cuisinier : Olivier</span>
+						<span class="rose">Livraison : 15 min</span>
+					</div>
+					<div class="dish-actions">
+						<button class="details-btn">Détails</button>
+					</div>
+				</div>
+				<div class="dish-card">
+					<div class="dish-info">
+						<p>Pâtes bolognaise</p>
+						<span class="rose">Cuisinier : Olivier</span>
+						<span class="rose">Livraison : 15 min</span>
+					</div>
+					<div class="dish-actions">
+						<button class="details-btn">Détails</button>
+					</div>
+				</div>
+				<div class="dish-card">
+					<div class="dish-info">
+						<p>Pâtes bolognaise</p>
+						<span class="rose">Cuisinier : Olivier</span>
+						<span class="rose">Livraison : 15 min</span>
+					</div>
+					<div class="dish-actions">
+						<button class="details-btn">Détails</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="right-colonne">
+				<!-- A automatiser -->
+				<p class="panier-title">Panier</p>
+				<div class="dish-list">
+					<!-- Carte d’un plat -->
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>Pâtes bolognaise</p>
+							<span class="rose">5€</span>
+						</div>
+						<div class="dish-actions">
+							<button class="delete-btn">🗑️</button>
+						</div>
+					</div>
+				</div>
+				<div class="bottom-panier">
+					<div class="total-panier">
+						<p>Total : 20€</p>
+					</div>
+					<div class="btn-pass-command">
+						<form method="post">
+							<button type="submit" asp-page-handler="PassCommand">
+								Passer commander
+							</button>
+						</form>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="bottom-line">
+		<div class="bottom-line-container">
+
+		</div>
+	</div>
+</div>
+@section Scripts {
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+	<script>
+		const ligneColors = {
+			1: "#FFCD00",
+			2: "#003CA6",
+			3: "#837902",
+			"3bis": "#6EC4E8",
+			4: "#CF009E",
+			5: "#FF7E2E",
+			6: "#6ECEB2",
+			7: "#F5A9BB",
+			"7bis": "#6ECA97",
+			8: "#E19BDF",
+			9: "#B6BD00",
+			10: "#C9910D",
+			11: "#704B1C",
+			12: "#007852",
+			13: "#99D4E4",
+			14: "#62259D"
+		};
+
+		const stations = @Html.Raw(ViewData["Stations"]);
+		const arcs = @Html.Raw(ViewData["Arcs"]);
+
+
+		// Création de la map
+		const map = L.map('map').setView([48.8566, 2.3522], 12);
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '© OpenStreetMap contributors'
+		}).addTo(map);
+
+		// Pour retrouver les stations par ID
+		const stationMap = {};
+		stations.forEach(st => {
+			stationMap[st.id] = st;
+
+			const marker = L.circleMarker([st.Latitude, st.Longitude], {
+				radius: 5,
+				fillColor: "#ff5e5e",
+				color: "#000",
+				weight: 1,
+				opacity: 0.8,
+				fillOpacity: 0.8
+			}).addTo(map);
+			marker.bindPopup(`<strong>${st.nom}</strong><br/>ID: ${st.id}`);
+		});
+
+		// Ajout des arcs
+		arcs.forEach(arc => {
+			const srcLat = arc.SourceLat;
+			const srcLong = arc.SourceLong;
+			const destLat = arc.DestLat;
+			const destLong = arc.DestLong;
+			const ligne = arc.Ligne;
+
+			const color = ligneColors[ligne] || "#000";
+
+			L.polyline([
+				[srcLat, srcLong],
+				[destLat, destLong]
+			], {
+				color: color,
+				weight: 4,
+				opacity: 0.8
+			}).addTo(map);
+		});
+	</script>
 }

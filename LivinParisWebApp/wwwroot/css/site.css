@@ -965,6 +965,269 @@ header {
     }
 }
 
+.content-panel-client {
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+
+    .top-line
+    {
+        height: 70%;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+
+        .left-colonne
+        {
+            height: 100%;
+            width: 30%;
+            display: flex;
+            align-items:center;
+            justify-content:center;
+
+            .left-colonne-container{
+                height:90%;
+                width:90%;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+
+                #map{
+                    display: flex;
+                    height: 100%;
+                    width: 100%;
+                    border-radius: 10px;
+
+                    a.leaflet-control-zoom-in, 
+                    a.leaflet-control-zoom-out{
+                        background-color: #7b2cbf;
+                        font-size: 22px;
+                        border: none;
+                        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+                        transition: all 0.2s ease-in-out;
+
+                        span{
+                            color: #fffefe;
+                        }
+
+                    }
+
+                    a.leaflet-control-zoom-in:hover,
+                    a.leaflet-control-zoom-out:hover {
+                        background-color: #e0aaff;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+        .mid-colonne {
+            display: flex;
+            height: 100%;
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .rose{
+                color: #e0aaff;
+                font-size: 1.2vw;
+            }
+
+            .menu-title {
+                height: 10%;
+                font-size: 1.5vw;
+                margin-top: 3vh;
+            }
+
+            .dish-list {
+                height: 47.5vh;
+                width: 80%;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .dish-card {
+                background-color: rgba(255, 255, 255, 0.25);
+                border-radius: 15px;
+                margin-right: 1vw;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .dish-info {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                margin-left: 2vw;
+                gap: 0.2rem;
+                font-size: 1.2vw;
+            }
+
+            .dish-actions {
+                display: flex;
+                flex-direction: row;
+                justify-content:end;
+                margin-right: 1vw;
+                height: 70%;
+                width: 50%;
+
+                form{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 0.3rem;
+                    width: 100%;
+                }
+
+            }
+
+            .details-btn {
+                background-color: #e0aaff;
+                color: #fffefe;
+                border: none;
+                height: 100%;
+                width: 60%;
+                border-radius: 15px;
+                font-family: "Lilita One", sans-serif;
+                font-style: normal;
+                font-size: 1.2vw;
+                cursor: pointer;
+            }
+        }
+
+        .right-colonne {
+            height: 100%;
+            width: 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .panier-title{
+                height: 10%;
+                font-size: 1.5vw;
+                margin-top: 3vh;
+            }
+
+            .dish-list{
+                height: 65%;
+                width: 90%;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+
+            }
+            .dish-card {
+                background-color: rgba(255, 255, 255, 0.25);
+                border-radius: 15px;
+                display: flex;
+                min-height: 11%;
+                height: auto;
+                margin-right: 1vw;
+                align-items: center;
+            }
+
+            .dish-info {
+                width: 80%;
+                display: flex;
+                flex-direction: row;
+                justify-content:space-between;
+                margin-left: 2vw;
+                gap: 0.2rem;
+                font-size: 1.2vw;
+            }
+
+            .dish-actions {
+                display: flex;
+                flex-direction: row;
+                justify-content: end;
+                margin-right: 1vw;
+                height: 70%;
+                width: 20%;
+
+                form{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 0.3rem;
+                    width: 100%;
+                }
+            }
+
+            .delete-btn {
+                background-color: transparent;
+                border: none;
+                font-size: 0.7vw;
+                cursor: pointer;
+                height: 100%;
+                width: 50%;
+                background-color: #5a189a;
+                border-radius: 15px;
+            }
+
+            .bottom-panier {
+                width: 90%;
+                height: 20%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+
+                .total-panier{
+                    display:flex;
+                    align-self: end;
+                    font-size:1.2vw;
+                }
+
+                .btn-pass-command{
+                    display: flex;
+                    width: 100%;
+                    height: 50%;
+
+                    form{
+                        height: 100%;
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+
+                        button{
+                            height: 100%;
+                            background-color: #E0AAFF;
+                            color: #fffefe;
+                            border: none;
+                            border-radius: 10px;
+                            font-size: 1.5vw;
+                            font-family: "Lilita One", sans-serif;
+                            text-align: center;
+                            width: 100%;
+                            box-sizing: border-box;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .bottom-line {
+        height: 30%;
+        width: 100%;
+        display: flex;
+        align-items:center;
+        flex-direction: row;
+
+        .bottom-line-container{
+            height:90%;
+            width:97.5%;
+            background-color: rgba(255, 255, 255, 0.25);
+            border-radius: 15px;
+            display: flex;
+            margin-left:auto;
+            margin-right:auto;
+        }
+    }
+}
     .content-see-command {
         width: 90%;
         height: 90vh;
