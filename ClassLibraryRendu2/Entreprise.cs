@@ -56,7 +56,7 @@ namespace ClassLibraryRendu2
         public void CreerEntreprise(Entreprise<T> p1)
         {
             ConnexionDB.ConnectToDatabase();
-            string demande = "INSERT INTO Entreprise (Num_siret,Nom_entreprise,Nom_referent,Adresse_entreprise) VALUES ("+p1.numeroSiret+","+p1.nomEntreprise+","+p1.nomReferent+","+p1.adresseEntreprise+")";
+            string demande = "INSERT INTO Entreprise (Num_siret,Nom_entreprise,Nom_référent,Adresse_entreprise) VALUES ("+p1.numeroSiret+","+p1.nomEntreprise+","+p1.nomReferent+","+p1.adresseEntreprise+")";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
 
@@ -69,7 +69,7 @@ namespace ClassLibraryRendu2
         {
 
             ConnexionDB.ConnectToDatabase();
-            string demande = "UPDATE Entreprise SET Num_siret="+p1.numeroSiret+", Nom_entreprise="+p1.nomEntreprise+", Nom_referent="+p1.nomReferent+" WHERE Id_Client="+p1.IdClient+";";
+            string demande = "UPDATE Entreprise SET Num_siret="+p1.numeroSiret+", Nom_entreprise="+p1.nomEntreprise+", Nom_référent="+p1.nomReferent+" WHERE Id_Client="+p1.IdClient+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
 
         }

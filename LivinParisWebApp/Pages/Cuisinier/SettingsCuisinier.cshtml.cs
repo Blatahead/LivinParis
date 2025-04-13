@@ -94,7 +94,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
                         c.Prix_commande,
                         p.Prenom_particulier,
                         p.Nom_particulier,
-                        e.Nom_referent,
+                        e.Nom_référent,
                         e.Nom_entreprise
                     FROM Commande c
                     LEFT JOIN Client_ cl ON c.id_Utilisateur = cl.Id_Utilisateur
@@ -120,9 +120,9 @@ namespace LivinParisWebApp.Pages.Cuisinier
                             nomPrenom = $"{reader["Prenom_particulier"]} {reader["Nom_particulier"]}";
                         }
                         // Sinon si c’est une entreprise
-                        else if (reader["Nom_referent"] != DBNull.Value && reader["Nom_entreprise"] != DBNull.Value)
+                        else if (reader["Nom_référent"] != DBNull.Value && reader["Nom_entreprise"] != DBNull.Value)
                         {
-                            nomPrenom = $"{reader["Nom_referent"]} ({reader["Nom_entreprise"]})";
+                            nomPrenom = $"{reader["Nom_référent"]} ({reader["Nom_entreprise"]})";
                         }
 
                         if (!string.IsNullOrEmpty(nomPrenom) && !ClientsServis.Contains(nomPrenom))

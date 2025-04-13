@@ -43,7 +43,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             }
         }
-
         public IActionResult OnPostCuisinierPanel()
         {
             return RedirectToPage("/CuisinierPanel");

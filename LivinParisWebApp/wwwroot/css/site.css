@@ -608,6 +608,11 @@ header {
     gap: 1rem;
     align-items: center;
     justify-content: space-evenly;
+
+    form{
+        height:35%;
+        width:40%;
+    }
 }
 
 .nav-btn {
@@ -615,8 +620,8 @@ header {
     color: #fffefe;
     font-family: "Lilita One", sans-serif;
     font-size: 1.5vw;
-    width: 40%;
-    height: 35%;
+    width: 100%;
+    height: 100%;
     border: none;
     border-radius: 0.5rem;
     /*    font-weight: 600;*/
