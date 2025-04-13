@@ -26,16 +26,18 @@ namespace LivinParis.Pages
 
         public void OnGet()
         {
-            Email = TempData["Email"] as string;
             TempData.Keep("Email");
+            TempData.Keep("Password");
         }
 
         public async Task<IActionResult> OnPostCestParti()
         {
-            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
-            if (userId == 0)
+            string email = TempData["Email"] as string;
+            string password = TempData["Password"] as string;
+
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                ModelState.AddModelError("", "Utilisateur non connecté.");
+                ModelState.AddModelError("", "Informations d'inscription manquantes.");
                 return Page();
             }
 
@@ -47,19 +49,32 @@ namespace LivinParis.Pages
 
             try
             {
-                // Insertion Client_
+                //Utilisateur
+                var insertUserCmd = new MySqlCommand(@"
+                    INSERT INTO Utilisateur (Mail_Utilisateur, Mdp)
+                    VALUES (@Email, @Pwd);
+                    SELECT LAST_INSERT_ID();", conn, transaction);
+
+                insertUserCmd.Parameters.AddWithValue("@Email", email);
+                insertUserCmd.Parameters.AddWithValue("@Pwd", password);
+
+                int userId = Convert.ToInt32(await insertUserCmd.ExecuteScalarAsync());
+
+                //Client_
                 var insertClientCmd = new MySqlCommand("INSERT INTO Client_ (Id_Utilisateur) VALUES (@UserId)", conn, transaction);
                 insertClientCmd.Parameters.AddWithValue("@UserId", userId);
                 await insertClientCmd.ExecuteNonQueryAsync();
 
+                //Récupérer Id_Client
                 var getLastIdCmd = new MySqlCommand("SELECT LAST_INSERT_ID()", conn, transaction);
                 int clientId = Convert.ToInt32(await getLastIdCmd.ExecuteScalarAsync());
 
-                // Insertion Entreprise
+                //Insertion dans Entreprise
                 string adresse = $"{Voirie} {Numéro}, {Arrondissement}e";
-                var insertEntrepriseCmd = new MySqlCommand(
-                    "INSERT INTO Entreprise (Id_Client, Nom_entreprise, Nom_référent, Adresse_entreprise, Num_SIRET) " +
-                    "VALUES (@ClientId, @Nom, @Referent, @Adresse, @Siret)", conn, transaction);
+                var insertEntrepriseCmd = new MySqlCommand(@"
+                    INSERT INTO Entreprise (Id_Client, Nom_entreprise, Nom_référent, Adresse_entreprise, Num_SIRET)
+                    VALUES (@ClientId, @Nom, @Referent, @Adresse, @Siret)", conn, transaction);
+
                 insertEntrepriseCmd.Parameters.AddWithValue("@ClientId", clientId);
                 insertEntrepriseCmd.Parameters.AddWithValue("@Nom", NomEntreprise);
                 insertEntrepriseCmd.Parameters.AddWithValue("@Referent", NomReferent);
@@ -69,6 +84,8 @@ namespace LivinParis.Pages
                 await insertEntrepriseCmd.ExecuteNonQueryAsync();
                 await transaction.CommitAsync();
 
+                // Enregistrer l’utilisateur en session
+                HttpContext.Session.SetInt32("UserId", userId);
                 return RedirectToPage("/ClientPanel");
             }
             catch (Exception ex)
@@ -78,7 +95,6 @@ namespace LivinParis.Pages
                 return Page();
             }
         }
-
 
         public IActionResult OnPostChoixPe()
         {

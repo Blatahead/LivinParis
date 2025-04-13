@@ -44,23 +44,22 @@
 			14: "#62259D"
 		};
 
-		const chemin = @Html.Raw(Model.CheminJson);
+		const chemin = @Html.Raw(Model.CheminJson)
 		// console.log("Chemin JS :", chemin);
 
-		const stations = @Html.Raw(ViewData["Stations"]);
+		const stations = @Html.Raw(ViewData["Stations"])
 		// console.log("Stations :", stations);
 
-		const arcs = @Html.Raw(ViewData["Arcs"]);
+		const arcs = @Html.Raw(ViewData["Arcs"])
 		// console.log("Arcs :", arcs);
 
-
-		// Création de la map
+		//carte
 		const map = L.map('map').setView([48.8566, 2.3522], 12);
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '© OpenStreetMap contributors'
 		}).addTo(map);
 
-		// Pour retrouver les stations par ID
+		//Ajout des stations
 		const stationMap = {};
 		stations.forEach(st => {
 			stationMap[st.id] = st;
@@ -98,7 +97,7 @@
 
 		// Affichage du chemin trouvé en noir
 		if (chemin && chemin.length > 1) {
-			// console.log("Coordonnées utilisées dans latlngs :", chemin.map(s => [s.Latitude, s.Longitude]));
+			console.log("Coordonnées utilisées dans latlngs :", chemin.map(s => [s.Latitude, s.Longitude]));
 
 			const latlngs = chemin.map(s => [parseFloat(s.Latitude), parseFloat(s.Longitude)]);
 
@@ -107,7 +106,8 @@
 				weight: 6,
 				opacity: 0.9
 			}).addTo(map);
-			map.fitBounds(L.polyline(latlngs).getBounds());
+			//si on veut centrer sur le chemin dijsktra
+			// map.fitBounds(L.polyline(latlngs).getBounds());
 		} else {
 			console.log("Aucun chemin trouvé ou chemin trop court.");
 		}

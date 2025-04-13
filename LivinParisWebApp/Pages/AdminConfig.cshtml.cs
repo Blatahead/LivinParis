@@ -39,25 +39,25 @@ namespace LivinParisWebApp.Pages
             CheminJson = JsonConvert.SerializeObject(cheminDTOs);
 
             var stationDTOs = graphe.Stations.Select(st => new StationDTO
-                {
-                    Id = st.Id,
-                    Nom = st.Nom,
-                    Latitude = st.Latitude,
-                    Longitude = st.Longitude
-                })
+            {
+                Id = st.Id,
+                Nom = st.Nom,
+                Latitude = st.Latitude,
+                Longitude = st.Longitude
+            })
                 .ToList();
 
             var arcDTOs = graphe.Arcs.Select(arc => new ArcDTO
-                {
-                    SourceId = arc.Source.Id,
-                    SourceLat = arc.Source.Latitude,
-                    SourceLong = arc.Source.Longitude,
-                    DestLat = arc.Destination.Latitude,
-                    DestLong = arc.Destination.Longitude,
-                    DestinationId = arc.Destination.Id,
-                    Distance = arc.Distance,
-                    Ligne = arc.Ligne
-                }).ToList();
+            {
+                SourceId = arc.Source.Id,
+                SourceLat = arc.Source.Latitude,
+                SourceLong = arc.Source.Longitude,
+                DestLat = arc.Destination.Latitude,
+                DestLong = arc.Destination.Longitude,
+                DestinationId = arc.Destination.Id,
+                Distance = arc.Distance,
+                Ligne = arc.Ligne
+            }).ToList();
 
             ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
             ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
