@@ -21,6 +21,7 @@ namespace LivinParisWebApp.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
+            //vérfication qu'un utilisateur est connecté
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
             if (userId == 0) return RedirectToPage("/Login");
 
@@ -28,9 +29,20 @@ namespace LivinParisWebApp.Pages
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // 1. Récupérer l'ID cuisinier
+            //vérification qu'un cuisinier est associé au userID
+            MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM Cuisinier WHERE Id_Utilisateur = @id", conn);
+            cmd.Parameters.AddWithValue("@id", userId);
+
+            long count = (long)cmd.ExecuteScalar();
+
+            if (count == 0)
+            {
+                return RedirectToPage("/NoCuisinierAccount");
+            }
+
+            //ID cuisinier
             int cuisinierId = 0;
-            var getIdCmd = new MySqlCommand("SELECT Id_Cuisinier, Liste_de_plats, Liste_commandes, Liste_commandes_pretes FROM Cuisinier WHERE Id_Utilisateur = @UserId", conn);
+            MySqlCommand getIdCmd = new MySqlCommand("SELECT Id_Cuisinier, Liste_de_plats, Liste_commandes, Liste_commandes_pretes FROM Cuisinier WHERE Id_Utilisateur = @UserId", conn);
             getIdCmd.Parameters.AddWithValue("@UserId", userId);
             using var reader = await getIdCmd.ExecuteReaderAsync();
             string? commandes = null, pretes = null, plats = null;
@@ -43,8 +55,7 @@ namespace LivinParisWebApp.Pages
                 }
                 else
                 {
-                    // Gérer l'erreur ou mettre un fallback
-                    ModelState.AddModelError("", "ID cuisinier introuvable.");
+                    //cas d'erreur normalement inateignable
                     return Page();
                 }
 
@@ -54,20 +65,18 @@ namespace LivinParisWebApp.Pages
             }
             reader.Close();
 
-            // 2. Prochaine livraison (commande prête ?)
+            //Prochaine livraison (commande prête ?)
             ProchaineLivraison = !string.IsNullOrEmpty(pretes) ? DateTime.Now.AddMinutes(30).ToString("dd/MM/yy à HH:mm") : "Aucune";
 
-            // 3. Nb de commandes
+            //Nb de commandes
             NbCommandesEnCours = string.IsNullOrEmpty(commandes) ? 0 : commandes.Split(',').Length;
 
-            // 4. Plat du jour
-            var platCmd = new MySqlCommand(@"
-    SELECT Nom_platJ, prix_platJ, Nombre_de_personneJ, 
-           Nationalité_platJ, Régime_alimentaire_platJ
-    FROM Plat_du_jour
-    WHERE id_Cuisinier = @Cid
-    ORDER BY Date_fabrication_platJ DESC
-    LIMIT 1", conn);
+            //Plat du jour
+            var platCmd = new MySqlCommand(@"SELECT Nom_platJ, prix_platJ, Nombre_de_personneJ, Nationalité_platJ, Régime_alimentaire_platJ
+                FROM Plat_du_jour
+                WHERE id_Cuisinier = @Cid
+                ORDER BY Date_fabrication_platJ DESC
+                LIMIT 1", conn);
             platCmd.Parameters.AddWithValue("@Cid", cuisinierId);
 
             using var platReader = await platCmd.ExecuteReaderAsync();
@@ -86,9 +95,7 @@ namespace LivinParisWebApp.Pages
             }
             platReader.Close();
 
-
-
-            // 5. Liste des plats disponibles (mocké avec nom et cuisinier seulement)
+            //Liste des plats disponibles
             if (!string.IsNullOrEmpty(plats))
             {
                 var noms = plats.Split(',');
@@ -101,12 +108,10 @@ namespace LivinParisWebApp.Pages
 
             return Page();
         }
-
         public IActionResult OnPostSettingsCuisinier()
         {
             return RedirectToPage("/Cuisinier/SettingsCuisinier");
         }
-
 
         public IActionResult OnPostChangeTodaysPlat()
         {
@@ -139,7 +144,6 @@ namespace LivinParisWebApp.Pages
             public string Nationalite { get; set; }
             public string Regime { get; set; }
         }
-
 
         public class PlatDispoDto
         {

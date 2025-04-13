@@ -21,12 +21,13 @@
             <img src="~/src/img/logo_livinparis.png" alt="Logo" class="nav-logo" />
         </div>
         <div class="nav-btns">
-            <button class="nav-btn">
-                Espace Client
-            </button>
-            <button class="nav-btn">
-                Espace Cuisinier
-            </button>
+            <form method="get" asp-page="/ClientPanel">
+                <button type="submit" class="nav-btn">Espace Client</button>
+            </form>
+
+            <form method="get" asp-page="/CuisinierPanel">
+                <button type="submit" class="nav-btn">Espace Cuisinier</button>
+            </form>
         </div>
     </header>
 

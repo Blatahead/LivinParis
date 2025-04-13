@@ -48,5 +48,15 @@ namespace LivinParisWebApp.Pages
             ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
             ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
         }
+
+        public IActionResult OnPostClientPanel()
+        {
+            return Page();
+        }
+        public IActionResult OnPostCuisinierPanel()
+        {
+            //checker l'existance du cuisinier
+            return RedirectToPage("/CuisinierPanel");
+        }
     }
 }

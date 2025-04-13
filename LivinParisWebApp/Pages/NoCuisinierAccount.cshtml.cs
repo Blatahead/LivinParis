@@ -12,7 +12,7 @@ namespace LivinParisWebApp.Pages
         //penser à rediriger vers le panel (login pour test)
         public IActionResult OnPostClientPanel()
         {
-            return RedirectToPage("/Login");
+            return RedirectToPage("/ClientPanel");
         }
 
         // bien penser au fait que ce passage skip la page register (donc récup les valeurs mises dans login)

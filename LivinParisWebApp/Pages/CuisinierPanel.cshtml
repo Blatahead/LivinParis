@@ -22,17 +22,14 @@
             <div class="stats-panel">
                 <div class="item1-stats-panel">
                     <p class="title-stats-panel">Prochaine livraison prévue à</p>
-                    <!-- A automatiser -->
                     <p class="text-stats-panel">@Model.ProchaineLivraison</p>
                 </div>
                 <div class="item2-stats-panel">
                     <p class="title-stats-panel">Nb de commandes en cours</p>
-                    <!-- A automatiser -->
                     <p class="text-stats-panel">@Model.NbCommandesEnCours</p>
                 </div>
                 <div class="item3-stats-panel">
                     <p class="title-stats-panel">Moyenne de notation</p>
-                    <!-- A automatiser -->
                     <p class="text-stats-panel">@Model.MoyenneNotation</p>
                 </div>
             </div>
@@ -50,25 +47,20 @@
             <p class="title-mid-colonne">Plat du jour</p>
             <div class="todays-plat">
                 <div class="nom-plat">
-                    <!-- A automatiser -->
                     <p>@Model.PlatDuJour?.Nom</p>
                 </div>
-                <!-- A automatiser -->
                 <div class="prix-plat">
                     <p>Prix :</p>
                     <p>@Model.PlatDuJour?.Prix</p>
                 </div>
-                <!-- A automatiser -->
                 <div class="nb-pers-plat">
                     <p>Nb de personnes :</p>
                     <p>@Model.PlatDuJour?.NbPersonnes</p>
                 </div>
-                <!-- A automatiser -->
                 <div class="natio-plat rose">
                     <p>Nationalité :</p>
                     <p>@Model.PlatDuJour?.Nationalite</p>
                 </div>
-                <!-- A automatiser -->
                 <div class="regime-plat rose">
                     <p>Régime :</p>
                     <p>@Model.PlatDuJour?.Regime</p>
@@ -107,7 +99,6 @@
                 </div>
             }
         </div>
-
         <div class="btn-add-plat">
             <form method="post">
                 <button type="submit" asp-page-handler="AddPlat">

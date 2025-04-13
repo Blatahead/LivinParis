@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MySql.Data.MySqlClient;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace LivinParis.Pages
 {
     public class CreateParticulierModel : PageModel
     {
+        private readonly IConfiguration _config;
         [BindProperty]
         public string FirstName { get; set; }
 
@@ -22,14 +25,69 @@ namespace LivinParis.Pages
 
         public string Message { get; set; }
 
-        //quand on clique sur "C'est parti"
-
-        public IActionResult OnPostCestParti()
+        public CreateParticulierModel(IConfiguration config)
         {
-            return RedirectToPage();
+            _config = config;
         }
 
-        // Handler pour le bouton "Retour"
+        //quand on clique sur "C'est parti"
+
+        public async Task<IActionResult> OnPostCestParti()
+        {
+            string email = TempData["Email"]?.ToString();
+            string password = TempData["Password"]?.ToString();
+
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                ModelState.AddModelError("", "Erreur : informations de connexion manquantes.");
+                return Page();
+            }
+
+            string connStr = _config.GetConnectionString("MyDb");
+
+            using var conn = new MySqlConnection(connStr);
+            await conn.OpenAsync();
+            using var transaction = await conn.BeginTransactionAsync();
+
+            try
+            {
+                //Utilisateur
+                var insertUserCmd = new MySqlCommand(
+                    "INSERT INTO Utilisateur (Mail_Utilisateur, Mdp) VALUES (@Email, @Pwd); SELECT LAST_INSERT_ID();", conn, transaction);
+                insertUserCmd.Parameters.AddWithValue("@Email", email);
+                insertUserCmd.Parameters.AddWithValue("@Pwd", password);
+                int userId = Convert.ToInt32(await insertUserCmd.ExecuteScalarAsync());
+
+                //Client_
+                var insertClientCmd = new MySqlCommand("INSERT INTO Client_ (Id_Utilisateur) VALUES (@UserId); SELECT LAST_INSERT_ID();", conn, transaction);
+                insertClientCmd.Parameters.AddWithValue("@UserId", userId);
+                int clientId = Convert.ToInt32(await insertClientCmd.ExecuteScalarAsync());
+
+                //Particulier
+                string adresse = $"{Voirie} {Numéro}, {Arrondissement}e";
+                var insertPartCmd = new MySqlCommand(
+                    "INSERT INTO Particulier (Prenom_particulier, Nom_particulier, Adresse_particulier, Id_Client) " +
+                    "VALUES (@Prenom, @Nom, @Adresse, @ClientId)", conn, transaction);
+                insertPartCmd.Parameters.AddWithValue("@Prenom", FirstName);
+                insertPartCmd.Parameters.AddWithValue("@Nom", Name);
+                insertPartCmd.Parameters.AddWithValue("@Adresse", adresse);
+                insertPartCmd.Parameters.AddWithValue("@ClientId", clientId);
+                await insertPartCmd.ExecuteNonQueryAsync();
+
+                await transaction.CommitAsync();
+
+                HttpContext.Session.SetInt32("UserId", userId);
+                TempData["Email"] = email;
+                return RedirectToPage("/ClientPanel");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                ModelState.AddModelError("", "Erreur : " + ex.Message);
+                return Page();
+            }
+        }
+
         public IActionResult OnPostChoixPe()
         {
             return RedirectToPage("/ChoixPe");

@@ -19,11 +19,11 @@ namespace ClassLibrary
                 Id = Convert.ToInt32(parts[2]),
                 Ligne = parts[3],
                 Nom = parts[4].Trim('"'),
-                Longitude = Convert.ToDouble(parts[5], CultureInfo.InvariantCulture),
-                Latitude = Convert.ToDouble(parts[6], CultureInfo.InvariantCulture),
+                Longitude = Convert.ToDouble(parts[5].Replace(',', '.'), CultureInfo.InvariantCulture),
+                Latitude = Convert.ToDouble(parts[6].Replace(',', '.'), CultureInfo.InvariantCulture),
                 CodePostal = Convert.ToInt32(parts[7]),
                 Sens = Convert.ToInt32(parts[8]),
-                Distance = Convert.ToDouble(parts[9], CultureInfo.InvariantCulture),
+                Distance = Convert.ToDouble(parts[9].Replace(',', '.'), CultureInfo.InvariantCulture),
                 TempsVersStation = Convert.ToInt32(parts[10]),
             };
         }
