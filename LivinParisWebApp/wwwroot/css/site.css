@@ -635,7 +635,6 @@ header {
     height: 85vh;
     display: flex;
     flex-direction: column;
-    /* background-color: aqua; */
     margin-top: 15vh;
 
     .top-panel{
@@ -1169,7 +1168,7 @@ header {
 
             .bottom-panier {
                 width: 90%;
-                height: 20%;
+                height: 16%;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
@@ -1211,11 +1210,12 @@ header {
     }
 
     .bottom-line {
-        height: 30%;
+        height: 35%;
         width: 100%;
         display: flex;
         align-items:center;
         flex-direction: row;
+        font-size:1.5vw;
 
         .bottom-line-container{
             height:90%;
@@ -1225,6 +1225,99 @@ header {
             display: flex;
             margin-left:auto;
             margin-right:auto;
+
+            .rose
+            {
+                color: #E0AAFF;
+            }
+
+            .left{
+                height:100%;
+                width:60%;
+                display:flex;
+                flex-direction:column;
+
+                .up
+                {
+                    height: 60%;
+                    width: 90%;
+                    margin-left:auto;
+                    margin-right:auto;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content:space-between;
+
+                    .lup
+                    {
+                        height: 100%;
+                        width: 33%;
+                        display: flex;
+                        justify-content:space-evenly;
+                        flex-direction: column;
+                    }
+                    .mup {
+                        height: 100%;
+                        width: 33%;
+                        display: flex;
+                        justify-content: space-evenly;
+                        flex-direction: column;
+                    }
+                    .rup {
+                        height: 100%;
+                        width: 33%;
+                        display: flex;
+                        justify-content: space-evenly;
+                        flex-direction: column;
+                    }
+                }
+                .down {
+                    height: 40%;
+                    width: 90%;
+                    margin-left: auto;
+                    margin-right: auto;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-direction: row;
+                }
+            }
+
+            .mid {
+                height: 80%;
+                margin-top: auto;
+                margin-bottom: auto;
+                width: 20%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+
+
+                .add-panier{
+                    height: 40%;
+                    background-color: #E0AAFF;
+                    color: #fffefe;
+                    border: none;
+                    border-radius: 10px;
+                    font-size: 1.5vw;
+                    font-family: "Lilita One", sans-serif;
+                    text-align: center;
+                    width: 100%;
+                    box-sizing: border-box;
+                    cursor: pointer;
+                }
+            }
+            .right{
+                height:100%;
+                width:20%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+
+                img{
+                    width:90%;
+                    height:90%;
+                }
+            }
         }
     }
 }

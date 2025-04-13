@@ -4,7 +4,8 @@
     Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
     ViewData["Title"] = "Panel Client";
 }
-<div class="top-panel" style="justify-content:end;">
+<div class="top-panel" style="justify-content:space-between;">
+	<p class="message-top-panel">Bienvenue sur votre espace client !</p>
     <div class="right-settings-panel">
         <form method="post">
             <button class="btn-settings"
@@ -200,7 +201,33 @@
 	</div>
 	<div class="bottom-line">
 		<div class="bottom-line-container">
-
+			<div class="left">
+				<div class="up">
+					<div class="lup">
+						<p class="plat">Pâtes carbonara</p>
+						<p class="prix">Prix : 5€</p>
+					</div>
+					<div class="mup">
+						<p class="nationalite rose">Nationalité : Italie</p>
+						<p class="type rose">Type : Plat</p>
+					</div>
+					<div class="rup">
+						<p class="fab rose">Fabrication : 01/04/25</p>
+						<p class="perem rose">Péremption : 02/04/25</p>
+					</div>
+				</div>
+				<div class="down">
+					<p class="nb">Nb de personnes : 4</p>
+					<p class="ingre rose">Ingrédients : pâtes, sauce tomate, viande hachée</p>
+				</div>
+			</div>
+			<div class="mid">
+				<p class="regime  rose">Régime : aucun</p>
+				<button class="add-panier">Ajouter au panier</button>
+			</div>
+			<div class="right">
+				<img src="/src/img/plat.png" alt="Image plat"/>
+			</div>
 		</div>
 	</div>
 </div>
