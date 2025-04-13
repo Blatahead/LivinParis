@@ -47,8 +47,7 @@ namespace LivinParis.Pages
 
             if (!await reader.ReadAsync())
             {
-                Message = "Identifiants incorrects.";
-                return Page();
+                return RedirectToPage("/AnyAccount");
             }
 
             int userId = reader.GetInt32(0);
@@ -57,8 +56,6 @@ namespace LivinParis.Pages
             // Stocker l'ID en session
             HttpContext.Session.SetInt32("UserId", userId);
 
-            // Check rôles
-            // Vérifier les rôles (Client / Cuisinier)
             // check client
             cmd = new MySqlCommand("SELECT COUNT(*) FROM Client_ WHERE Id_Utilisateur = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", userId);
@@ -69,7 +66,6 @@ namespace LivinParis.Pages
             cmd.Parameters.AddWithValue("@Id", userId);
             bool isCuisinier = Convert.ToInt32(await cmd.ExecuteScalarAsync()) > 0;
 
-
             // Redirection selon le rôle
             if (isClient && isCuisinier)
                 return RedirectToPage("/CuisinierPanel"); // par défaut Cuisinier
@@ -77,8 +73,6 @@ namespace LivinParis.Pages
                 return RedirectToPage("/ClientPanel");
             else if (isCuisinier)
                 return RedirectToPage("/CuisinierPanel");
-
-            Message = "Aucun rôle associé à ce compte.";
             return Page();
         }
     }
