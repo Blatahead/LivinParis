@@ -73,6 +73,7 @@ namespace LivinParis.Pages
                 return RedirectToPage("/ClientPanel");
             else if (isCuisinier)
                 return RedirectToPage("/CuisinierPanel");
+            //manque le cas où la personne est utilisateur sans compte cuisinier ou client (après suppression de compte par exemple)
             return Page();
         }
     }
