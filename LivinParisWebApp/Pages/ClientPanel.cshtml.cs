@@ -18,10 +18,29 @@ namespace LivinParisWebApp.Pages
             _config = config;
         }
 
-        public void OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            var graphe = new Graphe();
+            //vérfication qu'un utilisateur est connecté
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            if (userId == 0) return RedirectToPage("/Login");
+
             string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            await conn.OpenAsync();
+
+            //vérification qu'un Client est associé au userID
+            MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM Client_ WHERE Id_Utilisateur = @id", conn);
+            cmd.Parameters.AddWithValue("@id", userId);
+
+            long count = (long)cmd.ExecuteScalar();
+
+            if (count == 0)
+            {
+                return RedirectToPage("/NoClientAccount");
+            }
+
+            //pas fini
+            var graphe = new Graphe();
             graphe.ChargerDepuisBDD(connStr);
 
             var stationDTOs = graphe.Stations.Select(st => new StationDTO
@@ -47,6 +66,7 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
             ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
+            return Page();
         }
 
         public IActionResult OnPostClientPanel()
