@@ -37,29 +37,37 @@ namespace LivinParis.Pages
             string email = TempData["Email"]?.ToString();
             string password = TempData["Password"]?.ToString();
 
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-            {
-                ModelState.AddModelError("", "Erreur : informations de connexion manquantes.");
-                return Page();
-            }
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
             string connStr = _config.GetConnectionString("MyDb");
-
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
             using var transaction = await conn.BeginTransactionAsync();
 
             try
             {
-                //Utilisateur
-                var insertUserCmd = new MySqlCommand(
-                    "INSERT INTO Utilisateur (Mail_Utilisateur, Mdp) VALUES (@Email, @Pwd); SELECT LAST_INSERT_ID();", conn, transaction);
-                insertUserCmd.Parameters.AddWithValue("@Email", email);
-                insertUserCmd.Parameters.AddWithValue("@Pwd", password);
-                int userId = Convert.ToInt32(await insertUserCmd.ExecuteScalarAsync());
+                //si pas encore connecté, créer un nouvel utilisateur
+                if (userId == 0 && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+                {
+                    var insertUserCmd = new MySqlCommand(
+                        "INSERT INTO Utilisateur (Mail_Utilisateur, Mdp) VALUES (@Email, @Pwd); SELECT LAST_INSERT_ID();",
+                        conn, transaction);
+                    insertUserCmd.Parameters.AddWithValue("@Email", email);
+                    insertUserCmd.Parameters.AddWithValue("@Pwd", password);
+
+                    userId = Convert.ToInt32(await insertUserCmd.ExecuteScalarAsync());
+
+                    HttpContext.Session.SetInt32("UserId", userId);
+                }
+                else if (userId == 0)
+                {
+                    ModelState.AddModelError("", "Utilisateur non identifié.");
+                    return Page();
+                }
 
                 //Client_
-                var insertClientCmd = new MySqlCommand("INSERT INTO Client_ (Id_Utilisateur) VALUES (@UserId); SELECT LAST_INSERT_ID();", conn, transaction);
+                var insertClientCmd = new MySqlCommand(
+                    "INSERT INTO Client_ (Id_Utilisateur) VALUES (@UserId); SELECT LAST_INSERT_ID();", conn, transaction);
                 insertClientCmd.Parameters.AddWithValue("@UserId", userId);
                 int clientId = Convert.ToInt32(await insertClientCmd.ExecuteScalarAsync());
 
@@ -76,7 +84,6 @@ namespace LivinParis.Pages
 
                 await transaction.CommitAsync();
 
-                HttpContext.Session.SetInt32("UserId", userId);
                 TempData["Email"] = email;
                 return RedirectToPage("/ClientPanel");
             }
