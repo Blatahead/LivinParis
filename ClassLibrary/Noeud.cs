@@ -6,7 +6,17 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary
 {
-    internal class Noeud
+    public class Noeud
     {
+        public string Id { get; }
+        public string Type { get; }  // Client, Commande, Plat, Cuisinier
+
+        public Noeud(string id, string type)
+        {
+            Id = id;
+            Type = type;
+        }
+
+        public override string ToString() => $"[{Type}] {Id}";
     }
 }
