@@ -80,13 +80,18 @@ namespace LivinParisWebApp.Pages.Cuisinier
             string peremption = $"{AnneePerem}-{MoisPerem}-{JourPerem}";
             string photo = ""; // pas encore supporté
 
-            //Num_platJ unique
-            int idPlat = 1; // valeur au cas où y'a pas de plat
+            //supp le plat du jour précédent s'il existe
+            var deleteCmd = new MySqlCommand("DELETE FROM Plat_du_jour WHERE id_Cuisinier = @IdCuisinier", conn);
+            deleteCmd.Parameters.AddWithValue("@IdCuisinier", cuisinierId);
+            await deleteCmd.ExecuteNonQueryAsync();
+
+            //num plat unique
+            int idPlat = 1;
             var dernierNumPlat = new MySqlCommand("SELECT MAX(Num_platJ) FROM Plat_du_jour", conn);
-            object dernierNumPlatResult = dernierNumPlat.ExecuteScalar();
-            if (dernierNumPlatResult != DBNull.Value && result != null)
+            object dernierNumPlatResult = await dernierNumPlat.ExecuteScalarAsync();
+            if (dernierNumPlatResult != DBNull.Value && dernierNumPlatResult != null)
             {
-                idPlat = Convert.ToInt32(result) + 1;
+                idPlat = Convert.ToInt32(dernierNumPlatResult) + 1;
             }
 
             var insertCmd = new MySqlCommand(
