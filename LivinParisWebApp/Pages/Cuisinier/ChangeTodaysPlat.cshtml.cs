@@ -64,7 +64,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // 1. Récupération de l’Id_Cuisinier
+            //Id_Cuisinier
             var getCuisinierCmd = new MySqlCommand("SELECT Id_Cuisinier FROM Cuisinier WHERE Id_Utilisateur = @UserId", conn);
             getCuisinierCmd.Parameters.AddWithValue("@UserId", userId);
             object result = await getCuisinierCmd.ExecuteScalarAsync();
@@ -76,22 +76,23 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             int cuisinierId = Convert.ToInt32(result);
 
-            string fabrication = $"{JourCreation}/{MoisCreation}/{AnneeCreation}";
-            string peremption = $"{JourPerem}/{MoisPerem}/{AnneePerem}";
+            string fabrication = $"{AnneeCreation}-{MoisCreation}-{JourCreation}";
+            string peremption = $"{AnneePerem}-{MoisPerem}-{JourPerem}";
             string photo = ""; // pas encore supporté
 
-            // Générer un Num_platJ unique
-            string idPlat = Guid.NewGuid().ToString("N").Substring(0, 10);
+            //Num_platJ unique
+            int idPlat = 1; // valeur au cas où y'a pas de plat
+            var dernierNumPlat = new MySqlCommand("SELECT MAX(Num_platJ) FROM Plat_du_jour", conn);
+            object dernierNumPlatResult = dernierNumPlat.ExecuteScalar();
+            if (dernierNumPlatResult != DBNull.Value && result != null)
+            {
+                idPlat = Convert.ToInt32(result) + 1;
+            }
 
             var insertCmd = new MySqlCommand(
-                @"INSERT INTO Plat_du_jour 
-        (Num_platJ, Nom_platJ, Nombre_de_personneJ, Type_platJ, 
-         Nationalité_platJ, Date_péremption_platJ, prix_platJ, 
-         Ingrédients_platJ, Régime_alimentaire_platJ, Photo_platJ, 
-         Date_fabrication_platJ, id_Cuisinier)
-        VALUES 
-        (@Num, @Nom, @NbPers, @Type, @Natio, @Peremption, @Prix, 
-         @Ingredients, @Regime, @Photo, @Fabrication, @CuisinierId)", conn);
+                @"INSERT INTO Plat_du_jour (Num_platJ, Nom_platJ, Nombre_de_personneJ, Type_platJ, Nationalité_platJ, Date_péremption_platJ, prix_platJ, 
+                Ingrédients_platJ, Régime_alimentaire_platJ, Photo_platJ, Date_fabrication_platJ, id_Cuisinier)
+                VALUES (@Num, @Nom, @NbPers, @Type, @Natio, @Peremption, @Prix, @Ingredients, @Regime, @Photo, @Fabrication, @CuisinierId)", conn);
 
             insertCmd.Parameters.AddWithValue("@Num", idPlat);
             insertCmd.Parameters.AddWithValue("@Nom", NomDuPlat);
