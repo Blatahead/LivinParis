@@ -13,7 +13,13 @@
     <p class="message-top-panel">Création de plat</p>
 </div>
 
-<!-- FORM PRINCIPAL -->
+<form method="post">
+    <div class="checkbox-use-platdujour" style="display: flex; justify-content: center; margin-bottom: 1em;">
+        <input type="hidden" name="UsePlatJour" value="true" />
+        <button type="submit" asp-page-handler="CochePlatDuJour" class="btn-confirm">Utiliser le plat du jour</button>
+    </div>
+</form>
+
 <form method="post" class="form-plat">
     <div class="content-today-plat">
         <div class="left-colonne">

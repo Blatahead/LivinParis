@@ -41,6 +41,10 @@ namespace LivinParisWebApp.Pages.Cuisinier
         [Required]
         [BindProperty] public string Ingredients { get; set; }
 
+        [BindProperty]
+        public bool UsePlatJour { get; set; }
+
+
         public async Task<IActionResult> OnPostCuisinierPanelConfirm()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -54,10 +58,9 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // 1. Récupérer Id_Cuisinier + ancienne liste
-            int cuisinierId = 0;
+            // Récupération Id_Cuisinier
+            int cuisinierId;
             string? listeExistante = null;
-
             var getCmd = new MySqlCommand("SELECT Id_Cuisinier, Liste_de_plats FROM Cuisinier WHERE Id_Utilisateur = @Uid", conn);
             getCmd.Parameters.AddWithValue("@Uid", userId);
 
@@ -67,67 +70,91 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 cuisinierId = Convert.ToInt32(reader["Id_Cuisinier"]);
                 listeExistante = reader["Liste_de_plats"] as string;
             }
-            reader.Close();
-
-            if (cuisinierId == 0)
+            else
             {
                 ModelState.AddModelError("", "Cuisinier introuvable.");
                 return Page();
             }
+            reader.Close();
 
-            // 2. Construire les dates en DateTime
-            string fabricationStr = $"{AnneeCreation}-{MoisCreation}-{JourCreation}";
-            string peremptionStr = $"{AnneePerem}-{MoisPerem}-{JourPerem}";
+            int numPlatJour;
 
-            if (!DateTime.TryParse(fabricationStr, out DateTime fabrication) ||
-                !DateTime.TryParse(peremptionStr, out DateTime peremption))
+            if (UsePlatJour)
             {
-                ModelState.AddModelError("", "Format de date invalide.");
-                return Page();
+                //Récupération du plat du jour existant
+                var getPlatJourCmd = new MySqlCommand("SELECT Num_platJ FROM Plat_du_jour WHERE id_Cuisinier = @Cid AND Est_plat_du_jour = TRUE", conn);
+                getPlatJourCmd.Parameters.AddWithValue("@Cid", cuisinierId);
+                object result = await getPlatJourCmd.ExecuteScalarAsync();
+
+                if (result == null)
+                {
+                    ModelState.AddModelError("", "Aucun plat du jour trouvé.");
+                    return Page();
+                }
+
+                numPlatJour = Convert.ToInt32(result);
+            }
+            else
+            {
+                //Création d’un nouveau plat du jour (faux)
+                var maxNumPlatJCmd = new MySqlCommand("SELECT MAX(Num_platJ) FROM Plat_du_jour", conn);
+                object maxResult = await maxNumPlatJCmd.ExecuteScalarAsync();
+                numPlatJour = maxResult != DBNull.Value ? Convert.ToInt32(maxResult) + 1 : 1;
+
+                var insertPlatJourCmd = new MySqlCommand(@"INSERT INTO Plat_du_jour (Num_platJ, Nom_platJ, Nombre_de_personneJ, Type_platJ, 
+                    Nationalité_platJ, Date_péremption_platJ, prix_platJ, Ingrédients_platJ, Régime_alimentaire_platJ, Photo_platJ, Date_fabrication_platJ, id_Cuisinier, Est_plat_du_jour)
+                    VALUES (@Num, @Nom, @Nb, @Type, @Natio, @Peremp, @Prix, @Ingredients, @Regime, @Photo, @Fab, @Cid, FALSE)", conn);
+
+                insertPlatJourCmd.Parameters.AddWithValue("@Num", numPlatJour);
+                insertPlatJourCmd.Parameters.AddWithValue("@Nom", NomDuPlat);
+                insertPlatJourCmd.Parameters.AddWithValue("@Nb", NbDePersonnes);
+                insertPlatJourCmd.Parameters.AddWithValue("@Type", Type);
+                insertPlatJourCmd.Parameters.AddWithValue("@Natio", Nationalite);
+                insertPlatJourCmd.Parameters.AddWithValue("@Peremp", $"{AnneePerem}-{MoisPerem}-{JourPerem}");
+                insertPlatJourCmd.Parameters.AddWithValue("@Prix", Convert.ToDecimal(Prix.Replace(",", ".")));
+                insertPlatJourCmd.Parameters.AddWithValue("@Ingredients", Ingredients);
+                insertPlatJourCmd.Parameters.AddWithValue("@Regime", Regime);
+                insertPlatJourCmd.Parameters.AddWithValue("@Photo", "");
+                insertPlatJourCmd.Parameters.AddWithValue("@Fab", $"{AnneeCreation}-{MoisCreation}-{JourCreation}");
+                insertPlatJourCmd.Parameters.AddWithValue("@Cid", cuisinierId);
+
+                await insertPlatJourCmd.ExecuteNonQueryAsync();
             }
 
-            // 3. Insertion dans Plat
-            var insertCmd = new MySqlCommand(@"
-        INSERT INTO Plat 
-        (Num_plat, Nom_plat, Nombre_de_personne_plat, Type_plat, Nationalité_plat, 
-         Date_péremption_plat, prix_plat, Ingrédients_plat, Régime_alimentaire_plat, 
-         Photo_plat, Date_fabrication_plat, Num_platJ, id_Cuisinier)
-        VALUES 
-        (@Num, @Nom, @Nb, @Type, @Natio, @Peremption, @Prix, @Ingredients, 
-         @Regime, @Photo, @Fabrication, @NumPlatJ, @Cid)", conn);
+            //Insertion dans Plat
+            int numPlat = 1;
+            var dernierNumPlat = new MySqlCommand("SELECT MAX(Num_plat) FROM Plat", conn);
+            object dernierNumPlatResult = await dernierNumPlat.ExecuteScalarAsync();
+            if (dernierNumPlatResult != DBNull.Value)
+                numPlat = Convert.ToInt32(dernierNumPlatResult) + 1;
 
-            // Générer un numéro de plat unique
-            var rand = new Random();
-            int numPlat = rand.Next(100000, 999999);
-            string numPlatJ = Guid.NewGuid().ToString("N").Substring(0, 10);
+            var insertPlatCmd = new MySqlCommand(@"INSERT INTO Plat (Num_plat, Nom_plat, Nombre_de_personne_plat, Type_plat, Nationalité_plat, 
+                Date_péremption_plat, prix_plat, Ingrédients_plat, Régime_alimentaire_plat, Photo_plat, Date_fabrication_plat, Num_platJ, id_Cuisinier)
+                VALUES (@Num, @Nom, @Nb, @Type, @Natio, @Peremp, @Prix, @Ingredients, @Regime, @Photo, @Fab, @NumPlatJ, @Cid)", conn);
 
-            insertCmd.Parameters.AddWithValue("@Num", numPlat);
-            insertCmd.Parameters.AddWithValue("@Nom", NomDuPlat);
-            insertCmd.Parameters.AddWithValue("@Nb", NbDePersonnes);
-            insertCmd.Parameters.AddWithValue("@Type", Type);
-            insertCmd.Parameters.AddWithValue("@Natio", Nationalite);
-            insertCmd.Parameters.AddWithValue("@Peremption", peremption);
-            insertCmd.Parameters.AddWithValue("@Prix", Convert.ToDecimal(Prix.Replace(",", ".")));
-            insertCmd.Parameters.AddWithValue("@Ingredients", Ingredients);
-            insertCmd.Parameters.AddWithValue("@Regime", Regime);
-            insertCmd.Parameters.AddWithValue("@Photo", ""); // à gérer plus tard
-            insertCmd.Parameters.AddWithValue("@Fabrication", fabrication);
-            insertCmd.Parameters.AddWithValue("@NumPlatJ", numPlatJ);
-            insertCmd.Parameters.AddWithValue("@Cid", cuisinierId);
+            insertPlatCmd.Parameters.AddWithValue("@Num", numPlat);
+            insertPlatCmd.Parameters.AddWithValue("@Nom", NomDuPlat);
+            insertPlatCmd.Parameters.AddWithValue("@Nb", NbDePersonnes);
+            insertPlatCmd.Parameters.AddWithValue("@Type", Type);
+            insertPlatCmd.Parameters.AddWithValue("@Natio", Nationalite);
+            insertPlatCmd.Parameters.AddWithValue("@Peremp", $"{AnneePerem}-{MoisPerem}-{JourPerem}");
+            insertPlatCmd.Parameters.AddWithValue("@Prix", Convert.ToDecimal(Prix.Replace(",", ".")));
+            insertPlatCmd.Parameters.AddWithValue("@Ingredients", Ingredients);
+            insertPlatCmd.Parameters.AddWithValue("@Regime", Regime);
+            insertPlatCmd.Parameters.AddWithValue("@Photo", "");
+            insertPlatCmd.Parameters.AddWithValue("@Fab", $"{AnneeCreation}-{MoisCreation}-{JourCreation}");
+            insertPlatCmd.Parameters.AddWithValue("@NumPlatJ", numPlatJour);
+            insertPlatCmd.Parameters.AddWithValue("@Cid", cuisinierId);
 
-            // 4. Update la liste des plats
-            string updatedListe = string.IsNullOrEmpty(listeExistante)
-                ? NomDuPlat
-                : $"{listeExistante},{NomDuPlat}";
-
-            var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_de_plats = @Liste WHERE Id_Cuisinier = @Cid", conn);
-            updateCmd.Parameters.AddWithValue("@Liste", updatedListe);
-            updateCmd.Parameters.AddWithValue("@Cid", cuisinierId);
+            var updateListeCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_de_plats = @Liste WHERE Id_Cuisinier = @Cid", conn);
+            string nouvelleListe = string.IsNullOrEmpty(listeExistante) ? $"{NomDuPlat}" : $"{listeExistante},{NomDuPlat}";
+            updateListeCmd.Parameters.AddWithValue("@Liste", nouvelleListe);
+            updateListeCmd.Parameters.AddWithValue("@Cid", cuisinierId);
 
             try
             {
-                await insertCmd.ExecuteNonQueryAsync(); // insertion dans Plat
-                await updateCmd.ExecuteNonQueryAsync(); // update de la liste
+                await insertPlatCmd.ExecuteNonQueryAsync();
+                await updateListeCmd.ExecuteNonQueryAsync();
                 return RedirectToPage("/CuisinierPanel");
             }
             catch (Exception ex)
@@ -136,6 +163,72 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 return Page();
             }
         }
+
+
+        public async Task<IActionResult> OnPostCochePlatDuJour()
+        {
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            if (userId == 0)
+            {
+                ModelState.AddModelError("", "Utilisateur non connecté.");
+                return Page();
+            }
+
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            await conn.OpenAsync();
+
+            // Récupération Id_Cuisinier
+            var getCidCmd = new MySqlCommand("SELECT Id_Cuisinier FROM Cuisinier WHERE Id_Utilisateur = @Uid", conn);
+            getCidCmd.Parameters.AddWithValue("@Uid", userId);
+            object result = await getCidCmd.ExecuteScalarAsync();
+
+            if (result == null)
+            {
+                ModelState.AddModelError("", "Cuisinier introuvable.");
+                return Page();
+            }
+
+            int cuisinierId = Convert.ToInt32(result);
+
+            // Récupération du plat du jour
+            var getPlatCmd = new MySqlCommand("SELECT * FROM Plat_du_jour WHERE id_Cuisinier = @Cid", conn);
+            getPlatCmd.Parameters.AddWithValue("@Cid", cuisinierId);
+
+            using var reader = await getPlatCmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                NomDuPlat = reader["Nom_platJ"].ToString();
+                Prix = reader["prix_platJ"].ToString();
+                NbDePersonnes = reader["Nombre_de_personneJ"].ToString();
+                Nationalite = reader["Nationalité_platJ"].ToString();
+                Regime = reader["Régime_alimentaire_platJ"].ToString();
+                Type = reader["Type_platJ"].ToString();
+                Ingredients = reader["Ingrédients_platJ"].ToString();
+
+                // Dates
+                if (DateTime.TryParse(reader["Date_fabrication_platJ"].ToString(), out DateTime fabrication))
+                {
+                    JourCreation = fabrication.Day.ToString("D2");
+                    MoisCreation = fabrication.Month.ToString("D2");
+                    AnneeCreation = fabrication.Year.ToString();
+                }
+
+                if (DateTime.TryParse(reader["Date_péremption_platJ"].ToString(), out DateTime peremp))
+                {
+                    JourPerem = peremp.Day.ToString("D2");
+                    MoisPerem = peremp.Month.ToString("D2");
+                    AnneePerem = peremp.Year.ToString();
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Aucun plat du jour trouvé.");
+            }
+            ModelState.Clear();
+            return Page();
+        }
+
 
 
         public IActionResult OnPostCuisinierPanelRetour()
