@@ -1,20 +1,18 @@
 ﻿@page
 @model LivinParisWebApp.Pages.ClientPanelModel
 @{
-    Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
-    ViewData["Title"] = "Panel Client";
+	Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
+	ViewData["Title"] = "Panel Client";
 }
 <div class="top-panel" style="justify-content:space-between;">
 	<p class="message-top-panel">Bienvenue sur votre espace client !</p>
-    <div class="right-settings-panel">
-        <form method="post">
-            <button class="btn-settings"
-                    type="submit"
-                    asp-page-handler="SettingsCuisinier">
-                Paramètres
-            </button>
-        </form>
-    </div>
+	<div class="right-settings-panel">
+		<form method="post">
+			<button class="btn-settings" type="submit" asp-page-handler="SettingsCuisinier">
+				Paramètres
+			</button>
+		</form>
+	</div>
 </div>
 <div class="content-panel-client">
 	<div class="top-line">
@@ -35,125 +33,46 @@
 							<span class="rose">Livraison estimée : en dev</span>
 						</div>
 						<div class="dish-actions">
-							<button class="details-btn" onclick="remplirInfosPlat('@plat.Nom','@plat.Prix','@plat.Nationalite','@plat.Type',
-									'@plat.Fabrication','@plat.Peremption','@plat.NbPersonnes','@plat.Ingredients','@plat.Regime')">
+							<button class="details-btn" onclick="remplirInfosPlat('@plat.Nom','@plat.Prix','@plat.Nationalite','@plat.Type','@plat.Fabrication','@plat.Peremption','@plat.NbPersonnes','@plat.Ingredients','@plat.Regime', '@plat.Id')">
 								Détails
 							</button>
-
 						</div>
 					</div>
 				}
 			</div>
 		</div>
-
 		<div class="right-colonne">
-				<!-- A automatiser -->
-				<p class="panier-title">Panier</p>
-				<div class="dish-list">
-					<!-- Carte d’un plat -->
+			<p class="panier-title">Panier</p>
+			<div class="dish-list">
+				@foreach (var plat in Model.PanierPlats)
+				{
 					<div class="dish-card">
 						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
+							<p>@plat.Nom</p>
+							<span class="rose">@plat.Prix €</span>
 						</div>
 						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
+							<form method="post">
+								<input type="hidden" name="ModelSuppression.PlatIdSupp" id="hidden-plat-id" value="@plat.NumPlat" />
+								<button type="submit" class="delete-btn" asp-page-handler="RemoveFromCart">🗑️</button>
+							</form>
 						</div>
 					</div>
-					<div class="dish-card">
-						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
-						</div>
-						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
-						</div>
-					</div>
-					<div class="dish-card">
-						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
-						</div>
-						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
-						</div>
-					</div>
-					<div class="dish-card">
-						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
-						</div>
-						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
-						</div>
-					</div>
-					<div class="dish-card">
-						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
-						</div>
-						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
-						</div>
-					</div>
-					<div class="dish-card">
-						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
-						</div>
-						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
-						</div>
-					</div>
-					<div class="dish-card">
-						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
-						</div>
-						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
-						</div>
-					</div>
-					<div class="dish-card">
-						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
-						</div>
-						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
-						</div>
-					</div>
-					<div class="dish-card">
-						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
-						</div>
-						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
-						</div>
-					</div>
-					<div class="dish-card">
-						<div class="dish-info">
-							<p>Pâtes bolognaise</p>
-							<span class="rose">5€</span>
-						</div>
-						<div class="dish-actions">
-							<button class="delete-btn">🗑️</button>
-						</div>
-					</div>
+				}
+			</div>
+
+			<div class="bottom-panier">
+				<div class="total-panier">
+					<p>Total : @Model.TotalPanier €</p>
 				</div>
-				<div class="bottom-panier">
-					<div class="total-panier">
-						<p>Total : 20€</p>
-					</div>
-					<div class="btn-pass-command">
-						<form method="post">
-							<button type="submit" asp-page-handler="PassCommand">
-								Passer commander
-							</button>
-						</form>
-					</div>
+				<div class="btn-pass-command">
+					<form method="post">
+						<button type="submit" asp-page-handler="PassCommand">
+							Passer commander
+						</button>
+					</form>
 				</div>
+			</div>
 		</div>
 	</div>
 	<div class="bottom-line">
@@ -179,11 +98,14 @@
 				</div>
 			</div>
 			<div class="mid">
-				<p class="regime  rose" id="regime-plat">Régime : </p>
-				<button class="add-panier">Ajouter au panier</button>
+				<p class="regime rose" id="regime-plat">Régime : </p>
+				<form method="post">
+					<input type="hidden" name="ModelAjout.PlatId" id="hidden-plat-id" />
+					<button class="add-panier" type="submit" asp-page-handler="AddToCart">Ajouter au panier</button>
+				</form>
 			</div>
 			<div class="right">
-				<img src="/src/img/plat.png" alt="Image plat"/>
+				<img src="/src/img/plat.png" alt="Image plat" />
 			</div>
 		</div>
 	</div>
@@ -280,7 +202,7 @@
 
 	</script>
 	<script>
-		function remplirInfosPlat(nom, prix, nat, type, fab, perem, nb, ingre, regime) {
+		function remplirInfosPlat(nom, prix, nat, type, fab, perem, nb, ingre, regime, id) {
 			document.getElementById("nom-plat").innerText = nom;
 			document.getElementById("prix-plat").innerText = "Prix : " + prix;
 			document.getElementById("nat-plat").innerText = "Nationalité : " + nat;
@@ -290,6 +212,9 @@
 			document.getElementById("nb-plat").innerText = "Nb de personnes : " + nb;
 			document.getElementById("ingre-plat").innerText = "Ingrédients : " + ingre;
 			document.getElementById("regime-plat").innerText = "Régime : " + regime;
+			document.querySelector('input[name="ModelAjout.PlatId"]').value = id;
 		}
 	</script>
+	
+
 }
