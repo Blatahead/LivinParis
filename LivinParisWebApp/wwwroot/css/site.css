@@ -1218,10 +1218,9 @@ header {
         height: 35%;
         width: 100%;
         display: flex;
-        align-items:center;
+        align-items: center;
         flex-direction: row;
-        font-size:1.5vw;
-
+        font-size: 1.5vw;
         .bottom-line-container{
             height:90%;
             width:97.5%;
@@ -1257,7 +1256,7 @@ header {
                         height: 100%;
                         width: 33%;
                         display: flex;
-                        justify-content:space-evenly;
+                        justify-content: space-evenly;
                         flex-direction: column;
                     }
                     .mup {
@@ -1322,6 +1321,15 @@ header {
                     width:90%;
                     height:90%;
                 }
+            }
+        }
+    }
+    @media (max-width: 1350px) {
+        .bottom-line {
+            height: 20%;
+
+            p{
+                font-size:1.2vw;
             }
         }
     }
