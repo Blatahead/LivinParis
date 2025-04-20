@@ -66,7 +66,7 @@ namespace LivinParisWebApp.Pages
                         throw new Exception("Utilisateur non connecté.");
                 }
 
-                string adresse = $"{Numéro} {Voirie}, {Arrondissement}e";
+                string adresse = $"{Numéro} {Voirie}, 750{Arrondissement} Paris";
 
                 var insertCuisinierCmd = new MySqlCommand(
                     "INSERT INTO Cuisinier (Prenom_cuisinier, Nom_particulier, Adresse_cuisinier, Id_Utilisateur) " +

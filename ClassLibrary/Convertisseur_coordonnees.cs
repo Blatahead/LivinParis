@@ -5,33 +5,37 @@ using System.Text.Json;
 using DotNetEnv;
 using System.Configuration;
 
-public static class Convertisseur_coordonnees
+namespace ClassLibrary
 {
-    private static string cle_API; 
-
-    public static async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string address)
+    public static class Convertisseur_coordonnees
     {
-        DotNetEnv.Env.Load("../.env");
-        cle_API = Environment.GetEnvironmentVariable("CLEMAPG1");
+        private static string cle_API; 
 
-        using HttpClient client = new();
-        string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={cle_API}";
+        public static async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string address)
+        {
+            DotNetEnv.Env.Load("../.env");
+            cle_API = Environment.GetEnvironmentVariable("CLEMAPG2");
 
-        var reponse = await client.GetAsync(url);
-        if (!reponse.IsSuccessStatusCode)
-            throw new Exception("Erreur lors de la récupération des coordonnées");
+            using HttpClient client = new();
+            string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={cle_API}";
 
-        var json = await reponse.Content.ReadAsStringAsync();
-        using var document = JsonDocument.Parse(json);
-        var root = document.RootElement;
 
-        if (root.GetProperty("status").GetString() != "Ok")
-            throw new Exception("Adresse erronée");
+            var reponse = await client.GetAsync(url);
+            if (!reponse.IsSuccessStatusCode)
+                throw new Exception("Erreur lors de la récupération des coordonnées");
 
-        var lieu = root.GetProperty("results")[0].GetProperty("geometry").GetProperty("location");
-        double latitude = lieu.GetProperty("lat").GetDouble();
-        double longitude = lieu.GetProperty("lng").GetDouble();
+            var json = await reponse.Content.ReadAsStringAsync();
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
 
-        return (latitude, longitude);
+            if (root.GetProperty("status").GetString() != "OK")
+                throw new Exception("Adresse erronée");
+
+            var lieu = root.GetProperty("results")[0].GetProperty("geometry").GetProperty("location");
+            double latitude = lieu.GetProperty("lat").GetDouble();
+            double longitude = lieu.GetProperty("lng").GetDouble();
+
+            return (latitude, longitude);
+        }
     }
 }

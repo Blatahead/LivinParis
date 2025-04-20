@@ -21,7 +21,6 @@ namespace LivinParisWebApp.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            //vérfication qu'un utilisateur est connecté
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
             if (userId == 0) return RedirectToPage("/Login");
 
@@ -29,18 +28,11 @@ namespace LivinParisWebApp.Pages
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            //vérification qu'un cuisinier est associé au userID
             MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM Cuisinier WHERE Id_Utilisateur = @id", conn);
             cmd.Parameters.AddWithValue("@id", userId);
-
             long count = (long)cmd.ExecuteScalar();
+            if (count == 0) return RedirectToPage("/NoCuisinierAccount");
 
-            if (count == 0)
-            {
-                return RedirectToPage("/NoCuisinierAccount");
-            }
-
-            //ID cuisinier
             int cuisinierId = 0;
             MySqlCommand getIdCmd = new MySqlCommand("SELECT Id_Cuisinier, Liste_de_plats, Liste_commandes, Liste_commandes_pretes FROM Cuisinier WHERE Id_Utilisateur = @UserId", conn);
             getIdCmd.Parameters.AddWithValue("@UserId", userId);
@@ -55,7 +47,6 @@ namespace LivinParisWebApp.Pages
                 }
                 else
                 {
-                    //cas d'erreur normalement inateignable
                     return Page();
                 }
 
@@ -65,16 +56,12 @@ namespace LivinParisWebApp.Pages
             }
             reader.Close();
 
-            //Prochaine livraison (commande prête ?)
             ProchaineLivraison = !string.IsNullOrEmpty(pretes) ? DateTime.Now.AddMinutes(30).ToString("dd/MM/yy à HH:mm") : "Aucune";
-
-            //Nb de commandes
             NbCommandesEnCours = string.IsNullOrEmpty(commandes) ? 0 : commandes.Split(',').Length;
 
-            //Plat du jour
             var platCmd = new MySqlCommand(@"SELECT Nom_platJ, prix_platJ, Nombre_de_personneJ, Nationalité_platJ, Régime_alimentaire_platJ
                 FROM Plat_du_jour
-                WHERE id_Cuisinier = @Cid
+                WHERE id_Cuisinier = @Cid AND Est_plat_du_jour = TRUE
                 ORDER BY Date_fabrication_platJ DESC
                 LIMIT 1", conn);
             platCmd.Parameters.AddWithValue("@Cid", cuisinierId);
@@ -86,55 +73,31 @@ namespace LivinParisWebApp.Pages
                 {
                     Nom = platReader["Nom_platJ"]?.ToString(),
                     Prix = platReader["prix_platJ"]?.ToString(),
-                    NbPersonnes = platReader["Nombre_de_personneJ"] is DBNull
-                        ? 0
-                        : Convert.ToInt32(platReader["Nombre_de_personneJ"]),
+                    NbPersonnes = platReader["Nombre_de_personneJ"] is DBNull ? 0 : Convert.ToInt32(platReader["Nombre_de_personneJ"]),
                     Nationalite = platReader["Nationalité_platJ"]?.ToString(),
                     Regime = platReader["Régime_alimentaire_platJ"]?.ToString()
                 };
             }
             platReader.Close();
 
-            //Liste des plats disponibles
             if (!string.IsNullOrEmpty(plats))
             {
                 var noms = plats.Split(',');
                 PlatsDisponibles = noms.Select(n => new PlatDispoDto
                 {
-                    Nom = n.Trim(),
-                    Cuisinier = "Moi"
+                    Nom = n.Trim()
                 }).ToList();
             }
 
             return Page();
         }
-        public IActionResult OnPostSettingsCuisinier()
-        {
-            return RedirectToPage("/Cuisinier/SettingsCuisinier");
-        }
 
-        public IActionResult OnPostChangeTodaysPlat()
-        {
-            return RedirectToPage("/Cuisinier/ChangeTodaysPlat");
-        }
-        public IActionResult OnPostChangeDetailsPlat()
-        {
-            return RedirectToPage("/Cuisinier/DetailsPlat");
-        }
-        public IActionResult OnPostDeletePlat(string nomPlat)
-        {
-            return RedirectToPage("/Cuisinier/DeletePlat", new { nomPlat = nomPlat });
-        }
-
-        public IActionResult OnPostAddPlat()
-        {
-            return RedirectToPage("/Cuisinier/AddPlat");
-        }
-
-        public IActionResult OnPostSeeCurrentCommand()
-        {
-            return RedirectToPage("/Cuisinier/SeeCurrentCommand");
-        }
+        public IActionResult OnPostSettingsCuisinier() => RedirectToPage("/Cuisinier/SettingsCuisinier");
+        public IActionResult OnPostChangeTodaysPlat() => RedirectToPage("/Cuisinier/ChangeTodaysPlat");
+        public IActionResult OnPostChangeDetailsPlat() => RedirectToPage("/Cuisinier/DetailsPlat");
+        public IActionResult OnPostDeletePlat(string nomPlat) => RedirectToPage("/Cuisinier/DeletePlat", new { nomPlat });
+        public IActionResult OnPostAddPlat() => RedirectToPage("/Cuisinier/AddPlat");
+        public IActionResult OnPostSeeCurrentCommand() => RedirectToPage("/Cuisinier/SeeCurrentCommand");
 
         public class PlatDuJourDto
         {

@@ -2629,3 +2629,13 @@ a.leaflet-control-zoom-out:hover {
     background-color: #e0aaff;
     cursor: pointer;
 }
+
+.leaflet-popup-content-wrapper.custom-popup,
+.custom-popup {
+    background-color: #e0aaff;
+    color: #fffefe;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border-radius: 10px;
+    padding: 5px;
+}

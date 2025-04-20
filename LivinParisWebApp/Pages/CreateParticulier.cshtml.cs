@@ -72,7 +72,7 @@ namespace LivinParis.Pages
                 int clientId = Convert.ToInt32(await insertClientCmd.ExecuteScalarAsync());
 
                 //Particulier
-                string adresse = $"{Voirie} {Numéro}, {Arrondissement}e";
+                string adresse = $"{Voirie} {Numéro}, 750{Arrondissement} Paris";
                 var insertPartCmd = new MySqlCommand(
                     "INSERT INTO Particulier (Prenom_particulier, Nom_particulier, Adresse_particulier, Id_Client) " +
                     "VALUES (@Prenom, @Nom, @Adresse, @ClientId)", conn, transaction);

@@ -64,7 +64,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            //Id_Cuisinier
             var getCuisinierCmd = new MySqlCommand("SELECT Id_Cuisinier FROM Cuisinier WHERE Id_Utilisateur = @UserId", conn);
             getCuisinierCmd.Parameters.AddWithValue("@UserId", userId);
             object result = await getCuisinierCmd.ExecuteScalarAsync();
@@ -78,14 +77,13 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             string fabrication = $"{AnneeCreation}-{MoisCreation}-{JourCreation}";
             string peremption = $"{AnneePerem}-{MoisPerem}-{JourPerem}";
-            string photo = ""; // pas encore supporté
+            string photo = "";
 
-            //supp le plat du jour précédent s'il existe
-            var deleteCmd = new MySqlCommand("DELETE FROM Plat_du_jour WHERE id_Cuisinier = @IdCuisinier", conn);
-            deleteCmd.Parameters.AddWithValue("@IdCuisinier", cuisinierId);
-            await deleteCmd.ExecuteNonQueryAsync();
+            // Met à FALSE tous les anciens plats du jour du cuisinier
+            var resetCmd = new MySqlCommand("UPDATE Plat_du_jour SET Est_plat_du_jour = FALSE WHERE id_Cuisinier = @IdCuisinier", conn);
+            resetCmd.Parameters.AddWithValue("@IdCuisinier", cuisinierId);
+            await resetCmd.ExecuteNonQueryAsync();
 
-            //num plat unique
             int idPlat = 1;
             var dernierNumPlat = new MySqlCommand("SELECT MAX(Num_platJ) FROM Plat_du_jour", conn);
             object dernierNumPlatResult = await dernierNumPlat.ExecuteScalarAsync();
@@ -96,8 +94,8 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             var insertCmd = new MySqlCommand(
                 @"INSERT INTO Plat_du_jour (Num_platJ, Nom_platJ, Nombre_de_personneJ, Type_platJ, Nationalité_platJ, Date_péremption_platJ, prix_platJ, 
-                Ingrédients_platJ, Régime_alimentaire_platJ, Photo_platJ, Date_fabrication_platJ, id_Cuisinier)
-                VALUES (@Num, @Nom, @NbPers, @Type, @Natio, @Peremption, @Prix, @Ingredients, @Regime, @Photo, @Fabrication, @CuisinierId)", conn);
+                Ingrédients_platJ, Régime_alimentaire_platJ, Photo_platJ, Date_fabrication_platJ, id_Cuisinier, Est_plat_du_jour)
+                VALUES (@Num, @Nom, @NbPers, @Type, @Natio, @Peremption, @Prix, @Ingredients, @Regime, @Photo, @Fabrication, @CuisinierId, TRUE)", conn);
 
             insertCmd.Parameters.AddWithValue("@Num", idPlat);
             insertCmd.Parameters.AddWithValue("@Nom", NomDuPlat);
@@ -108,7 +106,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
             insertCmd.Parameters.AddWithValue("@Prix", Prix);
             insertCmd.Parameters.AddWithValue("@Ingredients", Ingredients);
             insertCmd.Parameters.AddWithValue("@Regime", Regime);
-            insertCmd.Parameters.AddWithValue("@Photo", photo); // vide pour l’instant
+            insertCmd.Parameters.AddWithValue("@Photo", photo);
             insertCmd.Parameters.AddWithValue("@Fabrication", fabrication);
             insertCmd.Parameters.AddWithValue("@CuisinierId", cuisinierId);
 
@@ -123,6 +121,5 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 return Page();
             }
         }
-
     }
 }
