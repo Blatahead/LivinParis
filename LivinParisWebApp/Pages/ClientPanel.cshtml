@@ -26,69 +26,26 @@
 		<div class="mid-colonne">
 			<p class="menu-title">Plats disponibles</p>
 			<div class="dish-list">
-				<!-- Carte d’un plat -->
-				<div class="dish-card">
-					<div class="dish-info">
-						<p>Pâtes bolognaise</p>
-						<span class="rose">Cuisinier : Olivier</span>
-						<span class="rose">Livraison : 15 min</span>
+				@foreach (var plat in Model.PlatsDisponibles)
+				{
+					<div class="dish-card">
+						<div class="dish-info">
+							<p>@plat.Nom</p>
+							<span class="rose">Cuisinier : @plat.Cuisinier</span>
+							<span class="rose">Livraison estimée : en dev</span>
+						</div>
+						<div class="dish-actions">
+							<button class="details-btn" onclick="remplirInfosPlat('@plat.Nom','@plat.Prix','@plat.Nationalite','@plat.Type',
+									'@plat.Fabrication','@plat.Peremption','@plat.NbPersonnes','@plat.Ingredients','@plat.Regime')">
+								Détails
+							</button>
+
+						</div>
 					</div>
-					<div class="dish-actions">
-						<button class="details-btn">Détails</button>
-					</div>
-				</div>
-				<div class="dish-card">
-					<div class="dish-info">
-						<p>Pâtes bolognaise</p>
-						<span class="rose">Cuisinier : Olivier</span>
-						<span class="rose">Livraison : 15 min</span>
-					</div>
-					<div class="dish-actions">
-						<button class="details-btn">Détails</button>
-					</div>
-				</div>
-				<div class="dish-card">
-					<div class="dish-info">
-						<p>Pâtes bolognaise</p>
-						<span class="rose">Cuisinier : Olivier</span>
-						<span class="rose">Livraison : 15 min</span>
-					</div>
-					<div class="dish-actions">
-						<button class="details-btn">Détails</button>
-					</div>
-				</div>
-				<div class="dish-card">
-					<div class="dish-info">
-						<p>Pâtes bolognaise</p>
-						<span class="rose">Cuisinier : Olivier</span>
-						<span class="rose">Livraison : 15 min</span>
-					</div>
-					<div class="dish-actions">
-						<button class="details-btn">Détails</button>
-					</div>
-				</div>
-				<div class="dish-card">
-					<div class="dish-info">
-						<p>Pâtes bolognaise</p>
-						<span class="rose">Cuisinier : Olivier</span>
-						<span class="rose">Livraison : 15 min</span>
-					</div>
-					<div class="dish-actions">
-						<button class="details-btn">Détails</button>
-					</div>
-				</div>
-				<div class="dish-card">
-					<div class="dish-info">
-						<p>Pâtes bolognaise</p>
-						<span class="rose">Cuisinier : Olivier</span>
-						<span class="rose">Livraison : 15 min</span>
-					</div>
-					<div class="dish-actions">
-						<button class="details-btn">Détails</button>
-					</div>
-				</div>
+				}
 			</div>
 		</div>
+
 		<div class="right-colonne">
 				<!-- A automatiser -->
 				<p class="panier-title">Panier</p>
@@ -204,25 +161,25 @@
 			<div class="left">
 				<div class="up">
 					<div class="lup">
-						<p class="plat">Pâtes carbonara</p>
-						<p class="prix">Prix : 5€</p>
+						<p class="plat" id="nom-plat">Cliquez sur détails pour obtenir plus d'informations sur un plat</p>
+						<p class="prix" id="prix-plat">Prix : </p>
 					</div>
 					<div class="mup">
-						<p class="nationalite rose">Nationalité : Italie</p>
-						<p class="type rose">Type : Plat</p>
+						<p class="nationalite rose" id="nat-plat">Nationalité : </p>
+						<p class="type rose" id="type-plat">Type : </p>
 					</div>
 					<div class="rup">
-						<p class="fab rose">Fabrication : 01/04/25</p>
-						<p class="perem rose">Péremption : 02/04/25</p>
+						<p class="fab rose" id="fab-plat">Fabrication : </p>
+						<p class="perem rose" id="perem-plat">Péremption : </p>
 					</div>
 				</div>
 				<div class="down">
-					<p class="nb">Nb de personnes : 4</p>
-					<p class="ingre rose">Ingrédients : pâtes, sauce tomate, viande hachée</p>
+					<p class="nb" id="nb-plat">Nb de personnes : </p>
+					<p class="ingre rose" id="ingre-plat">Ingrédients : </p>
 				</div>
 			</div>
 			<div class="mid">
-				<p class="regime  rose">Régime : aucun</p>
+				<p class="regime  rose" id="regime-plat">Régime : </p>
 				<button class="add-panier">Ajouter au panier</button>
 			</div>
 			<div class="right">
@@ -296,8 +253,43 @@
 			], {
 				color: color,
 				weight: 4,
-				opacity: 0.8
+				opacity: 0.5
 			}).addTo(map);
 		});
+
+		const plats = @Html.Raw(ViewData["PlatsCoords"])
+		console.log("Plats géolocalisés :", plats);
+
+		plats.forEach(plat => {
+			const marker = L.marker([plat.Latitude, plat.Longitude]).addTo(map);
+			marker.bindPopup(`
+				<div class="custom-popup">
+					<strong>${plat.Nom}</strong><br/>
+					Cuisinier : ${plat.Cuisinier}<br/>
+					Prix : ${plat.Prix} €
+				</div>
+			`);
+
+			marker.on("mouseover", function () {
+				this.openPopup();
+			});
+			marker.on("mouseout", function () {
+				this.closePopup();
+			});
+		});
+
+	</script>
+	<script>
+		function remplirInfosPlat(nom, prix, nat, type, fab, perem, nb, ingre, regime) {
+			document.getElementById("nom-plat").innerText = nom;
+			document.getElementById("prix-plat").innerText = "Prix : " + prix;
+			document.getElementById("nat-plat").innerText = "Nationalité : " + nat;
+			document.getElementById("type-plat").innerText = "Type : " + type;
+			document.getElementById("fab-plat").innerText = "Fabrication : " + fab;
+			document.getElementById("perem-plat").innerText = "Péremption : " + perem;
+			document.getElementById("nb-plat").innerText = "Nb de personnes : " + nb;
+			document.getElementById("ingre-plat").innerText = "Ingrédients : " + ingre;
+			document.getElementById("regime-plat").innerText = "Régime : " + regime;
+		}
 	</script>
 }

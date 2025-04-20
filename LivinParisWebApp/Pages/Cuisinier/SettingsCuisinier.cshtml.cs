@@ -159,7 +159,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             if (!string.IsNullOrEmpty(Prenom) || !string.IsNullOrEmpty(Nom) || !string.IsNullOrEmpty(Arrondissement) || !string.IsNullOrEmpty(Voirie) || !string.IsNullOrEmpty(Numero))
             {
-                string adresseComplete = $"{Numero} {Voirie}, {Arrondissement}";
+                string adresseComplete = $"{Numero} {Voirie}, 750{Arrondissement} Paris";
 
                 var updateCuis = new MySqlCommand(@"
                     UPDATE Cuisinier 
