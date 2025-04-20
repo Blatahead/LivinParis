@@ -17,9 +17,7 @@ namespace ClassLibrary
             cle_API = Environment.GetEnvironmentVariable("CLEMAPG2");
 
             using HttpClient client = new();
-            //string adresse = "12+Rue+20Saint-Didier,75016,Paris";
             string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={cle_API}";
-            //string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={adresse}&key={cle_API}";
 
 
             var reponse = await client.GetAsync(url);
