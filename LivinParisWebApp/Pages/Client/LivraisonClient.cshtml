@@ -1,6 +1,123 @@
 ﻿@page
 @model LivinParisWebApp.Pages.Client.LivraisonClientModel
 @{
-	Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
-	ViewData["Title"] = "Liraison Client";
+    Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
+    ViewData["Title"] = "Livraison Client";
+}
+
+<head>
+    <link rel="stylesheet" href="/css/site.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <style>
+        .content-settings-client{
+            height:80vh;
+        }
+        h2{
+            height:10%;
+        }
+        .carousel {
+            display: flex;
+            overflow: hidden;
+            width: 90vw;
+            margin-left:auto;
+            margin-right:auto;
+            height:70%;
+            gap: 20px;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.25);
+            padding: 20px;
+        }
+
+        .caroussel-btns {
+            height:20%;
+            width:100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+            .caroussel-btns button {
+            padding: 10px 15px;
+            height:30%;
+            width:10vw;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<div class="content-settings-client">
+    <p class="title-livraison">Aperçu des livraisons</p>
+
+    <div class="carousel" id="carousel">
+        @for (int i = 0; i < Model.Chemins.Count; i++)
+        {
+            <div class="slide">
+                <p class="ligne-commande-title">Ligne de commande @(@i + 1)</p>
+                <div class="map" id="map-@i" style="height: 400px; width: 100%; margin-bottom: 10px;"></div>
+                <p>Distance estimée : @Math.Round(Model.DistancesKm[i], 2) km</p>
+                <p>Temps estimé : @Math.Round(Model.DistancesKm[i] / 20 * 60) min</p>
+            </div>
+        }
+    </div>
+
+    <div class="caroussel-btns">
+        <button onclick="prevSlide()">⬅️</button>
+        <button onclick="nextSlide()">➡️</button>
+    </div>
+
+    <form method="post" class="btn-group">
+        <button type="submit" asp-page-handler="Confirm">Confirmer</button>
+        <button type="submit" asp-page-handler="Retour">Retour</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script>
+        const chemins = @Html.Raw(Json.Serialize(Model.Chemins));
+            console.log(chemins)
+
+        chemins.forEach((chemin, index) => {
+            const map = L.map(`map-${index}`).setView([48.8566, 2.3522], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            const latlngs = chemin.map(s => [s.latitude, s.longitude]);
+            console.log(latlngs);
+            L.polyline(latlngs, {
+                color: 'black',
+                weight: 5
+            }).addTo(map);
+
+            map.fitBounds(L.polyline(latlngs).getBounds());
+        });
+
+        let currentIndex = 0;
+        function nextSlide() {
+            const carousel = document.getElementById('carousel');
+            if (currentIndex < @Model.Chemins.Count - 1) {
+                currentIndex++;
+                carousel.scrollTo({ left: carousel.offsetWidth * currentIndex, behavior: 'smooth' });
+            }
+        }
+
+        function prevSlide() {
+            const carousel = document.getElementById('carousel');
+            if (currentIndex > 0) {
+                currentIndex--;
+                carousel.scrollTo({ left: carousel.offsetWidth * currentIndex, behavior: 'smooth' });
+            }
+        }
+    </script>
 }

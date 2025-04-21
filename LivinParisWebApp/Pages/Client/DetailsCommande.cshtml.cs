@@ -45,22 +45,29 @@ namespace LivinParisWebApp.Pages.Client
             var idClient = Convert.ToInt32(await getClientIdCmd.ExecuteScalarAsync());
 
             var cmd = new MySqlCommand(@"SELECT p.Num_plat, p.Nom_plat 
-                FROM Panier pa 
-                JOIN Plat p ON pa.Num_plat = p.Num_plat 
-                WHERE pa.Id_Client = @idClient", conn);
+        FROM Panier pa 
+        JOIN Plat p ON pa.Num_plat = p.Num_plat 
+        WHERE pa.Id_Client = @idClient", conn);
 
             cmd.Parameters.AddWithValue("@idClient", idClient);
 
+            var plats = new List<int>();
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
+                int id = Convert.ToInt32(reader["Num_plat"]);
+                plats.Add(id); // pour la session
                 PlatsDisponibles.Add(new PlatDisponibleDTO
                 {
-                    Id = Convert.ToInt32(reader["Num_plat"]),
+                    Id = id,
                     Nom = reader["Nom_plat"]?.ToString() ?? ""
                 });
             }
+
+            //Ajout : on stocke la liste dans la session
+            HttpContext.Session.SetObject("PanierClient", plats);
         }
+
 
         public IActionResult OnPostLivrerCommande()
         {
@@ -95,6 +102,33 @@ namespace LivinParisWebApp.Pages.Client
             HttpContext.Session.SetObject("LignesCommandeTemp", Lignes);
             return RedirectToPage("/Client/LivraisonClient");
         }
+
+        private async Task ChargerPanierClientDansSession()
+        {
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            if (userId == 0) return;
+
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            await conn.OpenAsync();
+
+            var getClientIdCmd = new MySqlCommand("SELECT Id_Client FROM Client_ WHERE Id_Utilisateur = @userId", conn);
+            getClientIdCmd.Parameters.AddWithValue("@userId", userId);
+            var idClient = Convert.ToInt32(await getClientIdCmd.ExecuteScalarAsync());
+
+            var cmd = new MySqlCommand("SELECT Num_plat FROM Panier WHERE Id_Client = @idClient", conn);
+            cmd.Parameters.AddWithValue("@idClient", idClient);
+
+            var ids = new List<int>();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                ids.Add(reader.GetInt32(0));
+            }
+
+            HttpContext.Session.SetObject("PanierClient", ids);
+        }
+
 
 
         [BindProperty(SupportsGet = true)]
