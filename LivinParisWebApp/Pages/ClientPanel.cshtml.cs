@@ -4,6 +4,7 @@ using ClassLibrary;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using LivinParisWebApp.Utils;
 
 namespace LivinParisWebApp.Pages
 {
@@ -204,6 +205,13 @@ namespace LivinParisWebApp.Pages
             await deleteCmd.ExecuteNonQueryAsync();
 
             return RedirectToPage();
+        }
+
+        public IActionResult OnPostPassCommand()
+        {
+            var panier = PanierPlats.Select(p => p.NumPlat).ToList();
+            HttpContext.Session.SetObject("PanierClient", panier);
+            return RedirectToPage("/Client/DetailsCommande");
         }
 
         public IActionResult OnPostClientPanel()

@@ -1,5 +1,6 @@
 ﻿@page
 @model LivinParisWebApp.Pages.Client.DetailsCommandeModel
+@using LivinParisWebApp.Pages.Client
 @{
     Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
     ViewData["Title"] = "Détails Commande";
@@ -8,29 +9,68 @@
     <link rel="stylesheet" href="/css/site.css" />
 </head>
 <div class="top-panel">
-    <p class="message-top-panel">Détails de votre commande</p>
+    <p class="message-top-panel">Composez votre commande !</p>
 </div>
 <div class="content-details-commande">
-    <div class="box">
-        <div class="ligne1">
-            <p class="nom">Plats : </p>
-            <!-- a automatiser foreach ou jsp-->
-            <p class="one rose">Pâtes bolognaises</p>
-            <p class="two rose">Pâtes bolognaises</p>
-            <p class="three rose">Pâtes bolognaises</p>
+    <form method="post" asp-page-handler="ChoisirNombreLignes" class="choix-nb-lignes">
+        <label>En combien de lignes voulez-vous décomposer votre commande ?</label>
+        <div class="donnee">
+            <input type="number" name="NombreDeLignesSouhaitees" min="1" required />
+            <button type="submit">Valider</button>
         </div>
-        <div class="ligne2">
-            <p class="prix">Prix : 15€</p>
-            <p class="date rose">Date de commmande : 01/04/25</p>
+    </form>
+    <form method="post" asp-page-handler="LivrerCommande" class="lignes-commande">
+        <div class="lignes-commande-container">
+            @if (TempData["Erreur"] != null)
+            {
+                <div class="alert-error">
+                    @TempData["Erreur"]
+                </div>
+            }
+
+            @for (int i = 0; i < Model.Lignes.Count; i++)
+            {
+                <div class="commande-ligne">
+                    <p class="rose">Ligne de commande @(@i + 1)</p>
+                    <div class="infos-ligne">
+                        <div class="date">
+                            <label>Date de livraison :</label>
+                            <input type="date" name="Lignes[@i].DateLivraison"
+                                   value="@(Model.Lignes[i].DateLivraison == default(DateTime)
+                                     ? DateTime.Today.ToString("yyyy-MM-dd")
+                                     : Model.Lignes[i].DateLivraison.ToString("yyyy-MM-dd"))"
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="lieu">
+                            <label>Lieu de livraison :</label>
+                            <input type="text" name="Lignes[@i].LieuLivraison" value="@Model.Lignes[i].LieuLivraison"/>
+                        </div>
+                    </div>
+
+                    <label>Plats à livrer :</label>
+                    <div class="plats">
+                        @foreach (var plat in Model.PlatsDisponibles)
+                        {
+                            <div>
+                                <input type="checkbox" name="Lignes[@i].Plats" value="@plat.Id"
+                                @(Model.Lignes[i].Plats.Contains(plat.Id) ? "checked" : "") />
+                                <label>@plat.Nom</label>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Bouton Supprimer cette ligne -->
+                    <input type="hidden" name="ligneIndex" value="@i" />
+                    <button class="sup-ligne" type="submit"
+                            formmethod="post"
+                            formaction="?handler=SupprimerLigne">
+                        <p>Supprimer cette ligne</p>
+                    </button>
+                </div>
+            }
         </div>
-        <div class="btn-validate">
-            <form method="post">
-                <button type="submit" asp-page-handler="LivrerCommande">
-                    Valider
-                </button>
-            </form>
-        </div>
-    </div>
+        <button type="submit" class="btn-validate"><p>Valider la commande</p></button>
+    </form>
 </div>
 <div class="btn-back-cuisinier">
     <form method="post">
