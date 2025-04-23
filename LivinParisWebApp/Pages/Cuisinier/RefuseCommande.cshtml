@@ -13,6 +13,7 @@
         <div class="popup-question">
             <div class="popup-two-div">
                 <form method="post">
+                    <input type="hidden" name="idLigneCommande" value="@Model.IdLigneCommande" />
                     <button class="btn-yes"
                             type="submit"
                             asp-page-handler="SeeCurrentCommandYes">
