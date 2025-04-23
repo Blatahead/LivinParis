@@ -87,7 +87,10 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
         public IActionResult OnPostCuisinierPanel() => RedirectToPage("/CuisinierPanel");
 
-        public IActionResult OnPostRefuseCommande() => RedirectToPage("/Cuisinier/RefuseCommande");
+        public IActionResult OnPostRefuseCommande(int idLigneCommande)
+        {
+            return RedirectToPage("/Cuisinier/RefuseCommande", new { idLigneCommande });
+        }
 
         public IActionResult OnPostDetailsCommande() => RedirectToPage("/Cuisinier/DetailsCommande");
 
