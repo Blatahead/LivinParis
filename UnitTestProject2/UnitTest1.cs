@@ -1,12 +1,15 @@
-﻿namespace ClassLibrary
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+
+namespace ClassLibrary
 {
     [TestClass]
-    public sealed class TestUnitaires
+    public class WelshPowellTests
     {
         [TestMethod]
         public void Graphe_Triangle()
         {
-
+            
             var g = new Graphe2();
             var a = new Noeud("A", "Test");
             var b = new Noeud("B", "Test");
@@ -20,18 +23,18 @@
             g.AjouterLien(b, c, "x");
             g.AjouterLien(c, a, "x");
 
-
+            
             var couleurs = WelshPowell.ColorierGraphe(g);
             var nbCouleurs = couleurs.Values.Distinct().Count();
 
-
+            
             Assert.AreEqual(3, nbCouleurs);
         }
 
         [TestMethod]
         public void Graphe_Ligne()
         {
-
+            
             var g = new Graphe2();
             var a = new Noeud("A", "Test");
             var b = new Noeud("B", "Test");
@@ -47,11 +50,11 @@
             g.AjouterLien(b, c, "x");
             g.AjouterLien(c, d, "x");
 
-
+            
             var couleurs = WelshPowell.ColorierGraphe(g);
             var nbCouleurs = couleurs.Values.Distinct().Count();
 
-
+            
             Assert.AreEqual(2, nbCouleurs);
         }
     }

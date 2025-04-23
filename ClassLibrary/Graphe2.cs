@@ -28,5 +28,20 @@ namespace ClassLibrary
             foreach (var l in Liens)
                 Console.WriteLine(l);
         }
+
+        public void ColorierEtAfficher()
+        {
+            var couleurs = WelshPowell.ColorierGraphe(this);
+            var nbCouleurs = couleurs.Values.Distinct().Count();
+
+            Console.WriteLine("\n=== Coloration des nœuds (Welsh-Powell) ===");
+            foreach (var kvp in couleurs.OrderBy(kvp => kvp.Value))
+            {
+                Console.WriteLine($"{kvp.Key} -> Couleur {kvp.Value}");
+            }
+
+            Console.WriteLine($"\nNombre total de couleurs utilisées : {nbCouleurs}");
+        }
+
     }
 }
