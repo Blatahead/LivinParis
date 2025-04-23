@@ -1,4 +1,4 @@
-using ClassLibraryRendu2;
+using ClassLibrary;
 namespace LivinParis
 {
     public static class Program
