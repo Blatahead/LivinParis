@@ -9,12 +9,22 @@
     <link rel="stylesheet" href="/css/site.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <style>
-        .content-settings-client{
-            height:80vh;
-        }
-        h2{
+        .title-livraison{
             height:10%;
+            align-content:center;
+            text-align:center;
+            font-size: 2vw;
         }
+        .ligne-commande-title{
+            font-size: 1.5vw;
+        }
+        .info{
+            font-size:1vw
+        }
+        .content-settings-client{
+            height:85vh;
+        }
+
         .carousel {
             display: flex;
             overflow: hidden;
@@ -29,28 +39,106 @@
         }
 
         .slide {
+            display:flex;
             flex: 0 0 100%;
+            flex-direction:column;
+            justify-content:space-around;
             scroll-snap-align: start;
             border-radius: 15px;
             background-color: rgba(255, 255, 255, 0.25);
             padding: 20px;
+
+            .map{
+                display:flex;
+                height:70%;
+            }
+
+            p{
+                display:flex;
+            }
         }
 
         .caroussel-btns {
-            height:20%;
-            width:100%;
+            height:10%;
+            width:20%;
+            margin-left:auto;
+            margin-right:auto;
             display: flex;
             justify-content: center;
             gap: 20px;
+
+            button{
+                padding: 10px 15px;
+                height: 60%;
+                width: 10vw;
+                font-size: 18px;
+                cursor: pointer;
+                background-color: #e0aaff;
+                color: #fffefe;
+                border: none;
+                border-radius: 15px;
+                font-size: 1.2vw;
+                justify-content:center;
+            }
         }
 
-            .caroussel-btns button {
-            padding: 10px 15px;
-            height:30%;
-            width:10vw;
-            font-size: 18px;
+
+        .btn-group{
+            height:10%;
+            width:50%;
+            display:flex;
+            flex-direction:row;
+            justify-content:space-around;
+            margin-left:auto;
+            margin-right:auto;
+            
+            button {
+                height:50%;
+                display: flex;
+                width: 10vw;
+                padding: 0.3rem 0.6rem;
+                margin-bottom:auto;
+                margin-top:auto;
+                border-radius: 15px;
+                font-size: 1.2vw;
+                font-family: "Lilita One", sans-serif;
+                cursor: pointer;
+                background-color: #e0aaff;
+                color: #fffefe;
+                border: none;
+                align-items:center;
+                justify-content: center;
+
+                p{
+                    display: flex;
+                    font-size: 1rem;
+                }
+            }
+
+            .violet{
+                background-color: #5a189a;
+            }
+        }
+
+        a.leaflet-control-zoom-in,
+        a.leaflet-control-zoom-out {
+            background-color: #7b2cbf;
+            font-size: 22px;
+            border: none;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            transition: all 0.2s ease-in-out
+
+            span{
+                color: #fffefe;
+            }
+        }
+
+        a.leaflet-control-zoom-in:hover,
+        a.leaflet-control-zoom-out:hover {
+            background-color: #e0aaff;
             cursor: pointer;
         }
+
     </style>
 </head>
 
@@ -62,9 +150,11 @@
         {
             <div class="slide">
                 <p class="ligne-commande-title">Ligne de commande @(@i + 1)</p>
-                <div class="map" id="map-@i" style="height: 400px; width: 100%; margin-bottom: 10px;"></div>
-                <p>Distance estimée : @Math.Round(Model.DistancesKm[i], 2) km</p>
-                <p>Temps estimé : @Math.Round(Model.DistancesKm[i] / 20 * 60) min</p>
+                <div class="map" id="map-@i" style="width: 100%;"></div>
+                <p class="info">Distance estimée : @Math.Round(Model.DistancesKm[i], 2) km</p>
+                <p class="info">Temps estimé : @Math.Round(Model.DistancesKm[i] / 20 * 60) min</p>
+                <p class="info">Prix de la ligne : @Model.PrixParLigne[i] €</p>
+                <p class="info">Stations traversées : @string.Join(" → ", Model.StationsTraversees[i])</p>
             </div>
         }
     </div>
@@ -75,8 +165,8 @@
     </div>
 
     <form method="post" class="btn-group">
-        <button type="submit" asp-page-handler="Confirm">Confirmer</button>
-        <button type="submit" asp-page-handler="Retour">Retour</button>
+        <button class="btn-confirm" type="submit" asp-page-handler="Confirm"><p>Confirmer</p></button>
+        <button class="btn-back violet" type="submit" asp-page-handler="Retour"><p>Retour</p></button>
     </form>
 </div>
 
