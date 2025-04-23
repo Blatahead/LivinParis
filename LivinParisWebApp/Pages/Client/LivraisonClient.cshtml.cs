@@ -95,10 +95,7 @@ namespace LivinParisWebApp.Pages.Client
                 {
                     var s1 = chemin[i];
                     var s2 = chemin[i + 1];
-                    distance += 2 * 6371 * Math.Asin(Math.Sqrt(
-                        Math.Pow(Math.Sin((s2.Latitude - s1.Latitude) / 2), 2) +
-                        Math.Cos(s1.Latitude) * Math.Cos(s2.Latitude) *
-                        Math.Pow(Math.Sin((s2.Longitude - s1.Longitude) / 2), 2)));
+                    distance += Station<StationNoeud>.CalculDistance2stations(s1,s2);
                 }
                 DistancesKm.Add(distance);
 

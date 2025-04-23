@@ -204,12 +204,21 @@ namespace ClassLibrary
         /// </summary>
         /// <param name="p1"></param>
         /// <param name="p2"></param>
-        static void CalculDistance2stations(Station<T> p1, Station<T> p2)
-            {
-                double distance = 2*6371*Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((p2.latitude-p1.latitude)/2), 2)+ Math.Cos(p1.latitude)*Math.Cos(p2.latitude)*Math.Pow(Math.Sin((p2.longitude-p1.longitude)/2), 2)));
+        public static double CalculDistance2stations(StationNoeud p1, StationNoeud p2)
+        {
+            double lat1 = ConvertDegToRad(p1.Latitude);
+            double lon1 = ConvertDegToRad(p1.Longitude);
+            double lat2 = ConvertDegToRad(p2.Latitude);
+            double lon2 = ConvertDegToRad(p2.Longitude);
 
+            return 2 * 6371 * Math.Asin(Math.Sqrt(
+                Math.Pow(Math.Sin((lat2 - lat1) / 2), 2) +
+                Math.Cos(lat1) * Math.Cos(lat2) *
+                Math.Pow(Math.Sin((lon2 - lon1) / 2), 2)
+            ));
+        }
 
-            }
+        private static double ConvertDegToRad(double deg) => deg * Math.PI / 180;
 
         #endregion
     }
