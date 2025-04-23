@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivinParisWebApp", "..\Livi
 		{BF0E3CCA-7046-4E1D-93CB-E1A7276C3D87} = {BF0E3CCA-7046-4E1D-93CB-E1A7276C3D87}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTestClassLibrary", "..\UnitTestProject2\UniTestClassLibrary.csproj", "{9F3D3E99-A839-4641-8C62-9EA27E0077FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{362B4A94-DA06-4610-9372-64446A193B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{362B4A94-DA06-4610-9372-64446A193B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{362B4A94-DA06-4610-9372-64446A193B7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F3D3E99-A839-4641-8C62-9EA27E0077FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F3D3E99-A839-4641-8C62-9EA27E0077FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F3D3E99-A839-4641-8C62-9EA27E0077FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F3D3E99-A839-4641-8C62-9EA27E0077FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
