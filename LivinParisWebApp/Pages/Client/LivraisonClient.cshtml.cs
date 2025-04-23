@@ -4,6 +4,7 @@ using ClassLibrary;
 using LivinParisWebApp.Utils;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using ClassLibraryRendu1;
 
 namespace LivinParisWebApp.Pages.Client
 {
@@ -30,20 +31,13 @@ namespace LivinParisWebApp.Pages.Client
                 return RedirectToPage("/Client/DetailsCommande");
 
             string connStr = _config.GetConnectionString("MyDb");
+            var graphe = new ClassLibrary.Graphe();
+            graphe.ChargerDepuisBDD(connStr);
+
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            int idClient = 0;
-            string adresseClient = "";
-            var idCmd = new MySqlCommand("SELECT Id_Client FROM Client_ WHERE Id_Utilisateur = @uid", conn);
-            idCmd.Parameters.AddWithValue("@uid", userId);
-            var result = await idCmd.ExecuteScalarAsync();
-            if (result != null)
-            {
-                idClient = Convert.ToInt32(result);
-                adresseClient = await GetAdresseUtilisateur(conn, idClient);
-            }
-
+            // Récupération des prix des plats
             var cmdPrix = new MySqlCommand($"SELECT Num_plat, Prix_plat FROM Plat WHERE Num_plat IN ({string.Join(",", platsPanier)})", conn);
             var prixMap = new Dictionary<int, decimal>();
             using var readerPrix = await cmdPrix.ExecuteReaderAsync();
@@ -51,87 +45,33 @@ namespace LivinParisWebApp.Pages.Client
                 prixMap[readerPrix.GetInt32(0)] = readerPrix.GetDecimal(1);
             await readerPrix.CloseAsync();
 
-            decimal prixTotal = lignes
-                .SelectMany(l => l.Plats)
-                .Where(id => prixMap.ContainsKey(id))
-                .Sum(id => prixMap[id]);
-
-            var insertCommande = new MySqlCommand("INSERT INTO Commande (Prix_commande, Id_Utilisateur) VALUES (@prix, @uid); SELECT LAST_INSERT_ID();", conn);
-            insertCommande.Parameters.AddWithValue("@prix", prixTotal);
-            insertCommande.Parameters.AddWithValue("@uid", userId);
-            int idCommande = Convert.ToInt32(await insertCommande.ExecuteScalarAsync());
-
-            var graphe = new Graphe();
-            graphe.ChargerDepuisBDD(connStr);
-
-            //var (latClient, lonClient) = await ClassLibrary.Convertisseur_coordonnees.GetCoordinatesAsync(adresseClient);
-            //var stationClient = StationUtils.GetStationProche(latClient, lonClient, graphe.Stations);
-
             foreach (var ligne in lignes)
             {
-                // Récupération adresse cuisinier à partir du 1er plat
-                int? idPlat = ligne.Plats.FirstOrDefault();
-                string adresseCuisinier = "";
-
-                var getAddrCmd = new MySqlCommand(@"SELECT Adresse_cuisinier FROM Cuisinier 
-                                        WHERE Id_Cuisinier = (SELECT Id_Cuisinier FROM Plat WHERE Num_plat = @idPlat)", conn);
-                getAddrCmd.Parameters.AddWithValue("@idPlat", idPlat);
-                var addrResult = await getAddrCmd.ExecuteScalarAsync();
-                adresseCuisinier = addrResult?.ToString() ?? "Paris, France";
-
-                // Coordonnées cuisinier
+                int idPlat = ligne.Plats.FirstOrDefault();
+                string adresseCuisinier = await GetAdresseCuisinierAsync(conn, idPlat);
                 var (latCuis, lonCuis) = await ClassLibrary.Convertisseur_coordonnees.GetCoordinatesAsync(adresseCuisinier);
                 var stationCuis = StationUtils.GetStationProche(latCuis, lonCuis, graphe.Stations);
 
-                // Coordonnées client pour CETTE ligne
-                var adresseClientLigne = ligne.LieuLivraison;
-                var (latClient, lonClient) = await ClassLibrary.Convertisseur_coordonnees.GetCoordinatesAsync(adresseClientLigne);
+                var (latClient, lonClient) = await ClassLibrary.Convertisseur_coordonnees.GetCoordinatesAsync(ligne.LieuLivraison);
                 var stationClient = StationUtils.GetStationProche(latClient, lonClient, graphe.Stations);
 
-                // Calcul chemin
                 var chemin = graphe.Dijkstra(stationCuis.Id, stationClient.Id);
                 Chemins.Add(chemin.Select(StationConvertisseurs.ToDTO).ToList());
-
-                // Noms des stations
                 StationsTraversees.Add(chemin.Select(s => s.Nom).ToList());
 
-                // Calcul distance
                 double distance = 0;
                 for (int i = 0; i < chemin.Count - 1; i++)
-                {
-                    var s1 = chemin[i];
-                    var s2 = chemin[i + 1];
-                    distance += Station<StationNoeud>.CalculDistance2stations(s1,s2);
-                }
+                    distance += Station<StationNoeud>.CalculDistance2stations(chemin[i], chemin[i + 1]);
                 DistancesKm.Add(distance);
 
-                // Prix de cette ligne
-                decimal prixLigne = ligne.Plats
-                    .Where(id => prixMap.ContainsKey(id))
-                    .Sum(id => prixMap[id]);
+                decimal prixLigne = ligne.Plats.Where(id => prixMap.ContainsKey(id)).Sum(id => prixMap[id]);
                 PrixParLigne.Add(prixLigne);
-
-                // Insertion en BDD
-                var insertLigne = new MySqlCommand(@"INSERT INTO LigneCommande (Id_Commande, DateLivraison, LieuLivraison) 
-                                         VALUES (@idc, @date, @lieu); SELECT LAST_INSERT_ID();", conn);
-                insertLigne.Parameters.AddWithValue("@idc", idCommande);
-                insertLigne.Parameters.AddWithValue("@date", ligne.DateLivraison);
-                insertLigne.Parameters.AddWithValue("@lieu", ligne.LieuLivraison);
-                int idLigne = Convert.ToInt32(await insertLigne.ExecuteScalarAsync());
-
-                foreach (var idPlatInLigne in ligne.Plats)
-                {
-                    var insertPlat = new MySqlCommand("INSERT INTO Plat_LigneCommande (Id_LigneCommande, Num_Plat) VALUES (@idL, @idP)", conn);
-                    insertPlat.Parameters.AddWithValue("@idL", idLigne);
-                    insertPlat.Parameters.AddWithValue("@idP", idPlatInLigne);
-                    await insertPlat.ExecuteNonQueryAsync();
-                }
             }
 
-
-            var deletePanier = new MySqlCommand("DELETE FROM Panier WHERE Id_Client = @idClient", conn);
-            deletePanier.Parameters.AddWithValue("@idClient", idClient);
-            await deletePanier.ExecuteNonQueryAsync();
+            PrixTotalCommande = PrixParLigne.Sum();
+            HttpContext.Session.SetObject("DistancesKm", DistancesKm);
+            HttpContext.Session.SetObject("PrixParLigne", PrixParLigne);
+            HttpContext.Session.SetObject("StationsTraversees", StationsTraversees);
 
             ToutesStations = graphe.Stations.Select(StationConvertisseurs.ToDTO).ToList();
             TousArcs = graphe.Arcs.Select(arc => new ArcDTO
@@ -149,37 +89,91 @@ namespace LivinParisWebApp.Pages.Client
             return Page();
         }
 
-        private async Task<string> GetAdresseUtilisateur(MySqlConnection conn, int idClient)
+        public async Task<IActionResult> OnPostConfirm()
         {
-            // Essai pour un particulier
-            var cmdPart = new MySqlCommand("SELECT Adresse_particulier FROM Particulier WHERE Id_Client = @id", conn);
-            cmdPart.Parameters.AddWithValue("@id", idClient);
-            var partAddr = await cmdPart.ExecuteScalarAsync();
-            if (partAddr != null)
+            var lignes = HttpContext.Session.GetObjectFromJson<List<LigneCommandeTemp>>("LignesCommandeTemp");
+            var platsPanier = HttpContext.Session.GetObjectFromJson<List<int>>("PanierClient");
+            var distances = HttpContext.Session.GetObjectFromJson<List<double>>("DistancesKm");
+            var prixLignes = HttpContext.Session.GetObjectFromJson<List<decimal>>("PrixParLigne");
+            var userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
+            if (lignes == null || platsPanier == null || distances == null || prixLignes == null || userId == 0)
+                return RedirectToPage("/ClientPanel");
+
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            await conn.OpenAsync();
+
+            var insertCommande = new MySqlCommand("INSERT INTO Commande (Prix_commande, Id_Utilisateur) VALUES (@prix, @uid); SELECT LAST_INSERT_ID();", conn);
+            insertCommande.Parameters.AddWithValue("@prix", prixLignes.Sum());
+            insertCommande.Parameters.AddWithValue("@uid", userId);
+            int idCommande = Convert.ToInt32(await insertCommande.ExecuteScalarAsync());
+
+            for (int i = 0; i < lignes.Count; i++)
             {
-                string adresse = partAddr.ToString();
-                if (!adresse.ToLower().Contains("paris"))
-                    adresse += ", Paris, France";
-                return adresse;
+                var ligne = lignes[i];
+                var insertLigne = new MySqlCommand("INSERT INTO LigneCommande (Id_Commande, DateLivraison, LieuLivraison) VALUES (@idc, @date, @lieu); SELECT LAST_INSERT_ID();", conn);
+                insertLigne.Parameters.AddWithValue("@idc", idCommande);
+                insertLigne.Parameters.AddWithValue("@date", ligne.DateLivraison);
+                insertLigne.Parameters.AddWithValue("@lieu", ligne.LieuLivraison);
+                int idLigne = Convert.ToInt32(await insertLigne.ExecuteScalarAsync());
+
+                foreach (var idPlat in ligne.Plats)
+                {
+                    var insertPlat = new MySqlCommand("INSERT INTO Plat_LigneCommande (Id_LigneCommande, Num_Plat) VALUES (@idL, @idP)", conn);
+                    insertPlat.Parameters.AddWithValue("@idL", idLigne);
+                    insertPlat.Parameters.AddWithValue("@idP", idPlat);
+                    await insertPlat.ExecuteNonQueryAsync();
+
+                    // Ajout du plat à la liste de commande du cuisinier
+                    var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = CONCAT_WS(',', Liste_commandes, @idC) WHERE Id_Cuisinier = (SELECT Id_Cuisinier FROM Plat WHERE Num_plat = @idP)", conn);
+                    updateCmd.Parameters.AddWithValue("@idC", idCommande);
+                    updateCmd.Parameters.AddWithValue("@idP", idPlat);
+                    await updateCmd.ExecuteNonQueryAsync();
+                }
             }
 
-            // Essai pour une entreprise
-            var cmdEnt = new MySqlCommand("SELECT Adresse_entreprise FROM Entreprise WHERE Id_Client = @id", conn);
-            cmdEnt.Parameters.AddWithValue("@id", idClient);
-            var entAddr = await cmdEnt.ExecuteScalarAsync();
-            if (entAddr != null)
-            {
-                string adresse = entAddr.ToString();
-                if (!adresse.ToLower().Contains("paris"))
-                    adresse += ", Paris, France";
-                return adresse;
-            }
+            var idClientCmd = new MySqlCommand("SELECT Id_Client FROM Client_ WHERE Id_Utilisateur = @uid", conn);
+            idClientCmd.Parameters.AddWithValue("@uid", userId);
+            int idClient = Convert.ToInt32(await idClientCmd.ExecuteScalarAsync());
 
-            return "Paris, France"; // fallback
+            var deletePanier = new MySqlCommand("DELETE FROM Panier WHERE Id_Client = @idClient", conn);
+            deletePanier.Parameters.AddWithValue("@idClient", idClient);
+            await deletePanier.ExecuteNonQueryAsync();
+
+            var updateStats = new MySqlCommand(@"UPDATE Statistiques SET
+                Nb_Paniers_Validés = Nb_Paniers_Validés + 1,
+                Nb_Commandes = Nb_Commandes + 1,
+                Argent_Total = Argent_Total + @total,
+                Temps_Livraison_Total = Temps_Livraison_Total + @temps,
+                Distance_Totale = Distance_Totale + @distance,
+                Nb_Plats_Livrés = Nb_Plats_Livrés + @nbplats
+                WHERE Id_Statistiques = 1;", conn);
+
+            updateStats.Parameters.AddWithValue("@total", prixLignes.Sum());
+            updateStats.Parameters.AddWithValue("@temps", distances.Sum(d => d / 20 * 60));
+            updateStats.Parameters.AddWithValue("@distance", distances.Sum());
+            updateStats.Parameters.AddWithValue("@nbplats", platsPanier.Count);
+            await updateStats.ExecuteNonQueryAsync();
+
+            HttpContext.Session.Remove("PanierClient");
+            HttpContext.Session.Remove("LignesCommandeTemp");
+            HttpContext.Session.Remove("DistancesKm");
+            HttpContext.Session.Remove("PrixParLigne");
+            HttpContext.Session.Remove("StationsTraversees");
+
+            return RedirectToPage("/ClientPanel");
         }
 
-
-        public IActionResult OnPostConfirm() => RedirectToPage("/ClientPanel");
         public IActionResult OnPostRetour() => RedirectToPage("/Client/DetailsCommande");
+
+        private async Task<string> GetAdresseCuisinierAsync(MySqlConnection conn, int idPlat)
+        {
+            var cmd = new MySqlCommand(@"SELECT Adresse_cuisinier FROM Cuisinier 
+                                         WHERE Id_Cuisinier = (SELECT Id_Cuisinier FROM Plat WHERE Num_plat = @id)", conn);
+            cmd.Parameters.AddWithValue("@id", idPlat);
+            var result = await cmd.ExecuteScalarAsync();
+            return result?.ToString() ?? "Paris, France";
+        }
     }
 }
