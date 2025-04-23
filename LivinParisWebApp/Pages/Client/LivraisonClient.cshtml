@@ -9,19 +9,22 @@
     <link rel="stylesheet" href="/css/site.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <style>
-        p{
-            font-size:1.5vw
-        }
-        .content-settings-client{
-            height:85vh;
-        }
-
         .title-livraison{
             height:10%;
             align-content:center;
             text-align:center;
             font-size: 2vw;
         }
+        .ligne-commande-title{
+            font-size: 1.5vw;
+        }
+        .info{
+            font-size:1vw
+        }
+        .content-settings-client{
+            height:85vh;
+        }
+
         .carousel {
             display: flex;
             overflow: hidden;
@@ -36,11 +39,23 @@
         }
 
         .slide {
+            display:flex;
             flex: 0 0 100%;
+            flex-direction:column;
+            justify-content:space-around;
             scroll-snap-align: start;
             border-radius: 15px;
             background-color: rgba(255, 255, 255, 0.25);
             padding: 20px;
+
+            .map{
+                display:flex;
+                height:70%;
+            }
+
+            p{
+                display:flex;
+            }
         }
 
         .caroussel-btns {
@@ -135,9 +150,11 @@
         {
             <div class="slide">
                 <p class="ligne-commande-title">Ligne de commande @(@i + 1)</p>
-                <div class="map" id="map-@i" style="height: 400px; width: 100%; margin-bottom: 10px;"></div>
-                <p>Distance estimée : @Math.Round(Model.DistancesKm[i], 2) km</p>
-                <p>Temps estimé : @Math.Round(Model.DistancesKm[i] / 20 * 60) min</p>
+                <div class="map" id="map-@i" style="width: 100%;"></div>
+                <p class="info">Distance estimée : @Math.Round(Model.DistancesKm[i], 2) km</p>
+                <p class="info">Temps estimé : @Math.Round(Model.DistancesKm[i] / 20 * 60) min</p>
+                <p class="info">Prix de la ligne : @Model.PrixParLigne[i] €</p>
+                <p class="info">Stations traversées : @string.Join(" → ", Model.StationsTraversees[i])</p>
             </div>
         }
     </div>

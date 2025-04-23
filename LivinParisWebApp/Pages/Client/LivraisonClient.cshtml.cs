@@ -16,6 +16,9 @@ namespace LivinParisWebApp.Pages.Client
         public List<StationDTO> ToutesStations { get; set; } = new();
         public List<ArcDTO> TousArcs { get; set; } = new();
         public List<double> DistancesKm { get; set; } = new();
+        public List<List<string>> StationsTraversees { get; set; } = new();
+        public List<decimal> PrixParLigne { get; set; } = new();
+        public decimal PrixTotalCommande { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -89,6 +92,9 @@ namespace LivinParisWebApp.Pages.Client
                 var chemin = graphe.Dijkstra(stationCuis.Id, stationClient.Id);
                 Chemins.Add(chemin.Select(StationConvertisseurs.ToDTO).ToList());
 
+                // Noms des stations
+                StationsTraversees.Add(chemin.Select(s => s.Nom).ToList());
+
                 // Calcul distance
                 double distance = 0;
                 for (int i = 0; i < chemin.Count - 1; i++)
@@ -98,6 +104,12 @@ namespace LivinParisWebApp.Pages.Client
                     distance += Station<StationNoeud>.CalculDistance2stations(s1,s2);
                 }
                 DistancesKm.Add(distance);
+
+                // Prix de cette ligne
+                decimal prixLigne = ligne.Plats
+                    .Where(id => prixMap.ContainsKey(id))
+                    .Sum(id => prixMap[id]);
+                PrixParLigne.Add(prixLigne);
 
                 // Insertion en BDD
                 var insertLigne = new MySqlCommand(@"INSERT INTO LigneCommande (Id_Commande, DateLivraison, LieuLivraison) 
