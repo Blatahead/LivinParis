@@ -67,7 +67,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
             }
 
             var commandes = listeCommandes.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToList();
-            commandes.Remove(idLigneCommande.ToString());
+            commandes.Remove(idCommande.ToString());
 
             var updateListe = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = @liste WHERE Id_Cuisinier = @cid", conn);
             updateListe.Parameters.AddWithValue("@liste", string.Join(",", commandes));

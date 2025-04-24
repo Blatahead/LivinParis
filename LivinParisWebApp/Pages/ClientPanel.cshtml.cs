@@ -61,11 +61,14 @@ namespace LivinParisWebApp.Pages
             }
 
             // Récupération des plats disponibles
-            var platsCmd = new MySqlCommand(@"SELECT p.Num_plat, p.Nom_plat, p.prix_plat, c.Prenom_cuisinier, 
-                p.Nombre_de_personne_plat, p.Type_plat, p.Nationalité_plat, p.Date_fabrication_plat, 
-                p.Date_péremption_plat, p.Ingrédients_plat, p.Régime_alimentaire_plat, c.Adresse_cuisinier
+            var platsCmd = new MySqlCommand(@"
+                SELECT p.Num_plat, p.Nom_plat, p.prix_plat, c.Prenom_cuisinier, 
+                       p.Nombre_de_personne_plat, p.Type_plat, p.Nationalité_plat, 
+                       p.Date_fabrication_plat, p.Date_péremption_plat, 
+                       p.Ingrédients_plat, p.Régime_alimentaire_plat, c.Adresse_cuisinier
                 FROM Plat p
-                JOIN Cuisinier c ON p.id_Cuisinier = c.Id_Cuisinier", conn);
+                JOIN Cuisinier c ON p.id_Cuisinier = c.Id_Cuisinier
+                WHERE p.Disponible = TRUE", conn);
 
             using var platsReader = await platsCmd.ExecuteReaderAsync();
             while (await platsReader.ReadAsync())

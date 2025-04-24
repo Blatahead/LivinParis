@@ -125,11 +125,15 @@ namespace LivinParisWebApp.Pages.Client
                     insertPlat.Parameters.AddWithValue("@idP", idPlat);
                     await insertPlat.ExecuteNonQueryAsync();
 
-                    // Ajout du plat à la liste de commande du cuisinier
+                    // add le plat à la liste de commande du cuisinier
                     var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = CONCAT_WS(',', Liste_commandes, @idC) WHERE Id_Cuisinier = (SELECT Id_Cuisinier FROM Plat WHERE Num_plat = @idP)", conn);
                     updateCmd.Parameters.AddWithValue("@idC", idCommande);
                     updateCmd.Parameters.AddWithValue("@idP", idPlat);
                     await updateCmd.ExecuteNonQueryAsync();
+
+                    var disablePlatCmd = new MySqlCommand("UPDATE Plat SET Disponible = FALSE WHERE Num_plat = @idPlat", conn);
+                    disablePlatCmd.Parameters.AddWithValue("@idPlat", idPlat);
+                    await disablePlatCmd.ExecuteNonQueryAsync();
                 }
             }
 
