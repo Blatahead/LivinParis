@@ -4,27 +4,31 @@
     Layout = "~/Pages/Shared/_NavBarLayout.cshtml";
     ViewData["Title"] = "Commandes à livrer";
 }
+
 <head>
     <link rel="stylesheet" href="../css/site.css" />
 </head>
+
 <div class="top-panel">
     <p class="message-top-panel">Vos commandes à livrer</p>
 </div>
+
 <div class="content-see-command">
     <div class="left-colonne">
         <p class="menu-title">Liste des commandes</p>
-        <!-- A synchro avec la bonne liste -->
         <div class="command-list">
-            @foreach (var commande in Model.ListeCommandes)
+            @foreach (var ligne in Model.CommandesEnCours)
             {
                 <div class="command-card">
                     <div class="command-info">
-                        <p>Commande n°@commande</p>
-                        <span class="rose">Client : ???</span>
-                        <span class="rose">Nb de plats : ???</span>
+                        <p class="sous-commande">Commande : @ligne.Num_commande</p>
+                        <p>ligne associée : @ligne.Id_LigneCommande</p>
+                        <span class="rose">Client : @ligne.ClientNom</span>
+                        <span class="rose">Nb de plats : @ligne.NbPlats</span>
                     </div>
                     <div class="command-actions">
                         <form method="post">
+                            <input type="hidden" name="idLigneCommande" value="@ligne.Id_LigneCommande" />
                             <button class="delete-btn" type="submit" asp-page-handler="RefuseCommande">
                                 Refuser
                             </button>
@@ -37,21 +41,22 @@
             }
         </div>
     </div>
+
     <div class="right-colonne">
         <p class="menu-title">Commandes prêtes à livrer</p>
-        <!-- A syncrho avec la bonne liste-->
         <div class="command-list">
-            @foreach (var commande in Model.ListeCommandesPretes)
+            @foreach (var ligne in Model.CommandesPretes)
             {
                 <div class="command-card">
                     <div class="command-info">
-                        <p>Commande n°@commande</p>
-                        <span class="rose">Client : ???</span>
-                        <span class="rose">Nb de plats : ???</span>
+                        <p>Ligne n°@ligne.Id_LigneCommande</p>
+                        <p class="sous-commande">Commande n°@ligne.Num_commande</p>
+                        <span class="rose">Client : @ligne.ClientNom</span>
+                        <span class="rose">Nb de plats : @ligne.NbPlats</span>
                     </div>
                     <div class="command-actions">
                         <form method="post">
-                            <input type="hidden" name="commandeId" value="@commande" />
+                            <input type="hidden" name="commandeId" value="@ligne.Id_LigneCommande" />
                             <button class="delete-btn" type="submit" asp-page-handler="CancelCommande">
                                 Annuler
                             </button>
@@ -62,11 +67,10 @@
                     </div>
                 </div>
             }
-
         </div>
-
     </div>
 </div>
+
 <div class="btn-add-plat">
     <form method="post">
         <button type="submit" asp-page-handler="CuisinierPanel">
