@@ -4,6 +4,10 @@ using ClassLibrary;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using System.Text.Json;
+
+
+
 
 namespace LivinParisWebApp.Pages
 {
@@ -22,9 +26,21 @@ namespace LivinParisWebApp.Pages
         //public List<StationNoeud> Chemin { get; set; }
         public void OnGet()
         {
-            var graphe = new ClassLibrary.Graphe();
+
+            var graphe = new Graphe();
+            Graphe2 graphe2 = new Graphe2();
+
             string connStr = _config.GetConnectionString("MyDb");
             graphe.ChargerDepuisBDD(connStr);
+            graphe2.ChargerDepuisBDD2(connStr);
+
+            var noeuds = graphe2.Noeuds.Select(n => new { id = n.Id, group = n.Type }).ToList();
+            var liens = graphe2.Liens.Select(l => new { source = l.Noeud1.Id, target = l.Noeud2.Id, label = l.Libelle }).ToList();
+
+            ViewData["NoeudsJson"] = JsonConvert.SerializeObject(noeuds);
+            ViewData["LiensJson"] = JsonConvert.SerializeObject(liens);
+
+
 
 
             //var cheminNoeuds = graphe.Dijkstra(1, 170);
@@ -110,7 +126,7 @@ namespace LivinParisWebApp.Pages
             string connStr = _config.GetConnectionString("MyDb");
             graphe.ChargerDepuisBDD(connStr);
 
-            TempData["Message"] = "Graphe généré avec succès.";
+            TempData["Message"] = "Graphe gÃ©nÃ©rÃ© avec succÃ¨s.";
             return Page();
         }
     }
