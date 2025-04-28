@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
+using System.Data;
 
 namespace LivinParisWebApp.Pages
 {
@@ -82,10 +83,28 @@ namespace LivinParisWebApp.Pages
 
             if (!string.IsNullOrEmpty(plats))
             {
-                var noms = plats.Split(',');
-                PlatsDisponibles = noms.Select(n => new PlatDispoDto
+                var noms = plats.Split(',').Select(n => n.Trim()).ToList();
+
+                // Requête SQL pour ne garder que les plats encore disponibles
+                var placeholders = string.Join(",", noms.Select((_, i) => $"@plat{i}"));
+                var filterQuery = $"SELECT Nom_plat FROM Plat WHERE Nom_plat IN ({placeholders}) AND Disponible = TRUE";
+
+                using var filterCmd = new MySqlCommand(filterQuery, conn);
+                for (int i = 0; i < noms.Count; i++)
                 {
-                    Nom = n.Trim()
+                    filterCmd.Parameters.AddWithValue($"@plat{i}", noms[i]);
+                }
+
+                var platsValides = new List<string>();
+                using var filtreReader = await filterCmd.ExecuteReaderAsync();
+                while (await filtreReader.ReadAsync())
+                {
+                    platsValides.Add(filtreReader.GetString("Nom_plat"));
+                }
+
+                PlatsDisponibles = platsValides.Select(n => new PlatDispoDto
+                {
+                    Nom = n
                 }).ToList();
             }
 

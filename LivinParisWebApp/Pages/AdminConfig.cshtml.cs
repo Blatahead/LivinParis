@@ -26,7 +26,16 @@ namespace LivinParisWebApp.Pages
         //public List<StationNoeud> Chemin { get; set; }
         public async Task OnGet()
         {
+
             var graphe = new Graphe();
+<<<<<<< HEAD
+=======
+            Graphe2 graphe2 = new Graphe2();
+
+            string connStr = _config.GetConnectionString("MyDb");
+            graphe.ChargerDepuisBDD(connStr);
+            graphe2.ChargerDepuisBDD2(connStr);
+>>>>>>> 91807ecee62566bbe744b53bc9572d6ec36ec440
 
             var cheminNoeuds = graphe.Dijkstra(1, 332);
 
@@ -123,7 +132,10 @@ namespace LivinParisWebApp.Pages
             var cmd = new MySqlCommand("DELETE FROM Station", conn);
             cmd.ExecuteNonQuery();
 
+<<<<<<< HEAD
             TempData["Message"] = "La table Station a été vidée avec succès.";
+=======
+>>>>>>> 91807ecee62566bbe744b53bc9572d6ec36ec440
             return RedirectToPage();
         }
 
@@ -155,14 +167,16 @@ namespace LivinParisWebApp.Pages
 
             if (!System.IO.File.Exists(cheminFichier))
             {
-                TempData["Message"] = $"Fichier introuvable : {cheminFichier}";
                 return Page();
             }
 
             try
             {
                 import.ImporterDepuisMTX(cheminFichier);
+<<<<<<< HEAD
                 TempData["Message"] = "Importation réussie";
+=======
+>>>>>>> 91807ecee62566bbe744b53bc9572d6ec36ec440
             }
             catch (Exception ex)
             {
@@ -171,6 +185,13 @@ namespace LivinParisWebApp.Pages
 
             return Page();
         }
+
+        public IActionResult OnPostVoidBDD()
+        {
+
+            return Page();
+        }
+
         public IActionResult OnPostGenererGraphe()
         {
             var graphe = new Graphe();

@@ -1,58 +1,90 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class RefuseCommandeModel : PageModel
     {
         private readonly IConfiguration _config;
+        public int IdLigneCommande { get; set; }
 
         public RefuseCommandeModel(IConfiguration config)
         {
             _config = config;
         }
-        public void OnGet()
+
+        public void OnGet(int idLigneCommande)
         {
+            IdLigneCommande = idLigneCommande;
         }
+
         public IActionResult OnPostSeeCurrentCommandNo()
         {
             return RedirectToPage("/Cuisinier/SeeCurrentCommand");
         }
 
-        public IActionResult OnPostSeeCurrentCommandYes(int numCommande)
+        public IActionResult OnPostSeeCurrentCommandYes(int idLigneCommande)
         {
             string connStr = _config.GetConnectionString("MyDb");
 
             using var conn = new MySqlConnection(connStr);
             conn.Open();
 
-            //Supprimer la commande de la table Commande
-            var deleteCmd = new MySqlCommand("DELETE FROM Commande WHERE Num_commande = @id", conn);
-            deleteCmd.Parameters.AddWithValue("@id", numCommande);
-            deleteCmd.ExecuteNonQuery();
+            // Id_Commande lié à la ligne
+            int idCommande = 0;
+            var getCmd = new MySqlCommand("SELECT Id_Commande FROM LigneCommande WHERE Id_LigneCommande = @id", conn);
+            getCmd.Parameters.AddWithValue("@id", idLigneCommande);
+            var result = getCmd.ExecuteScalar();
+            if (result != null)
+                idCommande = Convert.ToInt32(result);
 
-            //Retirer la commande de la Liste_commandes du cuisinier
+            // supp les plats liés à la ligne
+            var deletePlats = new MySqlCommand("DELETE FROM Plat_LigneCommande WHERE Id_LigneCommande = @id", conn);
+            deletePlats.Parameters.AddWithValue("@id", idLigneCommande);
+            deletePlats.ExecuteNonQuery();
+
+            // supp la ligne de commande
+            var deleteLigne = new MySqlCommand("DELETE FROM LigneCommande WHERE Id_LigneCommande = @id", conn);
+            deleteLigne.Parameters.AddWithValue("@id", idLigneCommande);
+            deleteLigne.ExecuteNonQuery();
+
+            // maj liste dans le cuisinier
             int idUtilisateur = int.Parse(HttpContext.Session.GetString("Id_Utilisateur") ?? "0");
-            var getCmd = new MySqlCommand("SELECT Liste_commandes FROM Cuisinier WHERE Id_Utilisateur = @idU", conn);
-            getCmd.Parameters.AddWithValue("@idU", idUtilisateur);
-            string? listeCommandes = getCmd.ExecuteScalar()?.ToString();
+            var getListe = new MySqlCommand("SELECT Id_Cuisinier, Liste_commandes FROM Cuisinier WHERE Id_Utilisateur = @idU", conn);
+            getListe.Parameters.AddWithValue("@idU", idUtilisateur);
 
-            if (!string.IsNullOrEmpty(listeCommandes))
+            int idCuisinier = 0;
+            string listeCommandes = "";
+
+            using (var reader = getListe.ExecuteReader())
             {
-                var commandes = listeCommandes.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToList();
-                commandes.Remove(numCommande.ToString());
-
-                string nouvelleListe = string.Join(",", commandes);
-
-                var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = @liste WHERE Id_Utilisateur = @idU", conn);
-                updateCmd.Parameters.AddWithValue("@liste", nouvelleListe);
-                updateCmd.Parameters.AddWithValue("@idU", idUtilisateur);
-                updateCmd.ExecuteNonQuery();
+                if (reader.Read())
+                {
+                    idCuisinier = reader.GetInt32("Id_Cuisinier");
+                    listeCommandes = reader["Liste_commandes"]?.ToString() ?? "";
+                }
             }
 
-            TempData["Message"] = $"Commande {numCommande} refusée avec succès.";
+            var commandes = listeCommandes.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToList();
+            commandes.Remove(idCommande.ToString());
+
+            var updateListe = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = @liste WHERE Id_Cuisinier = @cid", conn);
+            updateListe.Parameters.AddWithValue("@liste", string.Join(",", commandes));
+            updateListe.Parameters.AddWithValue("@cid", idCuisinier);
+            updateListe.ExecuteNonQuery();
+
+            // supp la commande si plus aucune ligne liée
+            var checkLignes = new MySqlCommand("SELECT COUNT(*) FROM LigneCommande WHERE Id_Commande = @idCmd", conn);
+            checkLignes.Parameters.AddWithValue("@idCmd", idCommande);
+            int nbLignes = Convert.ToInt32(checkLignes.ExecuteScalar());
+
+            if (nbLignes == 0)
+            {
+                var deleteCommande = new MySqlCommand("DELETE FROM Commande WHERE Num_commande = @idCmd", conn);
+                deleteCommande.Parameters.AddWithValue("@idCmd", idCommande);
+                deleteCommande.ExecuteNonQuery();
+            }
 
             return RedirectToPage("/Cuisinier/SeeCurrentCommand");
         }
