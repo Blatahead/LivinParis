@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+ï»¿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ClassLibrary;
 using MySql.Data.MySqlClient;
@@ -24,58 +24,94 @@ namespace LivinParisWebApp.Pages
         public string CheminJson { get; set; }
 
         //public List<StationNoeud> Chemin { get; set; }
-        public void OnGet()
+        public async Task OnGet()
         {
             var graphe = new Graphe();
-            Graphe2 graphe2 = new Graphe2();
-            string connStr = _config.GetConnectionString("MyDb");
-            graphe.ChargerDepuisBDD(connStr);
-            graphe2.ChargerDepuisBDD2(connStr);
 
-            var noeuds = graphe2.Noeuds.Select(n => new { id = n.Id, group = n.Type }).ToList();
-            var liens = graphe2.Liens.Select(l => new { source = l.Noeud1.Id, target = l.Noeud2.Id, label = l.Libelle }).ToList();
-
-            ViewData["NoeudsJson"] = JsonConvert.SerializeObject(noeuds);
-            ViewData["LiensJson"] = JsonConvert.SerializeObject(liens);
-
-
-
-
-            //var cheminNoeuds = graphe.Dijkstra(1, 170);
-            //var cheminNoeuds = graphe.Dijkstra(96, 300);
-            //var cheminNoeuds = graphe.Dijkstra(210, 66);
-            //var cheminNoeuds = graphe.Dijkstra(258, 332);
             var cheminNoeuds = graphe.Dijkstra(1, 332);
 
+            var graphe2 = new Graphe2();
+            string connStr = _config.GetConnectionString("MyDb");
+            graphe2.ChargerDepuisBDD2(connStr);
 
-            // Conversion en DTO pour casser les cycles
-            var cheminDTOs = cheminNoeuds.Select(StationConvertisseurs.ToDTO).ToList();
-            CheminJson = JsonConvert.SerializeObject(cheminDTOs);
+            var clientsDTOs = new List<object>();
+            var cuisiniersDTOs = new List<object>();
 
-            var stationDTOs = graphe.Stations.Select(st => new StationDTO
+            foreach (var noeud in graphe2.Noeuds)
             {
-                Id = st.Id,
-                Nom = st.Nom,
-                Latitude = st.Latitude,
-                Longitude = st.Longitude
-            })
-                .ToList();
+                if (noeud.Type == "Cuisinier")
+                {
+                    string adresseCuisinier = "";
 
-            var arcDTOs = graphe.Arcs.Select(arc => new ArcDTO
-            {
-                SourceId = arc.Source.Id,
-                SourceLat = arc.Source.Latitude,
-                SourceLong = arc.Source.Longitude,
-                DestLat = arc.Destination.Latitude,
-                DestLong = arc.Destination.Longitude,
-                DestinationId = arc.Destination.Id,
-                Distance = arc.Distance,
-                Ligne = arc.Ligne
-            }).ToList();
+                    using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+                    {
+                        await conn.OpenAsync();
 
-            ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
-            ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
+                        var cmd = new MySqlCommand("SELECT Adresse_cuisinier FROM Cuisinier WHERE Id_Cuisinier = @id", conn);
+                        cmd.Parameters.AddWithValue("@id", noeud.Id);
+                        var result = await cmd.ExecuteScalarAsync();
+
+                        if (result != null)
+                            adresseCuisinier = result.ToString();
+                    }
+                    if (!string.IsNullOrEmpty(adresseCuisinier))
+                    {
+                        var coords = await GetCoordinatesFromAdresseAsync(adresseCuisinier);
+
+                        cuisiniersDTOs.Add(new
+                        {
+                            id = noeud.Id,
+                            latitude = coords.latitude,
+                            longitude = coords.longitude
+                        });
+                    }
+
+                }
+                else if (noeud.Type == "Client")
+                {
+                    string adresseClient = "";
+
+                    using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+                    {
+                        await conn.OpenAsync();
+
+                        var cmd = new MySqlCommand("SELECT Adresse_particulier FROM Particulier WHERE Id_Client = @id", conn);
+                        cmd.Parameters.AddWithValue("@id", noeud.Id);
+                        var result = await cmd.ExecuteScalarAsync();
+
+                        if (result != null)
+                        {
+                            adresseClient = result.ToString();
+                        }
+                        else
+                        {
+                            cmd = new MySqlCommand("SELECT Adresse_entreprise FROM Entreprise WHERE Id_Client = @id", conn);
+                            cmd.Parameters.AddWithValue("@id", noeud.Id);
+                            result = await cmd.ExecuteScalarAsync();
+
+                            if (result != null)
+                                adresseClient = result.ToString();
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(adresseClient))
+                    {
+                        var coords = await GetCoordinatesFromAdresseAsync(adresseClient);
+
+                        clientsDTOs.Add(new
+                        {
+                            id = noeud.Id,
+                            latitude = coords.latitude,
+                            longitude = coords.longitude
+                        });
+                    }
+                }
+            }
+
+            ViewData["Clients"] = JsonConvert.SerializeObject(clientsDTOs);
+            ViewData["Cuisiniers"] = JsonConvert.SerializeObject(cuisiniersDTOs);
         }
+
 
         public IActionResult OnPostDeleteContenuStations()
         {
@@ -87,9 +123,30 @@ namespace LivinParisWebApp.Pages
             var cmd = new MySqlCommand("DELETE FROM Station", conn);
             cmd.ExecuteNonQuery();
 
-            TempData["Message"] = "La table Station a été vidée avec succès.";
+            TempData["Message"] = "La table Station a Ã©tÃ© vidÃ©e avec succÃ¨s.";
             return RedirectToPage();
         }
+
+        public async Task<(double latitude, double longitude)> GetCoordinatesFromAdresseAsync(string adresse)
+        {
+            if (string.IsNullOrWhiteSpace(adresse))
+                return (0, 0);
+
+            var (latitude, longitude) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresse);
+            return (latitude, longitude);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
         public IActionResult OnPostLoadStationInBDD()
         {
             var import = new ImportStations(_config);
@@ -105,7 +162,7 @@ namespace LivinParisWebApp.Pages
             try
             {
                 import.ImporterDepuisMTX(cheminFichier);
-                TempData["Message"] = "Importation réussie";
+                TempData["Message"] = "Importation rÃ©ussie";
             }
             catch (Exception ex)
             {
@@ -120,8 +177,11 @@ namespace LivinParisWebApp.Pages
             string connStr = _config.GetConnectionString("MyDb");
             graphe.ChargerDepuisBDD(connStr);
 
-            TempData["Message"] = "Graphe généré avec succès.";
+            TempData["Message"] = "Graphe gÃ©nÃ©rÃ© avec succÃ¨s.";
             return Page();
         }
+
+       
+
     }
 }

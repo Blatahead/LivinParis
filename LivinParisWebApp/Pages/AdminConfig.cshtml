@@ -68,6 +68,35 @@
 
 	<script src="https://d3js.org/d3.v7.min.js"></script>
 
+	<script>
+		// Récupérer les données Clients et Cuisiniers depuis Razor
+		var clients = @Html.Raw(ViewData["Clients"]);
+		var cuisiniers = @Html.Raw(ViewData["Cuisiniers"]);
+
+		// Initialiser la carte Leaflet
+		var map = L.map('map').setView([48.8566, 2.3522], 6); // Paris par défaut
+
+		// Ajouter une couche OpenStreetMap
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: 'Map data © OpenStreetMap contributors'
+		}).addTo(map);
+
+		// Fonction pour ajouter un marqueur
+		function ajouterMarqueur(lat, lng, texte) {
+			L.marker([lat, lng]).addTo(map)
+				.bindPopup(texte);
+		}
+
+		// Ajouter les marqueurs pour les clients
+		clients.forEach(function (client) {
+			ajouterMarqueur(client.latitude, client.longitude, "Client ID: " + client.id);
+		});
+
+		// Ajouter les marqueurs pour les cuisiniers
+		cuisiniers.forEach(function (cuisinier) {
+			ajouterMarqueur(cuisinier.latitude, cuisinier.longitude, "Cuisinier ID: " + cuisinier.id);
+		});
+	</script>
 
 	<script>
 		const ligneColors = {

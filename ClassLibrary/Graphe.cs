@@ -121,29 +121,34 @@ namespace ClassLibrary
 
                 if (idActuel == idArrivee)
                     break;
-
-                var stationActuelle = stationsParId[idActuel];
-
-                foreach (var arc in stationActuelle.ArcsSortants)
+                if (stationsParId.TryGetValue(idActuel, out var stationActuelle))
                 {
-                    var voisin = arc.Destination;
-                    double nouvelleDistance = distanceActuelle + arc.Distance;
+                    
 
-                    if (nouvelleDistance < distances[voisin.Id])
+
+                    stationActuelle = stationsParId[idActuel];
+
+                    foreach (var arc in stationActuelle.ArcsSortants)
                     {
-                        file.Remove((distances[voisin.Id], voisin.Id)); // supprimer ancienne entrée
-                        distances[voisin.Id] = nouvelleDistance;
-                        precedent[voisin.Id] = idActuel;
-                        file.Add((nouvelleDistance, voisin.Id));
+                        var voisin = arc.Destination;
+                        double nouvelleDistance = distanceActuelle + arc.Distance;
+
+                        if (nouvelleDistance < distances[voisin.Id])
+                        {
+                            file.Remove((distances[voisin.Id], voisin.Id)); // supprimer ancienne entrée
+                            distances[voisin.Id] = nouvelleDistance;
+                            precedent[voisin.Id] = idActuel;
+                            file.Add((nouvelleDistance, voisin.Id));
+                        }
                     }
                 }
             }
 
-            // Reconstruire le chemin
+            
             var chemin = new List<StationNoeud>();
             int? courant = idArrivee;
 
-            while (courant != null)
+            while (courant != null && courant.Value!=332)
             {
                 chemin.Insert(0, stationsParId[courant.Value]);
                 courant = precedent[courant.Value];

@@ -27,6 +27,7 @@ namespace ClassLibrary
         public int IdParticulier
         {
             set { idParticulier=value; }
+            get { return idParticulier; }
         }
         public string PrenomParticulier
         {

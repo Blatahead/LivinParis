@@ -24,9 +24,13 @@ public static class Convertisseur_coordonnees
         var json = await reponse.Content.ReadAsStringAsync();
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;
+        var status = root.GetProperty("status").GetString();
+        System.Diagnostics.Debug.WriteLine($"Status retourné par Google Maps: {status}");
 
-        if (root.GetProperty("status").GetString() != "Ok")
-            throw new Exception("Adresse erronée");
+        if (status != "OK")
+        {
+            throw new Exception($"Adresse erronée : Status = {status}");
+        }
 
         var lieu = root.GetProperty("results")[0].GetProperty("geometry").GetProperty("location");
         double latitude = lieu.GetProperty("lat").GetDouble();
