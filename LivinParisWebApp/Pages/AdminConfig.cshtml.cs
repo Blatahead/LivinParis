@@ -28,16 +28,29 @@ namespace LivinParisWebApp.Pages
         {
 
             var graphe = new Graphe();
-<<<<<<< HEAD
-=======
-            Graphe2 graphe2 = new Graphe2();
 
-            string connStr = _config.GetConnectionString("MyDb");
-            graphe.ChargerDepuisBDD(connStr);
-            graphe2.ChargerDepuisBDD2(connStr);
->>>>>>> 91807ecee62566bbe744b53bc9572d6ec36ec440
 
             var cheminNoeuds = graphe.Dijkstra(1, 332);
+
+            var noeuds = graphe2.Noeuds.Select(n => new { id = n.Id, group = n.Type }).ToList();
+            var liens = graphe2.Liens.Select(l => new { source = l.Noeud1.Id, target = l.Noeud2.Id, label = l.Libelle }).ToList();
+
+            ViewData["NoeudsJson"] = JsonConvert.SerializeObject(noeuds);
+            ViewData["LiensJson"] = JsonConvert.SerializeObject(liens);
+
+
+
+
+            //affichage graphe avec Bellman Ford
+            var cheminNoeuds = Parcours.BellmanFord(1, 332, graphe.Arcs);
+
+            //affichage graphe avec Dijkstra
+            //var cheminNoeuds = graphe.Dijkstra(1, 170);
+            //var cheminNoeuds = graphe.Dijkstra(96, 300);
+            //var cheminNoeuds = graphe.Dijkstra(210, 66);
+            //var cheminNoeuds = graphe.Dijkstra(258, 332);
+            //var cheminNoeuds = graphe.Dijkstra(1, 332);
+
 
             var graphe2 = new Graphe2();
             string connStr = _config.GetConnectionString("MyDb");
@@ -132,10 +145,9 @@ namespace LivinParisWebApp.Pages
             var cmd = new MySqlCommand("DELETE FROM Station", conn);
             cmd.ExecuteNonQuery();
 
-<<<<<<< HEAD
+
             TempData["Message"] = "La table Station a été vidée avec succès.";
-=======
->>>>>>> 91807ecee62566bbe744b53bc9572d6ec36ec440
+
             return RedirectToPage();
         }
 
@@ -173,10 +185,9 @@ namespace LivinParisWebApp.Pages
             try
             {
                 import.ImporterDepuisMTX(cheminFichier);
-<<<<<<< HEAD
+
                 TempData["Message"] = "Importation réussie";
-=======
->>>>>>> 91807ecee62566bbe744b53bc9572d6ec36ec440
+
             }
             catch (Exception ex)
             {
