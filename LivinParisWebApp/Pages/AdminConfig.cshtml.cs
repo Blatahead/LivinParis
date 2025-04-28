@@ -43,11 +43,15 @@ namespace LivinParisWebApp.Pages
 
 
 
+            //affichage graphe avec Bellman Ford
+            var cheminNoeuds = Parcours.BellmanFord(1, 332, graphe.Arcs);
+
+            //affichage graphe avec Dijkstra
             //var cheminNoeuds = graphe.Dijkstra(1, 170);
             //var cheminNoeuds = graphe.Dijkstra(96, 300);
             //var cheminNoeuds = graphe.Dijkstra(210, 66);
             //var cheminNoeuds = graphe.Dijkstra(258, 332);
-            var cheminNoeuds = graphe.Dijkstra(1, 332);
+            //var cheminNoeuds = graphe.Dijkstra(1, 332);
 
 
             // Conversion en DTO pour casser les cycles

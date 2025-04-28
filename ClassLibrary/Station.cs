@@ -17,7 +17,7 @@ namespace ClassLibrary
         string nomStation;
         double longitude;
         double latitude;
-        int libelle_ligne;
+        string libelle_ligne;
         int code_postal;
         int temps_2_station;
         int depart;
@@ -27,7 +27,7 @@ namespace ClassLibrary
         
 
         #region constructeur
-        public Station(int identifiantStation, string nomStation, double longitude, double latitude, int libelle_ligne, int code_postal, int temps_2_station, int depart, int arrivee, int sens, double distance)
+        public Station(int identifiantStation, string nomStation, double longitude, double latitude, string libelle_ligne, int code_postal, int temps_2_station, int depart, int arrivee, int sens, double distance)
         {
             this.identifiantStation = identifiantStation;
             this.nomStation = nomStation;
@@ -41,6 +41,18 @@ namespace ClassLibrary
             this.sens=sens;
             this.distance=distance;
         }
+
+        public Station(int identifiantStation, string nomStation, double longitude, double latitude, string libelle_ligne, int depart, int arrivee, double distance)
+        {
+            this.identifiantStation = identifiantStation;
+            this.nomStation = nomStation;
+            this.longitude = longitude;
+            this.latitude = latitude;
+            this.libelle_ligne = libelle_ligne;
+            this.depart = depart;
+            this.arrivee = arrivee;
+            this.distance = distance;
+        }
         #endregion
 
         #region propriétés
@@ -48,7 +60,7 @@ namespace ClassLibrary
         public string NomStation { get { return nomStation; } set { nomStation=value; } }
         public double Longitude { get { return longitude; } set { Longitude=value; } }
         public double Latitude { get { return latitude; } set { Latitude=value; } }
-        public int Libelle_ligne
+        public string Libelle_ligne
         {
             get { return libelle_ligne; }
             set { libelle_ligne=value; }

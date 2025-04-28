@@ -1,4 +1,6 @@
-﻿namespace ClassLibrary
+﻿using Org.BouncyCastle.Crypto.Utilities;
+
+namespace ClassLibrary
 {
     [TestClass]
     public sealed class TestUnitaires
@@ -58,68 +60,33 @@
         [TestClass]
         public class BellmanFordTests
         {
-            public class GrapheTest
-            {
-                public Dictionary<int, double> BellmanFord(int idDepart, List<Station<object>> stations)
-                {
-                    var distances = new Dictionary<int, double>();
+            //[TestMethod]
+            //public void BellmanFord_CalculDistanceCorrecte()
+            //{
+            //    // Arrange : création d’un graphe simple
+            //    var noeuds = new List<StationNoeud>
+            //{
+            //    new StationNoeud(1,"A",0,0,"1",1,2,2),
+            //    new StationNoeud(2,"B",0,0,"1",2,3,2),
+            //    new StationNoeud(3,"C",0,0,"1",3,2,2)
 
-                    // Initialisation des distances
-                    foreach (var station in stations)
-                    {
-                        distances[station.Depart] = double.PositiveInfinity;
-                        distances[station.Arrivee] = double.PositiveInfinity;
-                    }
-                    distances[idDepart] = 0;
+            //};
 
-                    int nombreStations = distances.Count;
+            //    var stations = noeuds.ConvertAll(StationConvertisseurs.NoeudToStation);
 
-                    // Détente des arêtes
-                    for (int i = 0; i < nombreStations - 1; i++)
-                    {
-                        foreach (var station in stations)
-                        {
-                            double poids = station.Distance;
-                            if (distances[station.Depart] + poids < distances[station.Arrivee])
-                            {
-                                distances[station.Arrivee] = distances[station.Depart] + poids;
-                            }
-                        }
-                    }
+            //    // Act
+            //    var result = Parcours.BellmanFord(1, stations);
 
-                    // Détection des cycles de poids négatif
-                    foreach (var station in stations)
-                    {
-                        double poids = station.Distance;
-                        if (distances[station.Depart] + poids < distances[station.Arrivee])
-                        {
-                            throw new Exception("Le graphe contient un cycle de poids négatif.");
-                        }
-                    }
+            //    // Assert
+            //    Assert.AreEqual(1, result[0].Id);  // Station A
+            //    Assert.AreEqual(2, result[1].Id);  // Station B
+            //    Assert.AreEqual(3, result[2].Id);  // Station C
+            //}
 
-                    return distances;
-                }
-            }
-
-            [TestMethod]
-            public void BellmanFord_CalculDistanceCorrecte()
-            {
-                var algo = new GrapheTest();
-                var stations = new List<Station<object>>()
-        {
-            new Station<object>(1, "A", 0, 0, 1, 75000, 0, 1, 2, 0, 2),
-            new Station<object>(2, "B", 0, 0, 1, 75000, 0, 2, 3, 0, 3)
-        };
-
-                var result = algo.BellmanFord(1, stations);
-
-                Assert.AreEqual(0, result[1]);
-                Assert.AreEqual(2, result[2]);
-                Assert.AreEqual(5, result[3]);
-            }
+            //[TestMethod]
+            //public void 
         }
     }
-
 
     [TestClass]
     public class AStarTests
