@@ -33,6 +33,26 @@ namespace ClassLibrary
             return new StationNoeud(dto.Id, dto.Nom, dto.Latitude, dto.Longitude, dto.Ligne);
         }
 
+        public static Station<object> NoeudToStation(StationNoeud s)
+        {
+            return new Station<object>(s.Id, s.Nom, s.Longitude, s.Latitude, s.Ligne, s.Depart, s.Arrivee, s.Distance);
+        }
+        public static StationNoeud StationToNoeud(Station<object> s)
+        {
+            return new StationNoeud(s.IdentifiantStation, s.NomStation, s.Latitude, s.Longitude, s.Libelle_ligne.ToString(), s.Depart, s.Arrivee, s.Distance)
+            {
+                Id = s.IdentifiantStation,
+                Nom = s.NomStation,
+                Longitude = s.Longitude,
+                Latitude = s.Latitude,
+                Ligne = s.Libelle_ligne.ToString(),
+                Depart = s.Depart,
+                Arrivee = s.Arrivee,
+                Distance = s.Distance
+            };
+        }
+
+
         public static StationDTO ToDTO(StationNoeud station)
         {
             return new StationDTO
