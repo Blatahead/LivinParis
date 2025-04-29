@@ -12,7 +12,7 @@ public static class Convertisseur_coordonnees
     public static async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string address)
     {
         DotNetEnv.Env.Load("../.env");
-        cle_API = Environment.GetEnvironmentVariable("CLEMAPG1");
+        cle_API = Environment.GetEnvironmentVariable("CLEMAPG2");
 
         using HttpClient client = new();
         string url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={cle_API}";

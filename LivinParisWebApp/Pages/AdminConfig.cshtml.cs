@@ -26,19 +26,10 @@ namespace LivinParisWebApp.Pages
         //public List<StationNoeud> Chemin { get; set; }
         public async Task OnGet()
         {
-
-            var graphe = new Graphe();
-
-
-            var cheminNoeuds = graphe.Dijkstra(1, 332);
-
-            var noeuds = graphe2.Noeuds.Select(n => new { id = n.Id, group = n.Type }).ToList();
-            var liens = graphe2.Liens.Select(l => new { source = l.Noeud1.Id, target = l.Noeud2.Id, label = l.Libelle }).ToList();
-
-            ViewData["NoeudsJson"] = JsonConvert.SerializeObject(noeuds);
-            ViewData["LiensJson"] = JsonConvert.SerializeObject(liens);
-
-
+            //Graphe 1
+            var graphe = new ClassLibrary.Graphe();
+            string connStr = _config.GetConnectionString("MyDb");
+            graphe.ChargerDepuisBDD(connStr);
 
 
             //affichage graphe avec Bellman Ford
@@ -52,9 +43,46 @@ namespace LivinParisWebApp.Pages
             //var cheminNoeuds = graphe.Dijkstra(1, 332);
 
 
-            var graphe2 = new Graphe2();
-            string connStr = _config.GetConnectionString("MyDb");
-            graphe2.ChargerDepuisBDD2(connStr);
+            // Conversion en DTO pour casser les cycles
+            var cheminDTOs = cheminNoeuds.Select(StationConvertisseurs.ToDTO).ToList();
+            CheminJson = JsonConvert.SerializeObject(cheminDTOs);
+
+            var stationDTOs = graphe.Stations.Select(st => new StationDTO
+            {
+                Id = st.Id,
+                Nom = st.Nom,
+                Latitude = st.Latitude,
+                Longitude = st.Longitude
+            })
+                .ToList();
+
+            var arcDTOs = graphe.Arcs.Select(arc => new ArcDTO
+            {
+                SourceId = arc.Source.Id,
+                SourceLat = arc.Source.Latitude,
+                SourceLong = arc.Source.Longitude,
+                DestLat = arc.Destination.Latitude,
+                DestLong = arc.Destination.Longitude,
+                DestinationId = arc.Destination.Id,
+                Distance = arc.Distance,
+                Ligne = arc.Ligne
+            }).ToList();
+
+            ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
+            ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
+
+            //Graphe 2
+            var graphe2 = new ClassLibrary.Graphe2();
+            string connStr2 = _config.GetConnectionString("MyDb");
+            graphe2.ChargerDepuisBDD2(connStr2);
+
+
+            var noeuds = graphe2.Noeuds.Select(n => new { id = n.Id, group = n.Type }).ToList();
+            var liens = graphe2.Liens.Select(l => new { source = l.Noeud1.Id, target = l.Noeud2.Id, label = l.Libelle }).ToList();
+
+            ViewData["NoeudsJson"] = JsonConvert.SerializeObject(noeuds);
+            ViewData["LiensJson"] = JsonConvert.SerializeObject(liens);
+
 
             var clientsDTOs = new List<object>();
             var cuisiniersDTOs = new List<object>();
@@ -87,7 +115,6 @@ namespace LivinParisWebApp.Pages
                             longitude = coords.longitude
                         });
                     }
-
                 }
                 else if (noeud.Type == "Client")
                 {
