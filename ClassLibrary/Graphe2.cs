@@ -53,9 +53,13 @@ namespace ClassLibrary
             var clients = new List<Noeud>();
             var commandes = new List<(Noeud, string, string)>(); 
             var plats = new List<Noeud>();
-            var cuisiniers = new List<(Noeud, string)>(); 
+            var cuisiniers = new List<(Noeud, string, string)>();
+            var particuliers = new List<(string id, string adresse)>();
+            var entreprises = new List<(string id, string adresse)>();
 
-            
+
+
+
             var cmdClients = new MySqlCommand("SELECT Id_Client, Id_Utilisateur FROM Client_", conn);
             using var readerClients = cmdClients.ExecuteReader();
             while (readerClients.Read())
@@ -68,7 +72,13 @@ namespace ClassLibrary
             }
             readerClients.Close();
 
-            
+            var cmdParticuliers = new MySqlCommand("SELECT Id_Client, Adresse_particulier FROM Particulier", conn);
+
+            var cmdEntreprises = new MySqlCommand("SELECT id_Client, Adresse_entreprise FROM Entreprise", conn);
+
+
+
+
             var cmdCommandes = new MySqlCommand("SELECT Num_commande, liste_plats, Id_Utilisateur FROM Commande", conn);
             using var readerCommandes = cmdCommandes.ExecuteReader();
             while (readerCommandes.Read())
@@ -95,17 +105,20 @@ namespace ClassLibrary
             }
             readerPlats.Close();
 
-            
-            var cmdCuisiniers = new MySqlCommand("SELECT Id_Cuisinier, Id_Utilisateur FROM Cuisinier", conn);
+
+            var cmdCuisiniers = new MySqlCommand("SELECT Id_Cuisinier, Id_Utilisateur, Adresse_cuisinier FROM Cuisinier", conn);
             using var readerCuisiniers = cmdCuisiniers.ExecuteReader();
             while (readerCuisiniers.Read())
             {
                 string idCuisinier = readerCuisiniers.GetInt32(0).ToString();
                 string idUser = readerCuisiniers.GetInt32(1).ToString();
+                string adresseCuisinier = readerCuisiniers.GetString(2);
+
                 var noeudCuisinier = new Noeud(idCuisinier, "Cuisinier");
                 AjouterNoeud(noeudCuisinier);
-                cuisiniers.Add((noeudCuisinier, idUser));
+                cuisiniers.Add((noeudCuisinier, idUser, adresseCuisinier));
             }
+
             readerCuisiniers.Close();
 
             
@@ -135,8 +148,8 @@ namespace ClassLibrary
                 }
             }
 
-            
-            foreach (var (noeudCuisinier, idUserCuisinier) in cuisiniers)
+
+            foreach (var (noeudCuisinier, idUserCuisinier, adresseCuisinier) in cuisiniers)
             {
                 foreach (var plat in plats)
                 {
@@ -147,7 +160,7 @@ namespace ClassLibrary
          
             foreach (var client in clients)
             {
-                foreach (var (cuisinier, idUserCuisinier) in cuisiniers)
+                foreach (var (cuisinier, idUserCuisinier, adresseCuisinier) in cuisiniers)
                 {
                     if (client.Id == idUserCuisinier)
                     {
@@ -155,6 +168,69 @@ namespace ClassLibrary
                     }
                 }
             }
+        }
+        public async Task<(List<Noeud> noeuds, List<Lien> liens)> BuildGraphAsync(
+            List<Cuisinier<object>> cuisiniers,
+            List<Particulier<object>> particuliers,
+            List<Entreprise<object>> entreprises,
+            List<Commande<object>> commandes)
+        {
+            var noeuds = new List<Noeud>();
+            var liens = new List<Lien>();
+
+            var noeudDict = new Dictionary<string, Noeud>();
+
+            // Ajout des cuisiniers
+            foreach (var cuisiner in cuisiniers)
+            {
+                var noeud = new Noeud($"Cuisinier:{cuisiner.Id_Cuisinier}", "Cuisinier");
+                noeuds.Add(noeud);
+                noeudDict[noeud.Id] = noeud;
+            }
+
+            
+            foreach (var particulier in particuliers)
+            {
+                var noeud = new Noeud($"Particulier:{particulier.IdParticulier}", "Particulier");
+                noeuds.Add(noeud);
+                noeudDict[noeud.Id] = noeud;
+            }
+
+            
+            foreach (var entreprise in entreprises)
+            {
+                var noeud = new Noeud($"Entreprise:{entreprise.NumeroSiret}", "Entreprise");
+                noeuds.Add(noeud);
+                noeudDict[noeud.Id] = noeud;
+            }
+
+            
+            foreach (var commande in commandes)
+            {
+                string clientId;
+
+                if (particuliers.Any(p => p.IdParticulier == commande.IdUser))
+                {
+                    clientId = $"Particulier:{commande.IdUser}";
+                }
+                else if (entreprises.Any(e => e.NumeroSiret == commande.IdUser))
+                {
+                    clientId = $"Entreprise:{commande.IdUser}";
+                }
+                else
+                {
+                    continue;
+                }
+
+                if (noeudDict.TryGetValue($"Cuisinier:{commande.Id_Cuisinier}", out var cuisinierNoeud) &&
+                    noeudDict.TryGetValue(clientId, out var clientNoeud))
+                {
+                    liens.Add(new Lien(cuisinierNoeud, clientNoeud, "Commande"));
+                }
+            }
+
+            return (noeuds, liens);
+
         }
 
 
