@@ -5,6 +5,7 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using System.Text.Json;
+using System.Data;
 
 
 
@@ -22,6 +23,17 @@ namespace LivinParisWebApp.Pages
             _config = config;
         }
         public string CheminJson { get; set; }
+        public List<ClientCommandesDTO> ClientsCommandes { get; set; } 
+        public List<ClientAvecPlusieursCommandesDTO> ClientsActifs { get; set; } 
+        public List<PlatJamaisCommandeDTO> PlatsNonCommandes { get; set; } 
+        public List<CuisinierSansCommandeDTO> CuisiniersDispos { get; set; } 
+        public List<CommandeSansPlatBonMarcheDTO> CommandesSansPlatAbordable { get; set; } 
+        public List<PlatPlusCommandeDTO> PlatLePlusCommande { get; set; } 
+        public List<MontantMoyenClientDTO> MontantsMoyensParClient { get; set; } 
+        public List<ClientCommandePlusChereDTO> ClientsAvecCommandeMax { get; set; } 
+        public List<CommandeVarieeDTO> CommandesDiversifiees { get; set; } 
+        public List<ClientPlatCherDTO> ClientsPlatsChers { get; set; } 
+
 
         //public List<StationNoeud> Chemin { get; set; }
         public async Task OnGet()
@@ -159,6 +171,221 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Clients"] = JsonConvert.SerializeObject(clientsDTOs);
             ViewData["Cuisiniers"] = JsonConvert.SerializeObject(cuisiniersDTOs);
+
+
+            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+            {
+                await conn.OpenAsync();
+
+                var cmd = new MySqlCommand(@"
+        SELECT c.Id_Client, COUNT(co.Num_commande) AS nb_commandes
+        FROM Client_ c
+        LEFT JOIN Commande co ON c.Id_Client = co.Id_Client
+        GROUP BY c.Id_Client
+        ORDER BY nb_commandes DESC;
+    ", conn);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                ClientsCommandes = new List<ClientCommandesDTO>();
+                while (await reader.ReadAsync())
+                {
+                    ClientsCommandes.Add(new ClientCommandesDTO
+                    {
+                        ID_client = reader.GetInt32("Id_Client"),
+                        Nb_commandes = reader.GetInt32("nb_commandes")
+                    });
+                }
+            }
+
+            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+            {
+                await conn.OpenAsync();
+
+                var cmd = new MySqlCommand(@"
+        SELECT c.Id_Client, COUNT(co.Num_commande) AS nb_commandes
+        FROM Client c
+        JOIN Commande co ON c.Id_Client = co.Id_Client
+        GROUP BY c.Id_Client
+        HAVING COUNT(co.Num_commande) > 2;
+    ", conn);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                ClientsActifs = new List<ClientAvecPlusieursCommandesDTO>();
+                while (await reader.ReadAsync())
+                {
+                    ClientsActifs.Add(new ClientAvecPlusieursCommandesDTO
+                    {
+                        ID_client = reader.GetInt32("Id_Client"),
+                        Nb_commandes = reader.GetInt32("nb_commandes")
+                    });
+                }
+            }
+
+
+            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+            {
+                await conn.OpenAsync();
+
+                var cmd = new MySqlCommand(@"
+        SELECT p.Num_plat, p.Nom_plat
+        FROM Plat p
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM Commande dc
+            WHERE dc.Num_plat = p.Num_plat
+        );
+    ", conn);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                PlatsNonCommandes = new List<PlatJamaisCommandeDTO>();
+                while (await reader.ReadAsync())
+                {
+                    PlatsNonCommandes.Add(new PlatJamaisCommandeDTO
+                    {
+                        ID_plat = reader.GetInt32("Num_plat"),
+                        Nom = reader.GetString("Nom_plat")
+                    });
+                }
+            }
+
+            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+            {
+                await conn.OpenAsync();
+
+                var cmd = new MySqlCommand(@"
+        SELECT cu.Id_Cuisinier, cu.Nom_particulier
+        FROM Cuisinier cu
+        LEFT JOIN Commande co ON cu.Id_Cuisinier = co.Id_Cuisinier
+        WHERE co.Num_commande IS NULL;
+    ", conn);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                CuisiniersDispos = new List<CuisinierSansCommandeDTO>();
+                while (await reader.ReadAsync())
+                {
+                    CuisiniersDispos.Add(new CuisinierSansCommandeDTO
+                    {
+                        ID_cuisinier = reader.GetInt32("Id_Cuisinier"),
+                        Nom = reader.GetString("Nom_particulier")
+                    });
+                }
+            }
+
+            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+            {
+                await conn.OpenAsync();
+
+                var cmd = new MySqlCommand(@"
+        SELECT co.Num_commande
+        FROM Commande co
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM liste_plats dc
+            JOIN Plat p ON dc.Num_plat = p.Num_plat
+            WHERE dc.Num_commande = co.Num_commande AND p.prix_plat <= 15
+        );
+    ", conn);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                CommandesSansPlatAbordable = new List<CommandeSansPlatBonMarcheDTO>();
+                while (await reader.ReadAsync())
+                {
+                    CommandesSansPlatAbordable.Add(new CommandeSansPlatBonMarcheDTO
+                    {
+                        ID_commande = reader.GetInt32("Num_commande")
+                    });
+                }
+            }
+
+            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+            {
+                await conn.OpenAsync();
+
+                var cmd = new MySqlCommand(@"
+        SELECT p.Nom_plat, COUNT(*) AS fois_commande
+        FROM liste_plats dc
+        JOIN Plat p ON dc.Num_plat = p.Num_plat
+        GROUP BY p.Num_plat, p.Nom_plat
+        ORDER BY fois_commande DESC
+        LIMIT 1;
+    ", conn);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                PlatLePlusCommande = new List<PlatPlusCommandeDTO>();
+                while (await reader.ReadAsync())
+                {
+                    PlatLePlusCommande.Add(new PlatPlusCommandeDTO
+                    {
+                        Nom = reader.GetString("Nom_plat"),
+                        Fois_commande = reader.GetInt32("fois_commande")
+                    });
+                }
+            }
+
+
+            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+            {
+                await conn.OpenAsync();
+
+                var cmd = new MySqlCommand(@"
+        SELECT DISTINCT c.Id_Client
+        FROM Client c
+        JOIN Commande co ON c.Id_Client = co.Id_Client
+        JOIN liste_plats dc ON co.Num_commande = dc.Num_commande
+        JOIN Plat p ON dc.Num_plat = p.Num_plat
+        WHERE p.prix > 20;
+    ", conn);
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                var ClientsHautDeGamme = new List<ClientPlatCherDTO>();
+                while (await reader.ReadAsync())
+                {
+                    ClientsHautDeGamme.Add(new ClientPlatCherDTO
+                    {
+                        ID_client = reader.GetInt32("ID_client"),
+                        Nom = reader.GetString("nom")
+                    });
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
 
 

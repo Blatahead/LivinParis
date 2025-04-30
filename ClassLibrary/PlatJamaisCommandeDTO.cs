@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary
 {
-    internal class PlatJamaisCommandeDTO
+    public class PlatJamaisCommandeDTO
     {
+        public int ID_plat { get; set; }
+        public string Nom { get; set; }
     }
+
 }
