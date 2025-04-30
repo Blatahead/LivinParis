@@ -2701,6 +2701,148 @@ header {
         }
     }
 }
+
+    .admin-container{
+        width:100%;
+        height:100%;
+        display: flex;
+        flex-direction:column;
+
+        .top{
+            width: 100%;
+            height: 30%;
+            display: flex;
+            flex-direction: row;
+
+            .formulaire-container{
+                display:flex;
+                width:50%;
+                height:100%;
+
+                form{
+                    display: flex;
+                    flex-direction: row;
+                    width: 90%;
+                    height: 90%;
+                    margin:auto;
+                    flex-wrap: wrap;
+                    gap: 2rem;
+                    justify-content: space-between;
+
+                    button{
+                        display: flex;
+                        height: 3vh;
+                        width: 45%;
+                        background-color: #cf7bff;
+                        border: 2px #cf7bff solid;
+                        border-radius: 10px;
+                        font-size: 1.2vw;
+                        font-family: "Lilita One", sans-serif;
+                        align-items: center;
+                        box-sizing: border-box;
+                        cursor: pointer;
+                        color: #fffefe;
+                        
+                        p{
+                            text-align: center;
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+            .stats-container{
+                width:50%;
+                height:100%;
+                display:flex;
+                flex-direction:column;
+
+                .stats-title{
+                    font-size:1.5vw;
+                    color:#fffefe;
+                    text-align:center;
+                    align-content:center;
+                    height:15%;
+                }
+
+                .stats{
+                    display:flex;
+                    flex-direction:column;
+                    justify-content:space-between;
+                    width:100%;
+                    height:85%;
+
+                    .stat{
+                         display:flex;
+
+                         .rose{
+                            color:#e0aaff;
+                        }
+                    }
+                }
+            }
+        }
+        .bottom{
+            width:100%;
+            height:70%;
+            display:flex;
+
+            .img-container
+            {
+                height: 100%;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                background-color: rgba(255, 254, 254, 0.22);
+
+                .graphe-dijkstra{
+                    display:flex;
+                    flex-direction:column;
+                    height:100%;
+                    width:50%;
+
+                    p{
+                         height:10%;
+                         text-align:center;
+                         align-content:center;
+                     }
+
+                     .map-container{
+                         display:flex;
+                         height:90%;
+                         width:100%;
+
+                         #map{
+                            width:100%;
+                            height:100%;
+                        }
+                     }
+                 }
+                .graphe-coloration{
+                    display:flex;
+                    flex-direction:column;
+                    height:100%;
+                    width:50%;
+
+                    p{
+                         height:10%;
+                         text-align:center;
+                         align-content:center;
+                     }
+
+                    .map-container {
+                        display: flex;
+                        height: 90%;
+                        width: 100%;
+
+                        #map2{
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 a.leaflet-control-zoom-in,
