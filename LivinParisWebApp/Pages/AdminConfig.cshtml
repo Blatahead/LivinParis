@@ -24,15 +24,71 @@
 <div class="admin-stats">
 	<h3>Statistiques de la base de données</h3>
 	<ul>
-		<li>Nombre de commandes client : @Model.ClientsCommandes</li>
-		<li>Client avec plusieurs commandes: @Model.ClientsActifs</li>
-		<li>Cuisinier dispo : @Model.CuisiniersDispos</li>
-		<li>Plat le plus commandé: @Model.PlatLePlusCommande</li>
-		<li>Commande sans plat abordable : @Model.CommandesSansPlatAbordable</li>
-		<li>Cuisiniers sans commande : @Model.CuisiniersDispos</li>
-		<li> </li>
+		<li>
+			Nombre de commandes client :
+			<ul>
+				@foreach (var item in Model.ClientsCommandes)
+				{
+					<li>Client @item.ID_client : @item.Nb_commandes commande(s)</li>
+				}
+			</ul>
+		</li>
+
+		<li>
+			Clients avec plusieurs commandes :
+			<ul>
+				@foreach (var item in Model.ClientsActifs)
+				{
+					<li>Client @item.ID_client : @item.Nb_commandes commande(s)</li>
+				}
+			</ul>
+		</li>
+
+		<li>
+			Cuisiniers disponibles :
+			<ul>
+				@foreach (var item in Model.CuisiniersDispos)
+				{
+					<li>Cuisinier @item.ID_cuisinier</li>
+				}
+			</ul>
+		</li>
+
+		<li>
+			Plat le plus commandé :
+			@if (Model.PlatLePlusCommande?.Any() == true)
+			{
+				var plat = Model.PlatLePlusCommande.First();
+				<span>@plat.Nom (@plat.Fois_commande fois)</span>
+			}
+			else
+			{
+				<span>Aucun plat trouvé</span>
+			}
+		</li>
+
+		<li>
+			Commandes sans plat abordable :
+			<ul>
+				@foreach (var item in Model.CommandesSansPlatAbordable)
+				{
+					<li>Commande @item.ID_commande</li>
+				}
+			</ul>
+		</li>
+
+		<li>
+			Cuisiniers sans commande :
+			<ul>
+				@foreach (var item in Model.CuisiniersDispos)
+				{
+					<li>Cuisinier @item.ID_cuisinier</li>
+				}
+			</ul>
+		</li>
 	</ul>
 </div>
+
 
 
 
