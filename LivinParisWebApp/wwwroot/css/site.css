@@ -2731,12 +2731,12 @@ header {
 
                     button{
                         display: flex;
-                        height: 3vh;
-                        width: 45%;
+                        height: 21%;
+                        width: 25%;
                         background-color: #cf7bff;
                         border: 2px #cf7bff solid;
                         border-radius: 10px;
-                        font-size: 1.2vw;
+                        font-size: 1.1vw;
                         font-family: "Lilita One", sans-serif;
                         align-items: center;
                         box-sizing: border-box;
