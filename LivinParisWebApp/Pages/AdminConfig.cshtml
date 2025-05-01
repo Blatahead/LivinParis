@@ -228,14 +228,91 @@
 
 		// Ajout des marqueurs pour chaque nœud
 		const noeudMap = {};
+		const platsAssocies = new Set(
+			liens
+				.filter(link => link.label === "contient" && link.target.startsWith("Plat:"))
+				.map(link => link.target)
+		);
+
+		// Recalcule la position des commande au centre de client-plat
+		const commandeCoords = {};
+
+		liens.forEach(link => {
+			if (link.label === "a commandé" && link.source.startsWith("Client") && link.target.startsWith("Commande")) {
+				const commandeId = link.target;
+				const client = noeuds.find(n => n.id === link.source);
+
+				const platsAssocies = liens
+					.filter(l => l.label === "contient" && l.source === commandeId)
+					.map(l => noeuds.find(n => n.id === l.target))
+					.filter(Boolean);
+
+				if (client && platsAssocies.length > 0) {
+					let latSum = client.latitude;
+					let lonSum = client.longitude;
+
+					for (const plat of platsAssocies) {
+						latSum += plat.latitude;
+						lonSum += plat.longitude;
+					}
+
+					const count = platsAssocies.length + 1;
+					let lat = latSum / count;
+					let lon = lonSum / count;
+
+					// Décalage orthogonal à l’axe client → premier plat
+					const firstPlat = platsAssocies[0];
+					if (firstPlat) {
+						const dx = firstPlat.longitude - client.longitude;
+						const dy = firstPlat.latitude - client.latitude;
+
+						// vecteur orthogonal normalisé
+						const length = Math.sqrt(dx * dx + dy * dy);
+						if (length > 0) {
+							const offset = 0.005;
+							const ox = -dy / length;
+							const oy = dx / length;
+
+							lat += offset * oy;
+							lon += offset * ox;
+						}
+					}
+
+					commandeCoords[commandeId] = { lat, lon };
+				}
+			}
+		});
+
 		noeuds.forEach((n, i) => {
 			if (n.latitude !== 0 && n.longitude !== 0) {
 				let lat = n.latitude;
 				let lon = n.longitude;
 
-				if (n.type === "Commande" || n.type === "Plat") {
-					[lat, lon] = decalerCoordonnees(lat, lon, i); // décalage pour éviter la superposition
+				if (n.type === "Commande") {
+					const coords = commandeCoords[n.id];
+					if (coords) {
+						lat = coords.lat;
+						lon = coords.lon;
+					} else {
+						[lat, lon] = decalerCoordonnees(lat, lon, i);
+					}
 				}
+
+				if (n.type === "Plat") {
+					const angle = (i * 2 * Math.PI) / noeuds.length;
+					const rayon = 0.01; // distance de décalage
+
+					if (platsAssocies.has(n.id)) {
+						// Plat lié à une commande → côté commande
+						lat = n.latitude + rayon * Math.cos(angle);
+						lon = n.longitude + rayon * Math.sin(angle);
+					} else {
+						// Plat non lié à une commande → côté opposé
+						lat = n.latitude - rayon * Math.cos(angle);
+						lon = n.longitude - rayon * Math.sin(angle);
+					}
+				}
+
 
 				const marker = L.circleMarker([lat, lon], {
 					radius: 6,
@@ -249,11 +326,16 @@
 			}
 		});
 
+
 		// Dessin des liens entre les nœuds
 		liens.forEach(link => {
+			console.log(link)
 			const src = noeudMap[link.source];
 			const dest = noeudMap[link.target];
-			if (src && dest) {
+
+			if (!src || !dest) {
+				console.warn("Lien ignoré : ", link);
+			} else {
 				L.polyline([src, dest], {
 					color: "#000",
 					weight: 2,
@@ -261,5 +343,6 @@
 				}).addTo(map2);
 			}
 		});
+
 	</script>
 }
