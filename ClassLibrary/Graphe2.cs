@@ -45,111 +45,145 @@ namespace ClassLibrary
         }
 
 
-        public void ChargerDepuisBDD2(string connectionString)
+        public async Task ChargerDepuisBDD2(string connectionString)
         {
             using var conn = new MySqlConnection(connectionString);
-            conn.Open();
+            await conn.OpenAsync();
 
             var clients = new List<Noeud>();
-            var commandes = new List<(Noeud, string, string)>(); 
+            var commandes = new List<(Noeud, string, string)>();
             var plats = new List<Noeud>();
             var cuisiniers = new List<(Noeud, string, string)>();
-            var particuliers = new List<(string id, string adresse)>();
-            var entreprises = new List<(string id, string adresse)>();
 
+            var adressesUtilisateurs = new Dictionary<string, (double lat, double lon)>();
+            var userToClient = new Dictionary<string, string>();
 
-
-
-            var cmdClients = new MySqlCommand("SELECT Id_Client, Id_Utilisateur FROM Client_", conn);
-            using var readerClients = cmdClients.ExecuteReader();
-            while (readerClients.Read())
+            // Particuliers
+            var cmdPart = new MySqlCommand("SELECT Id_Client, Adresse_particulier FROM Particulier", conn);
+            using var readerPart = await cmdPart.ExecuteReaderAsync();
+            while (await readerPart.ReadAsync())
             {
-                string idClient = readerClients.GetInt32(0).ToString();
-                string idUser = readerClients.GetInt32(1).ToString();
-                var noeudClient = new Noeud(idClient, "Client");
+                string idClient = readerPart.GetInt32(0).ToString();
+                string adresse = readerPart.GetString(1);
+                var (lat, lon) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresse);
+                adressesUtilisateurs[idClient] = (lat, lon);
+            }
+            await readerPart.CloseAsync();
+
+            // Entreprises
+            var cmdEnt = new MySqlCommand("SELECT id_Client, Adresse_entreprise FROM Entreprise", conn);
+            using var readerEnt = await cmdEnt.ExecuteReaderAsync();
+            while (await readerEnt.ReadAsync())
+            {
+                string idClient = readerEnt.GetInt32(0).ToString();
+                string adresse = readerEnt.GetString(1);
+                var (lat, lon) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresse);
+                adressesUtilisateurs[idClient] = (lat, lon);
+            }
+            await readerEnt.CloseAsync();
+
+            // Lien Utilisateur -> Client
+            var cmdLien = new MySqlCommand("SELECT Id_Client, Id_Utilisateur FROM Client_", conn);
+            using var readerLien = await cmdLien.ExecuteReaderAsync();
+            while (await readerLien.ReadAsync())
+            {
+                string idClient = readerLien.GetInt32(0).ToString();
+                string idUser = readerLien.GetInt32(1).ToString();
+                userToClient[idUser] = idClient;
+
+                var (lat, lon) = adressesUtilisateurs.GetValueOrDefault(idClient, (48.8566, 2.3522));
+                var noeudClient = new Noeud(idClient, "Client", lat, lon);
                 AjouterNoeud(noeudClient);
-                clients.Add(noeudClient); 
+                clients.Add(noeudClient);
             }
-            readerClients.Close();
+            await readerLien.CloseAsync();
 
-            var cmdParticuliers = new MySqlCommand("SELECT Id_Client, Adresse_particulier FROM Particulier", conn);
+            // Commandes
+            //var cmdCommandes = new MySqlCommand("SELECT Num_commande, liste_plats, Id_Utilisateur FROM Commande", conn);
+            //using var readerCommandes = await cmdCommandes.ExecuteReaderAsync();
+            //while (await readerCommandes.ReadAsync())
+            //{
+            //    string numCommande = readerCommandes.GetInt32(0).ToString();
+            //    string listePlats = readerCommandes.IsDBNull(1) ? "" : readerCommandes.GetString(1);
+            //    string idUser = readerCommandes.GetInt32(2).ToString();
 
-            var cmdEntreprises = new MySqlCommand("SELECT id_Client, Adresse_entreprise FROM Entreprise", conn);
+            //    string idClient = userToClient.GetValueOrDefault(idUser, "0");
+            //    var (lat, lon) = adressesUtilisateurs.GetValueOrDefault(idClient, (48.8566, 2.3522));
 
+            //    var noeudCommande = new Noeud(numCommande, "Commande", lat, lon);
+            //    AjouterNoeud(noeudCommande);
+            //    commandes.Add((noeudCommande, listePlats, idUser));
+            //}
+            //await readerCommandes.CloseAsync();
 
+            // Plats avec coordonnées du cuisinier associé
+            var cmdPlats = new MySqlCommand(@"SELECT p.Num_plat, c.Adresse_cuisinier
+                FROM Plat p
+                JOIN Cuisinier c ON p.id_Cuisinier = c.Id_Cuisinier
+                WHERE p.Disponible = 1", conn);
 
-
-            var cmdCommandes = new MySqlCommand("SELECT Num_commande, liste_plats, Id_Utilisateur FROM Commande", conn);
-            using var readerCommandes = cmdCommandes.ExecuteReader();
-            while (readerCommandes.Read())
-            {
-                string numeroCommande = readerCommandes.GetInt32(0).ToString();
-                string listePlats = readerCommandes.IsDBNull(1) ? "" : readerCommandes.GetString(1);
-                string idUser = readerCommandes.GetInt32(2).ToString();
-
-                var noeudCommande = new Noeud(numeroCommande, "Commande");
-                AjouterNoeud(noeudCommande);
-                commandes.Add((noeudCommande, listePlats, idUser));
-            }
-            readerCommandes.Close();
-
-            
-            var cmdPlats = new MySqlCommand("SELECT Num_plat FROM Plat", conn);
-            using var readerPlats = cmdPlats.ExecuteReader();
-            while (readerPlats.Read())
+            using var readerPlats = await cmdPlats.ExecuteReaderAsync();
+            while (await readerPlats.ReadAsync())
             {
                 string numPlat = readerPlats.GetInt32(0).ToString();
-                var noeudPlat = new Noeud(numPlat, "Plat");
+                string adresseCuisinier = readerPlats.GetString(1);
+
+                var (lat, lon) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresseCuisinier);
+
+                var noeudPlat = new Noeud(numPlat, "Plat", lat, lon);
                 AjouterNoeud(noeudPlat);
                 plats.Add(noeudPlat);
             }
-            readerPlats.Close();
+            await readerPlats.CloseAsync();
 
 
+            // Cuisiniers
             var cmdCuisiniers = new MySqlCommand("SELECT Id_Cuisinier, Id_Utilisateur, Adresse_cuisinier FROM Cuisinier", conn);
-            using var readerCuisiniers = cmdCuisiniers.ExecuteReader();
-            while (readerCuisiniers.Read())
+            using var readerCuisiniers = await cmdCuisiniers.ExecuteReaderAsync();
+            while (await readerCuisiniers.ReadAsync())
             {
                 string idCuisinier = readerCuisiniers.GetInt32(0).ToString();
                 string idUser = readerCuisiniers.GetInt32(1).ToString();
-                string adresseCuisinier = readerCuisiniers.GetString(2);
-
-                var noeudCuisinier = new Noeud(idCuisinier, "Cuisinier");
+                string adresse = readerCuisiniers.GetString(2);
+                var (lat, lon) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresse);
+                var noeudCuisinier = new Noeud(idCuisinier, "Cuisinier", lat, lon);
                 AjouterNoeud(noeudCuisinier);
-                cuisiniers.Add((noeudCuisinier, idUser, adresseCuisinier));
+                cuisiniers.Add((noeudCuisinier, idUser, adresse));
             }
+            await readerCuisiniers.CloseAsync();
 
-            readerCuisiniers.Close();
-
-            
+            // Liaisons : client -> commande
             foreach (var (noeudCommande, _, idUserCommande) in commandes)
             {
-                var client = clients.FirstOrDefault(c => c.Id == idUserCommande);
-                if (client != null)
+                if (userToClient.TryGetValue(idUserCommande, out string idClient))
                 {
-                    AjouterLien(client, noeudCommande, "a commandé");
-                }
-            }
-
-            
-            foreach (var (noeudCommande, listePlats, _) in commandes)
-            {
-                if (!string.IsNullOrEmpty(listePlats))
-                {
-                    var platsIds = listePlats.Split(',', StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var platId in platsIds)
+                    var client = clients.FirstOrDefault(c => c.Id == idClient);
+                    if (client != null)
                     {
-                        var plat = plats.FirstOrDefault(p => p.Id == platId.Trim());
-                        if (plat != null)
-                        {
-                            AjouterLien(noeudCommande, plat, "contient");
-                        }
+                        AjouterLien(client, noeudCommande, "a commandé");
                     }
                 }
             }
 
+            // Liaisons : commande -> plats
+            //foreach (var (noeudCommande, listePlats, _) in commandes)
+            //{
+            //    if (!string.IsNullOrEmpty(listePlats))
+            //    {
+            //        var platsIds = listePlats.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            //        foreach (var platId in platsIds)
+            //        {
+            //            var plat = plats.FirstOrDefault(p => p.Id == platId.Trim());
+            //            if (plat != null)
+            //            {
+            //                AjouterLien(noeudCommande, plat, "contient");
+            //            }
+            //        }
+            //    }
+            //}
 
-            foreach (var (noeudCuisinier, idUserCuisinier, adresseCuisinier) in cuisiniers)
+            // Liaisons : cuisinier -> plats
+            foreach (var (noeudCuisinier, _, _) in cuisiniers)
             {
                 foreach (var plat in plats)
                 {
@@ -157,18 +191,19 @@ namespace ClassLibrary
                 }
             }
 
-         
+            // Liaisons : client est aussi cuisinier
             foreach (var client in clients)
             {
-                foreach (var (cuisinier, idUserCuisinier, adresseCuisinier) in cuisiniers)
+                foreach (var (cuisinier, idUserCuisinier, _) in cuisiniers)
                 {
-                    if (client.Id == idUserCuisinier)
+                    if (userToClient.TryGetValue(idUserCuisinier, out string idClient) && client.Id == idClient)
                     {
                         AjouterLien(client, cuisinier, "est aussi cuisinier");
                     }
                 }
             }
         }
+
         public async Task<(List<Noeud> noeuds, List<Lien> liens)> BuildGraphAsync(
             List<Cuisinier<object>> cuisiniers,
             List<Particulier<object>> particuliers,
@@ -230,18 +265,6 @@ namespace ClassLibrary
             }
 
             return (noeuds, liens);
-
         }
-
-
-
-
-
-
-
-
-
-
     }
 }
-

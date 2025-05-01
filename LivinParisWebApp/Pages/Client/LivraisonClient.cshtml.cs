@@ -104,10 +104,16 @@ namespace LivinParisWebApp.Pages.Client
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            var insertCommande = new MySqlCommand("INSERT INTO Commande (Prix_commande, Id_Utilisateur) VALUES (@prix, @uid); SELECT LAST_INSERT_ID();", conn);
+            // 1. Exécuter l'insertion
+            var insertCommande = new MySqlCommand("INSERT INTO Commande (Prix_commande, Id_Utilisateur) VALUES (@prix, @uid)", conn);
             insertCommande.Parameters.AddWithValue("@prix", prixLignes.Sum());
             insertCommande.Parameters.AddWithValue("@uid", userId);
-            int idCommande = Convert.ToInt32(await insertCommande.ExecuteScalarAsync());
+            await insertCommande.ExecuteNonQueryAsync();
+
+            // 2. Récupérer le dernier ID généré
+            var getLastIdCmd = new MySqlCommand("SELECT LAST_INSERT_ID();", conn);
+            int idCommande = Convert.ToInt32(await getLastIdCmd.ExecuteScalarAsync());
+
 
             for (int i = 0; i < lignes.Count; i++)
             {

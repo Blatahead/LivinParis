@@ -6,6 +6,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using System.Text.Json;
 using System.Data;
+using System.Reflection.Metadata.Ecma335;
 
 
 
@@ -32,13 +33,13 @@ namespace LivinParisWebApp.Pages
         public List<MontantMoyenClientDTO> MontantsMoyensParClient { get; set; } 
         public List<ClientCommandePlusChereDTO> ClientsAvecCommandeMax { get; set; } 
         public List<CommandeVarieeDTO> CommandesDiversifiees { get; set; } 
-        public List<ClientPlatCherDTO> ClientsPlatsChers { get; set; } 
+        public List<ClientPlatCherDTO> ClientsPlatsChers { get; set; }
 
 
         //public List<StationNoeud> Chemin { get; set; }
-        public async Task OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            //Graphe 1
+            ///// Graphe 1 ////
             var graphe = new ClassLibrary.Graphe();
             string connStr = _config.GetConnectionString("MyDb");
             graphe.ChargerDepuisBDD(connStr);
@@ -82,20 +83,34 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
             ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
+            //////////////////
 
-            //Graphe 2
+            //// Graphe 2 ////
             var graphe2 = new ClassLibrary.Graphe2();
             string connStr2 = _config.GetConnectionString("MyDb");
-            graphe2.ChargerDepuisBDD2(connStr2);
+            await graphe2.ChargerDepuisBDD2(connStr2);
 
+            var noeuds = graphe2.Noeuds.Select(n => new
+            { 
+                id = n.Id, 
+                type = n.Type,
+                latitude = n.Latitude,
+                longitude = n.Longitude
+            }).ToList();
 
-            var noeuds = graphe2.Noeuds.Select(n => new { id = n.Id, group = n.Type }).ToList();
-            var liens = graphe2.Liens.Select(l => new { source = l.Noeud1.Id, target = l.Noeud2.Id, label = l.Libelle }).ToList();
+            var liens = graphe2.Liens.Select(l => new 
+            { 
+                source = l.Noeud1.Id, 
+                target = l.Noeud2.Id, 
+                label = l.Libelle 
+            }).ToList();
 
             ViewData["NoeudsJson"] = JsonConvert.SerializeObject(noeuds);
             ViewData["LiensJson"] = JsonConvert.SerializeObject(liens);
+            ///////////////////
 
-
+            //// Statistiques ////
+            //envoi des clients et cuisiniers
             var clientsDTOs = new List<object>();
             var cuisiniersDTOs = new List<object>();
 
@@ -171,19 +186,17 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Clients"] = JsonConvert.SerializeObject(clientsDTOs);
             ViewData["Cuisiniers"] = JsonConvert.SerializeObject(cuisiniersDTOs);
+            //fin d'envoi des clients et cuisiniers
 
-
+            //requetage des stats de la page + envoi sur la page html
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
 
-                var cmd = new MySqlCommand(@"
-        SELECT c.Id_Client, COUNT(co.Num_commande) AS nb_commandes
-        FROM Client_ c
-        LEFT JOIN Commande co ON c.Id_Client = co.Id_Utilisateur
-        GROUP BY c.Id_Client
-        ORDER BY nb_commandes DESC;
-    ", conn);
+                var cmd = new MySqlCommand(@"SELECT c.Id_Client, COUNT(co.Num_commande) AS nb_commandes FROM Client_ c
+                    LEFT JOIN Commande co ON c.Id_Client = co.Id_Utilisateur
+                    GROUP BY c.Id_Client
+                    ORDER BY nb_commandes DESC;", conn);
 
                 using var reader = await cmd.ExecuteReaderAsync();
                 ClientsCommandes = new List<ClientCommandesDTO>();
@@ -201,13 +214,10 @@ namespace LivinParisWebApp.Pages
             {
                 await conn.OpenAsync();
 
-                var cmd = new MySqlCommand(@"
-        SELECT c.Id_Client, COUNT(co.Num_commande) AS nb_commandes
-        FROM Client_ c
-        JOIN Commande co ON c.Id_Client = co.Id_Utilisateur
-        GROUP BY c.Id_Client
-        HAVING COUNT(co.Num_commande) > 2;
-    ", conn);
+                var cmd = new MySqlCommand(@"SELECT c.Id_Client, COUNT(co.Num_commande) AS nb_commandes FROM Client_ c
+                    JOIN Commande co ON c.Id_Client = co.Id_Utilisateur
+                    GROUP BY c.Id_Client
+                    HAVING COUNT(co.Num_commande) > 2;", conn);
 
                 using var reader = await cmd.ExecuteReaderAsync();
                 ClientsActifs = new List<ClientAvecPlusieursCommandesDTO>();
@@ -221,17 +231,13 @@ namespace LivinParisWebApp.Pages
                 }
             }
 
-
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
 
-                var cmd = new MySqlCommand(@"
-        SELECT cu.Id_Cuisinier, cu.Nom_particulier
-        FROM Cuisinier cu
-        LEFT JOIN Commande co ON cu.Id_Cuisinier = co.Id_Utilisateur
-        WHERE co.Num_commande IS NULL;
-    ", conn);
+                var cmd = new MySqlCommand(@"SELECT cu.Id_Cuisinier, cu.Nom_particulier FROM Cuisinier cu
+                    LEFT JOIN Commande co ON cu.Id_Cuisinier = co.Id_Utilisateur
+                    WHERE co.Num_commande IS NULL;", conn);
 
                 using var reader = await cmd.ExecuteReaderAsync();
                 CuisiniersDispos = new List<CuisinierSansCommandeDTO>();
@@ -249,16 +255,13 @@ namespace LivinParisWebApp.Pages
             {
                 await conn.OpenAsync();
 
-                var cmd = new MySqlCommand(@"
-        SELECT co.Num_commande
-        FROM Commande co
-        WHERE NOT EXISTS (
-            SELECT 1
-            FROM Commande dc
-            JOIN Plat p ON dc.liste_plats = p.Nom_plat
-            WHERE dc.Num_commande = co.Num_commande AND p.prix_plat <= 15
-        );
-    ", conn);
+                var cmd = new MySqlCommand(@"SELECT co.Num_commande FROM Commande co
+                    WHERE NOT EXISTS (
+                        SELECT 1
+                        FROM Commande dc
+                        JOIN Plat p ON dc.liste_plats = p.Nom_plat
+                        WHERE dc.Num_commande = co.Num_commande AND p.prix_plat <= 15
+                    );", conn);
 
                 using var reader = await cmd.ExecuteReaderAsync();
                 CommandesSansPlatAbordable = new List<CommandeSansPlatBonMarcheDTO>();
@@ -275,14 +278,11 @@ namespace LivinParisWebApp.Pages
             {
                 await conn.OpenAsync();
 
-                var cmd = new MySqlCommand(@"
-        SELECT p.Nom_plat, COUNT(*) AS fois_commande
-        FROM Commande dc
-        JOIN Plat p ON dc.liste_plats = p.Nom_plat
-        GROUP BY p.Num_plat, p.Nom_plat
-        ORDER BY fois_commande DESC
-        LIMIT 1;
-    ", conn);
+                var cmd = new MySqlCommand(@"SELECT p.Nom_plat, COUNT(*) AS fois_commande FROM Commande dc
+                    JOIN Plat p ON dc.liste_plats = p.Nom_plat
+                    GROUP BY p.Num_plat, p.Nom_plat
+                    ORDER BY fois_commande DESC
+                    LIMIT 1;", conn);
 
                 using var reader = await cmd.ExecuteReaderAsync();
                 PlatLePlusCommande = new List<PlatPlusCommandeDTO>();
@@ -301,14 +301,11 @@ namespace LivinParisWebApp.Pages
             {
                 await conn.OpenAsync();
 
-                var cmd = new MySqlCommand(@"
-        SELECT DISTINCT c.Id_Client
-        FROM Client_ c
-        JOIN Commande co ON c.Id_Client = co.Id_Utilisateur
-        JOIN Commande dc ON co.Num_commande = dc.Num_commande
-        JOIN Plat p ON dc.liste_plats = p.Nom_plat
-        WHERE p.prix_plat > 20;
-    ", conn);
+                var cmd = new MySqlCommand(@"SELECT DISTINCT c.Id_Client FROM Client_ c
+                    JOIN Commande co ON c.Id_Client = co.Id_Utilisateur
+                    JOIN Commande dc ON co.Num_commande = dc.Num_commande
+                    JOIN Plat p ON dc.liste_plats = p.Nom_plat
+                    WHERE p.prix_plat > 20;", conn);
 
                 using var reader = await cmd.ExecuteReaderAsync();
                 ClientsPlatsChers = new List<ClientPlatCherDTO>();
@@ -320,48 +317,9 @@ namespace LivinParisWebApp.Pages
                     });
                 }
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            ///////////////////////
+            return Page();
         }
-
-
         public IActionResult OnPostDeleteContenuStations()
         {
             string connStr = _config.GetConnectionString("MyDb");
@@ -386,17 +344,6 @@ namespace LivinParisWebApp.Pages
             var (latitude, longitude) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresse);
             return (latitude, longitude);
         }
-
-
-
-
-
-
-
-
-
-
-
 
         public IActionResult OnPostLoadStationInBDD()
         {
@@ -439,8 +386,5 @@ namespace LivinParisWebApp.Pages
             TempData["Message"] = "Graphe généré avec succès.";
             return Page();
         }
-
-       
-
     }
 }

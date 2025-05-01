@@ -8,9 +8,19 @@ namespace ClassLibrary
 {
     public class Noeud
     {
-        public string Id { get; }
-        public string Type { get; }  // Client, Commande, Plat, Cuisinier
+        public string Id { get; set; }
+        public string Type { get; set; }  // Client, Commande, Plat, Cuisinier
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
+
+        public Noeud(string id, string type, double latitude, double longitude)
+        {
+            Id = id;
+            Type = type;
+            Latitude = latitude;
+            Longitude = longitude;
+        }
         public Noeud(string id, string type)
         {
             Id = id;
