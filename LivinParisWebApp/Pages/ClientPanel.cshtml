@@ -15,6 +15,12 @@
 	</div>
 </div>
 <div class="content-panel-client">
+	@if (TempData["ErrorMessage"] != null)
+	{
+		<div class="error-message" style="color: red; margin: 10px 0;">
+			@TempData["ErrorMessage"]
+		</div>
+	}
 	<div class="top-line">
 		<div class="left-colonne">
 			<div class="left-colonne-container">
@@ -114,70 +120,11 @@
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
 	<script>
-		const ligneColors = {
-			1: "#FFCD00",
-			2: "#003CA6",
-			3: "#837902",
-			"3bis": "#6EC4E8",
-			4: "#CF009E",
-			5: "#FF7E2E",
-			6: "#6ECEB2",
-			7: "#F5A9BB",
-			"7bis": "#6ECA97",
-			8: "#E19BDF",
-			9: "#B6BD00",
-			10: "#C9910D",
-			11: "#704B1C",
-			12: "#007852",
-			13: "#99D4E4",
-			14: "#62259D"
-		};
-
-		const stations = @Html.Raw(ViewData["Stations"]);
-		const arcs = @Html.Raw(ViewData["Arcs"]);
-
-
 		// Création de la map
 		const map = L.map('map').setView([48.8566, 2.3522], 12);
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '© OpenStreetMap contributors'
 		}).addTo(map);
-
-		// Pour retrouver les stations par ID
-		const stationMap = {};
-		stations.forEach(st => {
-			stationMap[st.id] = st;
-
-			const marker = L.circleMarker([st.Latitude, st.Longitude], {
-				radius: 5,
-				fillColor: "#ff5e5e",
-				color: "#000",
-				weight: 1,
-				opacity: 0.8,
-				fillOpacity: 0.8
-			}).addTo(map);
-			marker.bindPopup(`<strong>${st.nom}</strong><br/>ID: ${st.id}`);
-		});
-
-		// Ajout des arcs
-		arcs.forEach(arc => {
-			const srcLat = arc.SourceLat;
-			const srcLong = arc.SourceLong;
-			const destLat = arc.DestLat;
-			const destLong = arc.DestLong;
-			const ligne = arc.Ligne;
-
-			const color = ligneColors[ligne] || "#000";
-
-			L.polyline([
-				[srcLat, srcLong],
-				[destLat, destLong]
-			], {
-				color: color,
-				weight: 4,
-				opacity: 0.5
-			}).addTo(map);
-		});
 
 		const plats = @Html.Raw(ViewData["PlatsCoords"])
 		console.log("Plats géolocalisés :", plats);
@@ -199,7 +146,6 @@
 				this.closePopup();
 			});
 		});
-
 	</script>
 	<script>
 		function remplirInfosPlat(nom, prix, nat, type, fab, perem, nb, ingre, regime, id) {
@@ -215,6 +161,32 @@
 			document.querySelector('input[name="ModelAjout.PlatId"]').value = id;
 		}
 	</script>
-	
+	<script>
+				const client = @Html.Raw(ViewData["ClientCoords"]);
+		console.log("Client localisé :", client);
 
+		// Définition d'une icône rouge avec une maison
+		const homeIcon = L.icon({
+			iconUrl: '/src/img/house.svg',
+			iconSize: [40, 40],
+			iconAnchor: [15, 30],
+			popupAnchor: [0, -30]
+		});
+
+		const marker = L.marker([client.Latitude, client.Longitude], { icon: homeIcon }).addTo(map);
+		marker.bindPopup(`
+			<div class="custom-popup">
+				<strong>${client.Nom}</strong><br/>
+				Client ID : ${client.Id}<br/>
+			</div>
+		`);
+
+		marker.on("mouseover", function () {
+			this.openPopup();
+		});
+		marker.on("mouseout", function () {
+			this.closePopup();
+		});
+
+	</script>
 }
