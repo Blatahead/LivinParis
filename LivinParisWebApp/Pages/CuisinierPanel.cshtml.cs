@@ -58,7 +58,10 @@ namespace LivinParisWebApp.Pages
             reader.Close();
 
             ProchaineLivraison = !string.IsNullOrEmpty(pretes) ? DateTime.Now.AddMinutes(30).ToString("dd/MM/yy à HH:mm") : "Aucune";
-            NbCommandesEnCours = string.IsNullOrEmpty(commandes) ? 0 : commandes.Split(',').Length;
+            NbCommandesEnCours = string.IsNullOrEmpty(commandes)? 0: commandes.Split(',', StringSplitOptions.RemoveEmptyEntries)
+               .Distinct()
+               .Count();
+
 
             var platCmd = new MySqlCommand(@"SELECT Nom_platJ, prix_platJ, Nombre_de_personneJ, Nationalité_platJ, Régime_alimentaire_platJ
                 FROM Plat_du_jour
