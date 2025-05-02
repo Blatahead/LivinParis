@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" clip-rule="evenodd" viewBox="0 0 32 32" id="house">
+  <path fill="url(#a)" d="M6 30h20a1 1 0 0 0 1-1V16h2a.999.999 0 0 0 .678-1.735l-13-12a1 1 0 0 0-1.356 0L12 5.331V4a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v6.87l-3.678 3.395A1 1 0 0 0 3 16h2v13a1 1 0 0 0 1 1Zm16-2h3V15a1 1 0 0 1 1-1h.442L16 4.361 11.678 8.35A.999.999 0 0 1 10 7.615V5H8v6.308a.998.998 0 0 1-.322.734L5.558 14H6a1 1 0 0 1 1 1v13h3v-8a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v8Zm-5-7v7h3v-7h-3Zm-5 0v7h3v-7h-3Zm7-10a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-4Zm-2 1v2h-2v-2h2Z"></path>
+  <defs>
+    <linearGradient id="a" x1="0" x2="1" y1="0" y2="0" gradientTransform="matrix(28.0001 0 0 28 2 16)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f78cff"></stop>
+      <stop offset="1" stop-color="#6dc8ff"></stop>
+    </linearGradient>
+  </defs>
+</svg>

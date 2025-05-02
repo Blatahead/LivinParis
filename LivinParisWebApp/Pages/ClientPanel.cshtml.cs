@@ -127,33 +127,32 @@ namespace LivinParisWebApp.Pages
             }
             panierReader.Close();
 
-            //pas fini
-            var graphe = new Graphe();
-            graphe.ChargerDepuisBDD(connStr);
+            // Récupérer coordonnées client
+            var cmdCoord = new MySqlCommand(@"SELECT a.Adresse_particulier FROM Client_ c
+            JOIN Particulier a ON c.Id_Client = a.Id_Client
+            WHERE c.Id_Utilisateur = @id", conn);
 
-            var stationDTOs = graphe.Stations.Select(st => new StationDTO
+            cmdCoord.Parameters.AddWithValue("@id", userId);
+            string? adresseClient = (await cmdCoord.ExecuteScalarAsync())?.ToString();
+
+            double latClient = 0, lonClient = 0;
+            if (!string.IsNullOrWhiteSpace(adresseClient))
             {
-                Id = st.Id,
-                Nom = st.Nom,
-                Latitude = st.Latitude,
-                Longitude = st.Longitude
-            })
-                .ToList();
+                try
+                {
+                    (latClient, lonClient) = await ClassLibrary.Convertisseur_coordonnees.GetCoordinatesAsync(adresseClient);
+                }
+                catch { }
+            }
 
-            var arcDTOs = graphe.Arcs.Select(arc => new ArcDTO
+            ViewData["ClientCoords"] = JsonConvert.SerializeObject(new
             {
-                SourceId = arc.Source.Id,
-                SourceLat = arc.Source.Latitude,
-                SourceLong = arc.Source.Longitude,
-                DestLat = arc.Destination.Latitude,
-                DestLong = arc.Destination.Longitude,
-                DestinationId = arc.Destination.Id,
-                Distance = arc.Distance,
-                Ligne = arc.Ligne
-            }).ToList();
+                Id = userId,
+                Nom = "Vous",
+                Latitude = latClient,
+                Longitude = lonClient
+            });
 
-            ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
-            ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
             return Page();
         }
 
