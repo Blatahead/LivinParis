@@ -15,6 +15,12 @@
 	</div>
 </div>
 <div class="content-panel-client">
+	@if (TempData["ErrorMessage"] != null)
+	{
+		<div class="error-message" style="color: red; margin: 10px 0;">
+			@TempData["ErrorMessage"]
+		</div>
+	}
 	<div class="top-line">
 		<div class="left-colonne">
 			<div class="left-colonne-container">

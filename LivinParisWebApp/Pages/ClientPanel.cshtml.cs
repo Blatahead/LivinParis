@@ -166,10 +166,41 @@ namespace LivinParisWebApp.Pages
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
+            // Récupérer l'Id_Client
             var cmdClient = new MySqlCommand("SELECT Id_Client FROM Client_ WHERE Id_Utilisateur = @userId", conn);
             cmdClient.Parameters.AddWithValue("@userId", userId);
             var idClient = Convert.ToInt32(await cmdClient.ExecuteScalarAsync());
 
+            // Obtenir le cuisinier du plat à ajouter
+            var getChefCmd = new MySqlCommand("SELECT id_Cuisinier FROM Plat WHERE Num_plat = @platId", conn);
+            getChefCmd.Parameters.AddWithValue("@platId", ModelAjout.PlatId);
+            var newChefId = Convert.ToInt32(await getChefCmd.ExecuteScalarAsync());
+
+            // Obtenir les cuisiniers des plats déjà dans le panier
+            var getCartChefCmd = new MySqlCommand(@"
+        SELECT DISTINCT p.id_Cuisinier
+        FROM Panier pa
+        JOIN Plat p ON pa.Num_plat = p.Num_plat
+        WHERE pa.Id_Client = @idClient", conn);
+            getCartChefCmd.Parameters.AddWithValue("@idClient", idClient);
+
+            var existingChefIds = new List<int>();
+            using (var reader = await getCartChefCmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    existingChefIds.Add(reader.GetInt32(0));
+                }
+            }
+
+            // Vérifier si un autre cuisinier est déjà présent
+            if (existingChefIds.Count > 0 && existingChefIds.Any(id => id != newChefId))
+            {
+                TempData["ErrorMessage"] = "Tous les plats du panier doivent provenir du même cuisinier.";
+                return RedirectToPage();
+            }
+
+            // Vérifier si le plat est déjà dans le panier
             var checkCmd = new MySqlCommand("SELECT COUNT(*) FROM Panier WHERE Id_Client = @idClient AND Num_plat = @platId", conn);
             checkCmd.Parameters.AddWithValue("@idClient", idClient);
             checkCmd.Parameters.AddWithValue("@platId", ModelAjout.PlatId);
