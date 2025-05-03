@@ -42,8 +42,17 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 }
             }
 
-            var commandes = commandesRaw.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            var pretes = pretesRaw.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var commandes = commandesRaw
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => int.TryParse(s.Trim(), out var id) ? id : -1)
+                .Where(id => id != -1)
+                .ToArray();
+
+            var pretes = pretesRaw
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => int.TryParse(s.Trim(), out var id) ? id : -1)
+                .Where(id => id != -1)
+                .ToArray();
 
             if (commandes.Length > 0)
                 CommandesEnCours = RecupererDetailsLignes(conn, commandes);
@@ -52,7 +61,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 CommandesPretes = RecupererDetailsLignes(conn, pretes);
         }
 
-        private List<LigneCommandeInfo> RecupererDetailsLignes(MySqlConnection conn, string[] commandeIds)
+        private List<LigneCommandeInfo> RecupererDetailsLignes(MySqlConnection conn, int[] commandeIds)
         {
             var result = new List<LigneCommandeInfo>();
             if (commandeIds.Length == 0) return result;
@@ -66,7 +75,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 LEFT JOIN Particulier p ON cl.Id_Client = p.Id_Client
                 LEFT JOIN Entreprise e ON cl.Id_Client = e.Id_Client
                 LEFT JOIN Plat_LigneCommande pl ON lc.Id_LigneCommande = pl.Id_LigneCommande
-                WHERE c.Num_commande IN ({idList})
+                WHERE lc.Id_LigneCommande IN ({idList})
                 GROUP BY lc.Id_LigneCommande, lc.Id_Commande, ClientNom";
 
             using var cmd = new MySqlCommand(query, conn);
@@ -92,7 +101,11 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return RedirectToPage("/Cuisinier/RefuseCommande", new { idLigneCommande });
         }
 
-        public IActionResult OnPostDetailsCommande() => RedirectToPage("/Cuisinier/DetailsCommande");
+        public IActionResult OnPostDetailsCommande(int idLigneCommande)
+        {
+            TempData["IdLigneCommande"] = idLigneCommande;
+            return RedirectToPage("/Cuisinier/DetailsCommande");
+        }
 
         public IActionResult OnPostCancelCommande(string commandeId)
         {

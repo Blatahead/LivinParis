@@ -124,18 +124,18 @@ namespace LivinParisWebApp.Pages.Client
                 insertLigne.Parameters.AddWithValue("@lieu", ligne.LieuLivraison);
                 int idLigne = Convert.ToInt32(await insertLigne.ExecuteScalarAsync());
 
+                var idPlatRef = ligne.Plats.First(); // on récupère juste un plat pour déterminer le cuisinier
+                var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = CONCAT_WS(',', Liste_commandes, @idL) WHERE Id_Cuisinier = (SELECT Id_Cuisinier FROM Plat WHERE Num_plat = @idPlat)", conn);
+                updateCmd.Parameters.AddWithValue("@idL", idLigne);
+                updateCmd.Parameters.AddWithValue("@idPlat", idPlatRef);
+                await updateCmd.ExecuteNonQueryAsync();
+
                 foreach (var idPlat in ligne.Plats)
                 {
                     var insertPlat = new MySqlCommand("INSERT INTO Plat_LigneCommande (Id_LigneCommande, Num_Plat) VALUES (@idL, @idP)", conn);
                     insertPlat.Parameters.AddWithValue("@idL", idLigne);
                     insertPlat.Parameters.AddWithValue("@idP", idPlat);
                     await insertPlat.ExecuteNonQueryAsync();
-
-                    // add le plat à la liste de commande du cuisinier
-                    var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = CONCAT_WS(',', Liste_commandes, @idC) WHERE Id_Cuisinier = (SELECT Id_Cuisinier FROM Plat WHERE Num_plat = @idP)", conn);
-                    updateCmd.Parameters.AddWithValue("@idC", idCommande);
-                    updateCmd.Parameters.AddWithValue("@idP", idPlat);
-                    await updateCmd.ExecuteNonQueryAsync();
 
                     var disablePlatCmd = new MySqlCommand("UPDATE Plat SET Disponible = FALSE WHERE Num_plat = @idPlat", conn);
                     disablePlatCmd.Parameters.AddWithValue("@idPlat", idPlat);
