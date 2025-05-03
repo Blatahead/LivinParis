@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using System.Text.Json;
 using System.Data;
 using System.Reflection.Metadata.Ecma335;
+using System.Xml.Serialization;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 
 
@@ -386,5 +388,145 @@ namespace LivinParisWebApp.Pages
             TempData["Message"] = "Graphe généré avec succès.";
             return Page();
         }
+
+
+        public T DeserializeFromXml<T>(string xml)
+        {
+            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            using var reader = new StringReader(xml);
+            return (T)serializer.Deserialize(reader);
+        }
+        public T DeserializeFromJson<T>(string json)
+        {
+            var options = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            return System.Text.Json.JsonSerializer.Deserialize<T>(json, options);
+        }
+        static void jsonSerializer_1()
+        {
+            string bd11 = "";
+            string JsonString = JsonSerializer.Serialize(bd11);
+            StreamWriter wr = new StreamWriter("/data"); 
+            wr.WriteLine(JsonString);
+            wr.Close();
+
+        }
+
+        /// <summary>
+        /// Cette méthode permet de récupérer les informations des clients et des cuisiniers dans la base de donnée et de les convertir en un fichier XML
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult OnPostXmlSerializer_1()
+        {
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            conn.Open();
+
+            List<Client<object>> clients = new List<Client<object>>();
+
+            
+            var cmd = new MySqlCommand("SELECT Id_Client, Id_Utilisateur FROM Client_", conn);
+
+            using var reader = cmd.ExecuteReader();
+
+            
+            while (reader.Read())
+            {
+                
+                int idClient = reader.GetInt32("Id_Client");
+                int idUser = reader.GetInt32("Id_Utilisateur");
+
+                
+                var client = new Client<object>(idUser, idClient);
+                clients.Add(client);
+            }
+            reader.Close();
+
+            List<Cuisinier<object>> cuisiniers = new List<Cuisinier<object>>();
+            var cmdCuisiniers = new MySqlCommand("SELECT Id_Cuisinier, Id_Utilisateur, Nom_particulier, Prenom_cuisinier FROM Cuisinier", conn);
+
+            using var readerCuisiniers = cmdCuisiniers.ExecuteReader();
+            while (readerCuisiniers.Read())
+            {
+                int idCuisinier = readerCuisiniers.GetInt32("Id_Cuisinier");
+                int idUser = readerCuisiniers.GetInt32("Id_Utilisateur");
+                string nom = readerCuisiniers.GetString("Nom_particulier");
+                string prenom = readerCuisiniers.GetString("Prenom_cuisinier");
+
+                var cuisinier = new Cuisinier<object>(idUser, idCuisinier, nom, prenom);
+                cuisiniers.Add(cuisinier);
+            }
+            readerCuisiniers.Close();
+
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Client<object>>));
+
+            
+            using (StreamWriter wr = new StreamWriter("wwwroot/data/client.xml"))
+            {
+                serializer.Serialize(wr, clients);
+            }
+
+            XmlSerializer serializerCuisiniers = new XmlSerializer(typeof(List<Cuisinier<object>>));
+            using (StreamWriter wr = new StreamWriter("wwwroot/data/cuisiniers.xml"))
+            {
+                serializerCuisiniers.Serialize(wr, cuisiniers);
+            }
+
+            return Page();
+        }
+
+
+        /// <summary>
+        /// Cette méthode permet de récupérer les informations des clients et des cuisiniers dans la base de donnée et de les convertir en un fichier Json
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult OnPostJsonSerializer_1()
+        {
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            conn.Open();
+
+            
+            List<Client<object>> clients = new List<Client<object>>();
+            var cmdClients = new MySqlCommand("SELECT Id_Client, Id_Utilisateur FROM Client_", conn);
+
+            using var readerClients = cmdClients.ExecuteReader();
+            while (readerClients.Read())
+            {
+                int idClient = readerClients.GetInt32("Id_Client");
+                int idUser = readerClients.GetInt32("Id_Utilisateur");
+
+                var client = new Client<object>(idUser, idClient);
+                clients.Add(client);
+            }
+            readerClients.Close();
+
+            
+            List<Cuisinier<object>> cuisiniers = new List<Cuisinier<object>>();
+            var cmdCuisiniers = new MySqlCommand("SELECT Id_Cuisinier, Id_Utilisateur, Nom_particulier, Prenom_cuisinier FROM Cuisinier", conn);
+
+            using var readerCuisiniers = cmdCuisiniers.ExecuteReader();
+            while (readerCuisiniers.Read())
+            {
+                int idCuisinier = readerCuisiniers.GetInt32("Id_Cuisinier");
+                int idUser = readerCuisiniers.GetInt32("Id_Utilisateur");
+                string nom = readerCuisiniers.GetString("Nom_particulier");
+                string prenom = readerCuisiniers.GetString("Prenom_cuisinier");
+
+                var cuisinier = new Cuisinier<object>(idUser, idCuisinier, nom, prenom);
+                cuisiniers.Add(cuisinier);
+            }
+            readerCuisiniers.Close();
+
+            // Sérialisation des clients en JSON
+            string jsonClients = JsonSerializer.Serialize(clients, new JsonSerializerOptions { WriteIndented = true });
+            System.IO.File.WriteAllText("clients.json", jsonClients);
+
+            // Sérialisation des cuisiniers en JSON
+            string jsonCuisiniers = JsonSerializer.Serialize(cuisiniers, new JsonSerializerOptions { WriteIndented = true });
+            System.IO.File.WriteAllText("cuisiniers.json", jsonCuisiniers);
+
+            return Page();
+        }
+
     }
 }

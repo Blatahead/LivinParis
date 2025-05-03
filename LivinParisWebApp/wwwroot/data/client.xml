@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfClientOfObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ClientOfObject>
+    <IdUser>31843</IdUser>
+    <IdClient>3995</IdClient>
+  </ClientOfObject>
+  <ClientOfObject>
+    <IdUser>31847</IdUser>
+    <IdClient>3996</IdClient>
+  </ClientOfObject>
+</ArrayOfClientOfObject>

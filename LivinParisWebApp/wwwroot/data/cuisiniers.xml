@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfCuisinierOfObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CuisinierOfObject>
+    <IdUser>31843</IdUser>
+    <Id_Cuisinier>507</Id_Cuisinier>
+  </CuisinierOfObject>
+  <CuisinierOfObject>
+    <IdUser>31848</IdUser>
+    <Id_Cuisinier>508</Id_Cuisinier>
+  </CuisinierOfObject>
+</ArrayOfCuisinierOfObject>

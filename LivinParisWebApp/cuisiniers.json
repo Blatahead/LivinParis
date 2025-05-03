@@ -1,0 +1,24 @@
+[
+  {
+    "Nom": "brn",
+    "Prenom": "Antocuisto",
+    "AdresseCuisinier": null,
+    "Liste_commandes": null,
+    "Liste_commandes_pretes": null,
+    "Liste_commandes_livrees": null,
+    "Id_Cuisinier": 507,
+    "Liste_de_plats": null,
+    "IdUser": 31843
+  },
+  {
+    "Nom": "c2",
+    "Prenom": "cuisto2",
+    "AdresseCuisinier": null,
+    "Liste_commandes": null,
+    "Liste_commandes_pretes": null,
+    "Liste_commandes_livrees": null,
+    "Id_Cuisinier": 508,
+    "Liste_de_plats": null,
+    "IdUser": 31848
+  }
+]
