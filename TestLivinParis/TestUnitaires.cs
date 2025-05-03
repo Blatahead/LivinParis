@@ -1,4 +1,6 @@
 ﻿using Org.BouncyCastle.Crypto.Utilities;
+using System.Text.Json;
+using System.Xml.Serialization;
 
 namespace ClassLibrary
 {
@@ -124,4 +126,66 @@ namespace ClassLibrary
         }
     }
 
+    [TestClass]
+    public class SerializationTests
+    {
+        public class Person
+        {
+            public string Name { get; set; }
+            public int Age { get; set; }
+        }
+
+        [TestMethod]
+        public void DeserializeFromJson_ShouldReturnCorrectObject()
+        {
+            // Arrange
+            var json = "{\"Name\":\"Alice\",\"Age\":30}";
+            var expected = new Person { Name = "Alice", Age = 30 };
+
+            // Act
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var result = JsonSerializer.Deserialize<Person>(json, options);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expected.Name, result.Name);
+            Assert.AreEqual(expected.Age, result.Age);
+        }
+    }
+
+
+    [TestClass]
+    public class SerializationTests2
+    {
+        public class Person
+        {
+            public string Name { get; set; }
+            public int Age { get; set; }
+        }
+
+        [TestMethod]
+        public void DeserializeFromXml_ShouldReturnCorrectObject()
+        {
+            // Arrange
+            var xml = "<Person><Name>Bob</Name><Age>40</Age></Person>";
+            var expected = new Person { Name = "Bob", Age = 40 };
+
+            // Act
+            var serializer = new XmlSerializer(typeof(Person));
+            Person result;
+            using (var reader = new StringReader(xml))
+            {
+                result = (Person)serializer.Deserialize(reader);
+            }
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expected.Name, result.Name);
+            Assert.AreEqual(expected.Age, result.Age);
+        }
+    }
 }
+
+
+
+    

@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace ClassLibrary
 {
@@ -267,7 +269,7 @@ namespace ClassLibrary
                 noeudDict[noeud.Id] = noeud;
             }
 
-            
+
             foreach (var particulier in particuliers)
             {
                 var noeud = new Noeud($"Particulier:{particulier.IdParticulier}", "Particulier");
@@ -275,7 +277,7 @@ namespace ClassLibrary
                 noeudDict[noeud.Id] = noeud;
             }
 
-            
+
             foreach (var entreprise in entreprises)
             {
                 var noeud = new Noeud($"Entreprise:{entreprise.NumeroSiret}", "Entreprise");
@@ -283,7 +285,7 @@ namespace ClassLibrary
                 noeudDict[noeud.Id] = noeud;
             }
 
-            
+
             foreach (var commande in commandes)
             {
                 string clientId;
@@ -310,5 +312,15 @@ namespace ClassLibrary
 
             return (noeuds, liens);
         }
+    
+
+        
+
+
+
+
+
+
+
     }
 }

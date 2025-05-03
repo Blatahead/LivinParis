@@ -33,6 +33,24 @@ namespace ClassLibrary
             this.liste_de_plats=liste_de_plats;
 
         }
+
+        public Cuisinier() : base(0, "", "")
+        {
+            Id_Cuisinier = 0;
+            nom = "";
+            prenom = "";
+        }
+
+        public Cuisinier(int idUser, int idCuisinier, string nom, string prenom) : base(idUser, "", "")
+        {
+            this.Id_Cuisinier = idCuisinier;
+            this.nom = nom;
+            this.prenom = prenom;
+        }
+
+
+
+
         #endregion
         #region propriétés
         public string Nom

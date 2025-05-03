@@ -13,10 +13,23 @@ namespace ClassLibrary
         int idClient;
 
         #region constructeur
+        public Client() : base(0, "", "")
+        {
+            idClient = 0;
+        }
+
         public Client(int idUser, string mdp, string adresse_mail, int idClient) : base(idUser, mdp, adresse_mail)
         {
             this.idClient=idClient;
         }
+
+        public Client(int idUser, int idClient) : base(idUser, "", "")
+        {
+            this.idClient = idClient;
+        }
+
+
+
         #endregion
         #region propriétés
         public int IdClient
