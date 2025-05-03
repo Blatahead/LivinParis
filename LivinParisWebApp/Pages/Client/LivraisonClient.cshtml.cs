@@ -154,11 +154,7 @@ namespace LivinParisWebApp.Pages.Client
             var updateStats = new MySqlCommand(@"UPDATE Statistiques SET
                 Nb_Paniers_Validés = Nb_Paniers_Validés + 1,
                 Nb_Commandes = Nb_Commandes + 1,
-                Argent_Total = Argent_Total + @total,
-                Temps_Livraison_Total = Temps_Livraison_Total + @temps,
-                Distance_Totale = Distance_Totale + @distance,
-                Nb_Plats_Livrés = Nb_Plats_Livrés + @nbplats
-                WHERE Id_Statistiques = 1;", conn);
+                WHERE Id_Statistiques = 3;", conn);
 
             updateStats.Parameters.AddWithValue("@total", prixLignes.Sum());
             updateStats.Parameters.AddWithValue("@temps", distances.Sum(d => d / 20 * 60));

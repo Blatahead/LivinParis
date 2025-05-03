@@ -163,7 +163,11 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return RedirectToPage();
         }
 
-        public IActionResult OnPostLivrerCommande() => RedirectToPage("/Cuisinier/LivraisonCuisinier");
+        public IActionResult OnPostLivrerCommande(int idLigneCommande)
+        {
+            TempData["IdLigneCommande"] = idLigneCommande;
+            return RedirectToPage("/Cuisinier/LivraisonCuisinier");
+        }
     }
 
     public class LigneCommandeInfo
