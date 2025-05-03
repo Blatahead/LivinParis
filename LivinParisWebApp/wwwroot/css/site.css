@@ -2814,9 +2814,12 @@ header {
 
                 .stats{
                     display:flex;
-                    flex-direction:column;
+                    flex-wrap:wrap;
+                    flex-direction:row;
                     justify-content:space-between;
-                    width:100%;
+                    margin-left:auto;
+                    margin-right:auto;
+                    width:90%;
                     height:85%;
 
                     .stat{

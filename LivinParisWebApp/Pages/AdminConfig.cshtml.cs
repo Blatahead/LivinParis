@@ -319,6 +319,38 @@ namespace LivinParisWebApp.Pages
                     });
                 }
             }
+            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+            {
+                await conn.OpenAsync();
+
+                var cmdStats = new MySqlCommand(@"
+                SELECT 
+                    Nb_Paniers_Validés,
+                    Argent_Total,
+                    Temps_Livraison_Total,
+                    Distance_Totale,
+                    Nb_Plats_Livrés
+                FROM Statistiques
+                WHERE Id_Statistiques = 3;", conn);
+
+                using var reader = await cmdStats.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    ViewData["NbPaniers"] = reader.GetInt32("Nb_Paniers_Validés");
+                    ViewData["ArgentTotal"] = reader.GetDecimal("Argent_Total");
+                    ViewData["TempsLivraison"] = reader.GetDecimal("Temps_Livraison_Total");
+                    ViewData["DistanceTotale"] = reader.GetDecimal("Distance_Totale");
+                    ViewData["NbPlats"] = reader.GetInt32("Nb_Plats_Livrés");
+                }
+            }
+            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
+            {
+                await conn.OpenAsync();
+
+                var cmdNbClients = new MySqlCommand("SELECT COUNT(*) FROM Client_;", conn);
+                var nbClients = Convert.ToInt32(await cmdNbClients.ExecuteScalarAsync());
+                ViewData["NbClients"] = nbClients;
+            }
             ///////////////////////
             return Page();
         }

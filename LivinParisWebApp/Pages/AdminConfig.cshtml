@@ -82,6 +82,30 @@
 						<p style="margin-left:10px;">@item.ID_cuisinier</p>
 					}
 				</div>
+				<div class="stat">
+					<p class="stat-title rose">Paniers validés : </p>
+					<p style="margin-left:10px;">@ViewData["NbPaniers"]</p>
+				</div>
+				<div class="stat">
+					<p class="stat-title rose">Total des transactions : </p>
+					<p style="margin-left:10px;">@ViewData["ArgentTotal"] €</p>
+				</div>
+				<div class="stat">
+					<p class="stat-title rose">Temps total de livraison : </p>
+					<p style="margin-left:10px;">@ViewData["TempsLivraison"] min</p>
+				</div>
+				<div class="stat">
+					<p class="stat-title rose">Distance totale parcourue : </p>
+					<p style="margin-left:10px;">@ViewData["DistanceTotale"] km</p>
+				</div>
+				<div class="stat">
+					<p class="stat-title rose">Nombre total de plats livrés : </p>
+					<p style="margin-left:10px;">@ViewData["NbPlats"]</p>
+				</div>
+				<div class="stat">
+					<p class="stat-title rose">Nombre de clients sur le site : </p>
+					<p style="margin-left:10px;">@ViewData["NbClients"]</p>
+				</div>
 			</div>
 		</div>
 	</div>
