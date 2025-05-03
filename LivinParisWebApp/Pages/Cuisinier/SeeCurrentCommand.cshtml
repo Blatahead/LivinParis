@@ -32,6 +32,7 @@
                             <button class="delete-btn" type="submit" asp-page-handler="RefuseCommande">
                                 Refuser
                             </button>
+                            <input type="hidden" name="idLigneCommande" value="@ligne.Id_LigneCommande" />
                             <button class="details-btn" type="submit" asp-page-handler="DetailsCommande">
                                 Détails
                             </button>
@@ -60,6 +61,7 @@
                             <button class="delete-btn" type="submit" asp-page-handler="CancelCommande">
                                 Annuler
                             </button>
+                            <input type="hidden" name="idLigneCommande" value="@ligne.Id_LigneCommande" />
                             <button class="details-btn" type="submit" asp-page-handler="LivrerCommande">
                                 Livrer
                             </button>

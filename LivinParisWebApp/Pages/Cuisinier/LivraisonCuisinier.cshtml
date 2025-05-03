@@ -6,6 +6,28 @@
 }
 <head>
     <link rel="stylesheet" href="/css/site.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <style>
+        a.leaflet-control-zoom-in,
+        a.leaflet-control-zoom-out {
+            background-color: #7b2cbf;
+            font-size: 22px;
+            border: none;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            transition: all 0.2s ease-in-out span
+
+        {
+            color: #fffefe;
+        }
+
+        }
+
+        a.leaflet-control-zoom-in:hover,
+        a.leaflet-control-zoom-out:hover {
+            background-color: #e0aaff;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <div class="content-settings-cuisinier">
     <div class="left">
@@ -15,34 +37,35 @@
             <div class="inside">
                 <div>
                     <p class="lines-trav rose">Lignes de métro traversées :</p>
-                    <p>10,8,3,9</p>
+                    <p>@string.Join(", ", Model.LignesTraversees.Distinct())</p>
                 </div>
                 <div>
                     <p class="nb rose">Nb de stations traversées :</p>
-                    <p>7</p>
+                    <p>@Model.StationsTraversees.Count</p>
                 </div>
                 <div>
                     <p class="dist rose">Distance parcourue :</p>
-                    <p>10 km</p>
+                    <p>@Math.Round(Model.DistanceKm, 2) km</p>
                 </div>
             </div>
         </div>
         <div class="ligne2">
             <div>
                 <p class="revenus rose">Temps de livraison estimé :</p>
-                <p>31 min</p>
+                <p>@Math.Round(Model.DistanceKm / 20 * 60) min</p>
             </div>
         </div>
         <div class="montant-l3">
             <div>
                 <p class="revenus rose">Montant débité :</p>
-                <p>15€</p>
+                <p>@Model.PrixLigne €</p>
             </div>
         </div>
         <div class="ligne4">
             <div class="btn-back">
                 <form method="post">
-                    <button type="submit" asp-page-handler="ClientPanel">
+                    <input type="hidden" name="idLigneCommande" value="@TempData["IdLigneCommande"]" />
+                    <button type="submit" asp-page-handler="Confirm">
                         Confirmer
                     </button>
                 </form>
@@ -65,91 +88,91 @@
                 </button>
             </form>
         </div>
-        @section Scripts {
-            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
-            <script>
-                const ligneColors = {
-                    1: "#FFCD00",  // jaune
-                    2: "#003CA6",  // bleu
-                    3: "#837902",  // kaki
-                    "3bis": "#6EC4E8", // bleu clair
-                    4: "#CF009E",  // rose/magenta
-                    5: "#FF7E2E",  // orange
-                    6: "#6ECEB2",  // vert d’eau
-                    7: "#F5A9BB",  // rose clair
-                    "7bis": "#6ECA97", // vert pastel
-                    8: "#E19BDF",  // violet clair
-                    9: "#B6BD00",  // jaune/vert
-                    10: "#C9910D", // ocre
-                    11: "#704B1C", // brun
-                    12: "#007852", // vert foncé
-                    13: "#99D4E4", // bleu glacier
-                    14: "#62259D", // violet foncé
-                }
-
-                const chemin = @Html.Raw(Model.CheminJson);
-
-                const stations = @Html.Raw(ViewData["Stations"]);
-
-                const arcs = @Html.Raw(ViewData["Arcs"]);
-
-                const map = L.map('map').setView([48.8566, 2.3522], 12); 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(map);
-
-                const stationMap = {};
-                stations.forEach(st => {
-                    stationMap[st.id] = st;
-
-                    const marker = L.circleMarker([st.Latitude, st.Longitude], {
-                        radius: 5,
-                        fillColor: "#ff5e5e",
-                        color: "#000",
-                        weight: 1,
-                        opacity: 0.8,
-                        fillOpacity: 0.8
-                    }).addTo(map);
-                    marker.bindPopup(`<strong>${st.nom}</strong><br/>ID: ${st.id}`);
-                });
-
-                        // Ajout des arcs
-                arcs.forEach(arc => {
-                    const srcLat = arc.SourceLat;
-                    const srcLong = arc.SourceLong;
-                    const destLat = arc.DestLat;
-                    const destLong = arc.DestLong;
-                    const ligne = arc.Ligne;
-
-                    const color = ligneColors[ligne] || "#000";
-
-                    L.polyline([
-                        [srcLat, srcLong],
-                        [destLat, destLong]
-                    ], {
-                        color: color,
-                        weight: 4,
-                        opacity: 0.8
-                    }).addTo(map);
-                });
-
-                        // Affichage du chemin trouvé en noir
-                if (chemin && chemin.length > 1) {
-                    // console.log("Coordonnées utilisées dans latlngs :", chemin.map(s => [s.Latitude, s.Longitude]));
-
-                    const latlngs = chemin.map(s => [parseFloat(s.Latitude), parseFloat(s.Longitude)]);
-
-                    L.polyline(latlngs, {
-                        color: 'black',
-                        weight: 6,
-                        opacity: 0.9
-                    }).addTo(map);
-                    map.fitBounds(L.polyline(latlngs).getBounds());
-                } else {
-                    console.log("Aucun chemin trouvé ou chemin trop court.");
-                }
-            </script>
-        }
     </div>
 </div>
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <script>
+        const ligneColors = {
+            1: "#FFCD00",  // jaune
+            2: "#003CA6",  // bleu
+            3: "#837902",  // kaki
+            "3bis": "#6EC4E8", // bleu clair
+            4: "#CF009E",  // rose/magenta
+            5: "#FF7E2E",  // orange
+            6: "#6ECEB2",  // vert d’eau
+            7: "#F5A9BB",  // rose clair
+            "7bis": "#6ECA97", // vert pastel
+            8: "#E19BDF",  // violet clair
+            9: "#B6BD00",  // jaune/vert
+            10: "#C9910D", // ocre
+            11: "#704B1C", // brun
+            12: "#007852", // vert foncé
+            13: "#99D4E4", // bleu glacier
+            14: "#62259D", // violet foncé
+        }
+
+        const chemin = @Html.Raw(Json.Serialize(Model.Chemin))
+
+        const stations = @Html.Raw(ViewData["Stations"])
+
+        const arcs = @Html.Raw(ViewData["Arcs"])
+
+        const map = L.map('map').setView([48.8566, 2.3522], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const stationMap = {};
+        stations.forEach(st => {
+            stationMap[st.id] = st;
+
+            const marker = L.circleMarker([st.Latitude, st.Longitude], {
+                radius: 5,
+                fillColor: "#ff5e5e",
+                color: "#000",
+                weight: 1,
+                opacity: 0.8,
+                fillOpacity: 0.8
+            }).addTo(map);
+            marker.bindPopup(`<strong>${st.nom}</strong><br/>ID: ${st.id}`);
+        });
+
+                // Ajout des arcs
+        arcs.forEach(arc => {
+            const srcLat = arc.SourceLat;
+            const srcLong = arc.SourceLong;
+            const destLat = arc.DestLat;
+            const destLong = arc.DestLong;
+            const ligne = arc.Ligne;
+
+            const color = ligneColors[ligne] || "#000";
+
+            L.polyline([
+                [srcLat, srcLong],
+                [destLat, destLong]
+            ], {
+                color: color,
+                weight: 4,
+                opacity: 0.4
+            }).addTo(map);
+        });
+
+                // Affichage du chemin trouvé en noir
+        if (chemin && chemin.length > 1) {
+            // console.log("Coordonnées utilisées dans latlngs :", chemin.map(s => [s.Latitude, s.Longitude]));
+
+            const latlngs = chemin.map(s => [parseFloat(s.latitude), parseFloat(s.longitude)]);
+
+            L.polyline(latlngs, {
+                color: 'black',
+                weight: 6,
+                opacity: 0.9
+            }).addTo(map);
+            map.fitBounds(L.polyline(latlngs).getBounds());
+        } else {
+            console.log("Aucun chemin trouvé ou chemin trop court.");
+        }
+    </script>
+}

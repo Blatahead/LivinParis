@@ -10,24 +10,28 @@
 <div class="top-panel">
     <p class="message-top-panel">Détails de votre commande</p>
 </div>
-<div class="content-details-commande">
+<div class="content-details-ligne-commande">
     <div class="box">
         <div class="ligne1">
             <p class="nom">Plats : </p>
-            <!-- a automatiser foreach ou jsp-->
-            <p class="one rose">Pâtes bolognaises</p>
-            <p class="two rose">Pâtes bolognaises</p>
-            <p class="three rose">Pâtes bolognaises</p>
+            @foreach (var plat in Model.NomsPlats)
+            {
+                <p class="rose">@plat</p>
+            }
         </div>
         <div class="ligne2">
-            <p class="prix">Prix : 15€</p>
-            <p class="date rose">Date de commmande : 01/04/25</p>
+            <p class="prix">Prix : @Model.PrixTotal €</p>
+        </div>
+        <div class="ligne3">
+            <p class="date rose">Date de livraison : @Model.DateLivraison</p>
+        </div>
+        <div class="ligne4">
+            <p class="lieu rose">Lieu : @Model.LieuLivraison</p>
         </div>
         <div class="btn-validate">
             <form method="post">
                 <button type="submit" asp-page-handler="LivrerCommande">
-                    Valider
-                </button>
+                    <p>Valider</p></button>
             </form>
         </div>
     </div>

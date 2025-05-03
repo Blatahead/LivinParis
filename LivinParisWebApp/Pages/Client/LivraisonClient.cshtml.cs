@@ -124,18 +124,18 @@ namespace LivinParisWebApp.Pages.Client
                 insertLigne.Parameters.AddWithValue("@lieu", ligne.LieuLivraison);
                 int idLigne = Convert.ToInt32(await insertLigne.ExecuteScalarAsync());
 
+                var idPlatRef = ligne.Plats.First(); // on récupère juste un plat pour déterminer le cuisinier
+                var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = CONCAT_WS(',', Liste_commandes, @idL) WHERE Id_Cuisinier = (SELECT Id_Cuisinier FROM Plat WHERE Num_plat = @idPlat)", conn);
+                updateCmd.Parameters.AddWithValue("@idL", idLigne);
+                updateCmd.Parameters.AddWithValue("@idPlat", idPlatRef);
+                await updateCmd.ExecuteNonQueryAsync();
+
                 foreach (var idPlat in ligne.Plats)
                 {
                     var insertPlat = new MySqlCommand("INSERT INTO Plat_LigneCommande (Id_LigneCommande, Num_Plat) VALUES (@idL, @idP)", conn);
                     insertPlat.Parameters.AddWithValue("@idL", idLigne);
                     insertPlat.Parameters.AddWithValue("@idP", idPlat);
                     await insertPlat.ExecuteNonQueryAsync();
-
-                    // add le plat à la liste de commande du cuisinier
-                    var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = CONCAT_WS(',', Liste_commandes, @idC) WHERE Id_Cuisinier = (SELECT Id_Cuisinier FROM Plat WHERE Num_plat = @idP)", conn);
-                    updateCmd.Parameters.AddWithValue("@idC", idCommande);
-                    updateCmd.Parameters.AddWithValue("@idP", idPlat);
-                    await updateCmd.ExecuteNonQueryAsync();
 
                     var disablePlatCmd = new MySqlCommand("UPDATE Plat SET Disponible = FALSE WHERE Num_plat = @idPlat", conn);
                     disablePlatCmd.Parameters.AddWithValue("@idPlat", idPlat);
@@ -154,11 +154,7 @@ namespace LivinParisWebApp.Pages.Client
             var updateStats = new MySqlCommand(@"UPDATE Statistiques SET
                 Nb_Paniers_Validés = Nb_Paniers_Validés + 1,
                 Nb_Commandes = Nb_Commandes + 1,
-                Argent_Total = Argent_Total + @total,
-                Temps_Livraison_Total = Temps_Livraison_Total + @temps,
-                Distance_Totale = Distance_Totale + @distance,
-                Nb_Plats_Livrés = Nb_Plats_Livrés + @nbplats
-                WHERE Id_Statistiques = 1;", conn);
+                WHERE Id_Statistiques = 3;", conn);
 
             updateStats.Parameters.AddWithValue("@total", prixLignes.Sum());
             updateStats.Parameters.AddWithValue("@temps", distances.Sum(d => d / 20 * 60));

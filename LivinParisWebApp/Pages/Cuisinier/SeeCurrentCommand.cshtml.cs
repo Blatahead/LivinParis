@@ -42,8 +42,17 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 }
             }
 
-            var commandes = commandesRaw.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            var pretes = pretesRaw.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var commandes = commandesRaw
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => int.TryParse(s.Trim(), out var id) ? id : -1)
+                .Where(id => id != -1)
+                .ToArray();
+
+            var pretes = pretesRaw
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => int.TryParse(s.Trim(), out var id) ? id : -1)
+                .Where(id => id != -1)
+                .ToArray();
 
             if (commandes.Length > 0)
                 CommandesEnCours = RecupererDetailsLignes(conn, commandes);
@@ -52,7 +61,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 CommandesPretes = RecupererDetailsLignes(conn, pretes);
         }
 
-        private List<LigneCommandeInfo> RecupererDetailsLignes(MySqlConnection conn, string[] commandeIds)
+        private List<LigneCommandeInfo> RecupererDetailsLignes(MySqlConnection conn, int[] commandeIds)
         {
             var result = new List<LigneCommandeInfo>();
             if (commandeIds.Length == 0) return result;
@@ -66,7 +75,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 LEFT JOIN Particulier p ON cl.Id_Client = p.Id_Client
                 LEFT JOIN Entreprise e ON cl.Id_Client = e.Id_Client
                 LEFT JOIN Plat_LigneCommande pl ON lc.Id_LigneCommande = pl.Id_LigneCommande
-                WHERE c.Num_commande IN ({idList})
+                WHERE lc.Id_LigneCommande IN ({idList})
                 GROUP BY lc.Id_LigneCommande, lc.Id_Commande, ClientNom";
 
             using var cmd = new MySqlCommand(query, conn);
@@ -92,12 +101,16 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return RedirectToPage("/Cuisinier/RefuseCommande", new { idLigneCommande });
         }
 
-        public IActionResult OnPostDetailsCommande() => RedirectToPage("/Cuisinier/DetailsCommande");
+        public IActionResult OnPostDetailsCommande(int idLigneCommande)
+        {
+            TempData["IdLigneCommande"] = idLigneCommande;
+            return RedirectToPage("/Cuisinier/DetailsCommande");
+        }
 
         public IActionResult OnPostCancelCommande(string commandeId)
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
-            if (userId == 0 || string.IsNullOrEmpty(commandeId))
+            if (userId == 0 || string.IsNullOrEmpty(commandeId) || !int.TryParse(commandeId, out int idLigneCommande))
                 return RedirectToPage();
 
             string connStr = _config.GetConnectionString("MyDb");
@@ -108,27 +121,38 @@ namespace LivinParisWebApp.Pages.Cuisinier
             selectCmd.Parameters.AddWithValue("@Uid", userId);
 
             int cuisinierId = 0;
-            string? listeCommandes = null, listePretes = null;
+            string? listeCommandesStr = null, listePretesStr = null;
 
             using (var reader = selectCmd.ExecuteReader())
             {
                 if (reader.Read())
                 {
                     cuisinierId = reader.GetInt32("Id_Cuisinier");
-                    listeCommandes = reader["Liste_commandes"]?.ToString();
-                    listePretes = reader["Liste_commandes_pretes"]?.ToString();
+                    listeCommandesStr = reader["Liste_commandes"]?.ToString();
+                    listePretesStr = reader["Liste_commandes_pretes"]?.ToString();
                 }
             }
 
             if (cuisinierId == 0) return RedirectToPage();
 
-            var commandes = (listeCommandes ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
-            var pretes = (listePretes ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+            var commandes = (listeCommandesStr ?? "")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => int.TryParse(s.Trim(), out var id) ? id : -1)
+                .Where(id => id != -1)
+                .ToList();
 
-            if (!pretes.Contains(commandeId)) return RedirectToPage();
+            var pretes = (listePretesStr ?? "")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => int.TryParse(s.Trim(), out var id) ? id : -1)
+                .Where(id => id != -1)
+                .ToList();
 
-            pretes.Remove(commandeId);
-            commandes.Add(commandeId);
+            if (!pretes.Contains(idLigneCommande)) return RedirectToPage();
+
+            pretes.Remove(idLigneCommande);
+
+            if (!commandes.Contains(idLigneCommande))
+                commandes.Add(idLigneCommande);
 
             var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = @Lc, Liste_commandes_pretes = @Lp WHERE Id_Cuisinier = @Cid", conn);
             updateCmd.Parameters.AddWithValue("@Lc", string.Join(",", commandes));
@@ -139,7 +163,11 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return RedirectToPage();
         }
 
-        public IActionResult OnPostLivrerCommande() => RedirectToPage("/Cuisinier/LivraisonCuisinier");
+        public IActionResult OnPostLivrerCommande(int idLigneCommande)
+        {
+            TempData["IdLigneCommande"] = idLigneCommande;
+            return RedirectToPage("/Cuisinier/LivraisonCuisinier");
+        }
     }
 
     public class LigneCommandeInfo
