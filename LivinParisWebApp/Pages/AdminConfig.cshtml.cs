@@ -188,9 +188,7 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Clients"] = JsonConvert.SerializeObject(clientsDTOs);
             ViewData["Cuisiniers"] = JsonConvert.SerializeObject(cuisiniersDTOs);
-            //fin d'envoi des clients et cuisiniers
-
-            //requetage des stats de la page + envoi sur la page html
+            
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
@@ -471,7 +469,7 @@ namespace LivinParisWebApp.Pages
                 serializerCuisiniers.Serialize(wr, cuisiniers);
             }
 
-            return Page();
+            return RedirectToPage();
         }
 
 
@@ -485,7 +483,6 @@ namespace LivinParisWebApp.Pages
             using var conn = new MySqlConnection(connStr);
             conn.Open();
 
-            
             List<Client<object>> clients = new List<Client<object>>();
             var cmdClients = new MySqlCommand("SELECT Id_Client, Id_Utilisateur FROM Client_", conn);
 
@@ -500,7 +497,6 @@ namespace LivinParisWebApp.Pages
             }
             readerClients.Close();
 
-            
             List<Cuisinier<object>> cuisiniers = new List<Cuisinier<object>>();
             var cmdCuisiniers = new MySqlCommand("SELECT Id_Cuisinier, Id_Utilisateur, Nom_particulier, Prenom_cuisinier FROM Cuisinier", conn);
 
@@ -517,16 +513,29 @@ namespace LivinParisWebApp.Pages
             }
             readerCuisiniers.Close();
 
-            // Sérialisation des clients en JSON
-            string jsonClients = JsonSerializer.Serialize(clients, new JsonSerializerOptions { WriteIndented = true });
-            System.IO.File.WriteAllText("clients.json", jsonClients);
+            
+            string clientsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data", "clients.json");
+            string cuisiniersFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data", "cuisiniers.json");
 
-            // Sérialisation des cuisiniers en JSON
-            string jsonCuisiniers = JsonSerializer.Serialize(cuisiniers, new JsonSerializerOptions { WriteIndented = true });
-            System.IO.File.WriteAllText("cuisiniers.json", jsonCuisiniers);
+            Directory.CreateDirectory(Path.GetDirectoryName(clientsFilePath));
 
-            return Page();
+            var options = new JsonSerializerOptions { WriteIndented = true };
+
+            using (var writer = new StreamWriter(clientsFilePath))
+            {
+                string json = JsonSerializer.Serialize(clients, options);
+                writer.Write(json);
+            }
+
+            using (var writer = new StreamWriter(cuisiniersFilePath))
+            {
+                string json = JsonSerializer.Serialize(cuisiniers, options);
+                writer.Write(json);
+            }
+
+            return RedirectToPage();
         }
+
 
     }
 }
