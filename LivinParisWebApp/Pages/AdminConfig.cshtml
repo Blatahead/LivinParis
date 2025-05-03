@@ -25,24 +25,28 @@
 			<p class="stats-title">Statistiques de la base de données</p>
 			<div class="stats">
 				<div class="nb-cmd stat">
-					<p class="stat-title rose">Nombre de commandes client :</p>
-					@foreach (var item in Model.ClientsCommandes)
-					{
-						<p>Client @item.ID_client : @item.Nb_commandes commande(s)</p>
-					}
+					<p class="stat-title rose">Nombre de commandes totales du site : </p>
+					<p style="margin-left:10px;">@ViewData["NbCommandesTotales"]</p>
 				</div>
 				<div class="client-cmd stat">
-					<p class="stat-title rose">Clients avec plusieurs commandes :</p>
-					@foreach (var item in Model.ClientsActifs)
+					<p class="stat-title rose">Clients avec + de 2 commandes :</p>
+					@if (Model.ClientsActifs.Any())
 					{
-						<p>Client @item.ID_client : @item.Nb_commandes commande(s)</p>
+						foreach (var item in Model.ClientsActifs)
+						{
+							<p style="margin-left:10px;">@item.Nb_commandes commande(s)</p>
+						}
+					}
+					else
+					{
+						<p style="margin-left:10px;">Aucun</p>
 					}
 				</div>
 				<div class="cuis-dispo stat">
-					<p class="stat-title rose">Cuisiniers disponibles :</p>
+					<p class="stat-title rose">Cuisiniers du site :</p>
 					@foreach (var item in Model.CuisiniersDispos)
 					{
-						<p>Cuisinier @item.ID_cuisinier</p>
+						<p style="margin-left:10px;">@item.ID_cuisinier</p>
 					}
 				</div>
 				<div class="best-plat stat">
@@ -50,25 +54,32 @@
 					@if (Model.PlatLePlusCommande?.Any() == true)
 					{
 						var plat = Model.PlatLePlusCommande.First();
-						<span>@plat.Nom (@plat.Fois_commande fois)</span>
+						<span style="margin-left:10px;">@plat.Nom (@plat.Fois_commande fois)</span>
 					}
 					else
 					{
-						<span>Aucun plat trouvé</span>
+						<span style="margin-left:10px;">Aucun plat trouvé</span>
 					}
 				</div>
 				<div class="cmd-sans-plat stat">
-					<p class="stat-title rose">Commandes sans plat abordable :</p>
-					@foreach (var item in Model.CommandesSansPlatAbordable)
+					<p class="stat-title rose">Commandes avec plats >15€ :</p>
+					@if (Model.CommandesSansPlatAbordable.Count == 1 && Model.CommandesSansPlatAbordable[0].ID_commande == -1)
 					{
-						<p>Commande @item.ID_commande</p>
+						<p style="margin-left:10px;">Aucune</p>
+					}
+					else
+					{
+						foreach (var item in Model.CommandesSansPlatAbordable)
+						{
+							<p style="margin-left:10px;">Commande @item.ID_commande</p>
+						}
 					}
 				</div>
 				<div class="cuis-sans-cmd stat">
 					<p class="stat-title rose">Cuisiniers sans commande :</p>
 					@foreach (var item in Model.CuisiniersDispos)
 					{
-						<p>Cuisinier @item.ID_cuisinier</p>
+						<p style="margin-left:10px;">@item.ID_cuisinier</p>
 					}
 				</div>
 			</div>

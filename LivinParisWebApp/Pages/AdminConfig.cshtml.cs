@@ -188,27 +188,17 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Clients"] = JsonConvert.SerializeObject(clientsDTOs);
             ViewData["Cuisiniers"] = JsonConvert.SerializeObject(cuisiniersDTOs);
-            
+
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
 
-                var cmd = new MySqlCommand(@"SELECT c.Id_Client, COUNT(co.Num_commande) AS nb_commandes FROM Client_ c
-                    LEFT JOIN Commande co ON c.Id_Client = co.Id_Utilisateur
-                    GROUP BY c.Id_Client
-                    ORDER BY nb_commandes DESC;", conn);
-
-                using var reader = await cmd.ExecuteReaderAsync();
-                ClientsCommandes = new List<ClientCommandesDTO>();
-                while (await reader.ReadAsync())
-                {
-                    ClientsCommandes.Add(new ClientCommandesDTO
-                    {
-                        ID_client = reader.GetInt32("Id_Client"),
-                        Nb_commandes = reader.GetInt32("nb_commandes")
-                    });
-                }
+                // Récupération du nombre de commandes depuis la table Statistiques
+                var cmd = new MySqlCommand("SELECT Nb_Commandes FROM Statistiques WHERE Id_Statistiques = 3", conn);
+                var result = await cmd.ExecuteScalarAsync();
+                ViewData["NbCommandesTotales"] = result != null ? Convert.ToInt32(result) : 0;
             }
+
 
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
@@ -255,13 +245,14 @@ namespace LivinParisWebApp.Pages
             {
                 await conn.OpenAsync();
 
-                var cmd = new MySqlCommand(@"SELECT co.Num_commande FROM Commande co
-                    WHERE NOT EXISTS (
-                        SELECT 1
-                        FROM Commande dc
-                        JOIN Plat p ON dc.liste_plats = p.Nom_plat
-                        WHERE dc.Num_commande = co.Num_commande AND p.prix_plat <= 15
-                    );", conn);
+                var cmd = new MySqlCommand(@"
+                    SELECT DISTINCT c.Num_commande
+                    FROM Commande c
+                    JOIN LigneCommande lc ON lc.Id_Commande = c.Num_commande
+                    JOIN Plat_LigneCommande plc ON plc.Id_LigneCommande = lc.Id_LigneCommande
+                    JOIN Plat p ON p.Num_plat = plc.Num_Plat
+                    GROUP BY c.Num_commande
+                    HAVING MIN(p.Prix_plat) > 10;", conn);
 
                 using var reader = await cmd.ExecuteReaderAsync();
                 CommandesSansPlatAbordable = new List<CommandeSansPlatBonMarcheDTO>();
@@ -272,20 +263,32 @@ namespace LivinParisWebApp.Pages
                         ID_commande = reader.GetInt32("Num_commande")
                     });
                 }
+
+                //aucune commande ne correspond
+                if (CommandesSansPlatAbordable.Count == 0)
+                {
+                    CommandesSansPlatAbordable.Add(new CommandeSansPlatBonMarcheDTO
+                    {
+                        ID_commande = -1
+                    });
+                }
             }
 
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
 
-                var cmd = new MySqlCommand(@"SELECT p.Nom_plat, COUNT(*) AS fois_commande FROM Commande dc
-                    JOIN Plat p ON dc.liste_plats = p.Nom_plat
+                PlatLePlusCommande = new List<PlatPlusCommandeDTO>();
+
+                var cmd = new MySqlCommand(@"
+                    SELECT p.Nom_plat, COUNT(*) AS fois_commande
+                    FROM Plat p
+                    JOIN Plat_LigneCommande plc ON p.Num_plat = plc.Num_Plat
                     GROUP BY p.Num_plat, p.Nom_plat
                     ORDER BY fois_commande DESC
                     LIMIT 1;", conn);
 
                 using var reader = await cmd.ExecuteReaderAsync();
-                PlatLePlusCommande = new List<PlatPlusCommandeDTO>();
                 while (await reader.ReadAsync())
                 {
                     PlatLePlusCommande.Add(new PlatPlusCommandeDTO
@@ -295,7 +298,6 @@ namespace LivinParisWebApp.Pages
                     });
                 }
             }
-
 
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
