@@ -39,7 +39,8 @@
 							<span class="rose">Livraison estimée : en dev</span>
 						</div>
 						<div class="dish-actions">
-							<button class="details-btn" onclick="remplirInfosPlat('@plat.Nom','@plat.Prix','@plat.Nationalite','@plat.Type','@plat.Fabrication','@plat.Peremption','@plat.NbPersonnes','@plat.Ingredients','@plat.Regime', '@plat.Id')">
+							<button class="details-btn"
+									onclick="remplirInfosPlat('@plat.Nom','@plat.Prix','@plat.Nationalite','@plat.Type','@plat.Fabrication','@plat.Peremption','@plat.NbPersonnes','@plat.Ingredients','@plat.Regime','@plat.Id','@plat.Photo')">
 								Détails
 							</button>
 						</div>
@@ -111,7 +112,7 @@
 				</form>
 			</div>
 			<div class="right">
-				<img src="/src/img/plat.png" alt="Image plat" />
+				<img class="img-plt" src="/src/img/plat.png" alt="Image plat" />
 			</div>
 		</div>
 	</div>
@@ -148,7 +149,7 @@
 		});
 	</script>
 	<script>
-		function remplirInfosPlat(nom, prix, nat, type, fab, perem, nb, ingre, regime, id) {
+		function remplirInfosPlat(nom, prix, nat, type, fab, perem, nb, ingre, regime, id, photo) {
 			document.getElementById("nom-plat").innerText = nom;
 			document.getElementById("prix-plat").innerText = "Prix : " + prix;
 			document.getElementById("nat-plat").innerText = "Nationalité : " + nat;
@@ -159,6 +160,7 @@
 			document.getElementById("ingre-plat").innerText = "Ingrédients : " + ingre;
 			document.getElementById("regime-plat").innerText = "Régime : " + regime;
 			document.querySelector('input[name="ModelAjout.PlatId"]').value = id;
+			document.querySelector(".img-plt").src = photo || "/images/plats/default.png";
 		}
 	</script>
 	<script>

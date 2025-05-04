@@ -23,6 +23,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
         public string Fabrication { get; set; }
         public string Peremption { get; set; }
         public string Ingredients { get; set; }
+        public string? PhotoPath { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -50,6 +51,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 Fabrication = Convert.ToDateTime(reader["Date_fabrication_plat"]).ToString("dd/MM/yy");
                 Peremption = Convert.ToDateTime(reader["Date_péremption_plat"]).ToString("dd/MM/yy");
                 Ingredients = reader["Ingrédients_plat"]?.ToString();
+                PhotoPath = reader["Photo_plat"]?.ToString();
             }
 
             return Page();

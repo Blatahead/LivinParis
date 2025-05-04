@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="img-container">
-        <img src="/src/img/plat.png" alt="" />
+        <img src="@(!string.IsNullOrEmpty(Model.PhotoPath) ? Model.PhotoPath : "/images/plats/default.png")" alt="Photo du plat" />
     </div>
 </div>
 <p class="msg-bottom">Pour modifier, veuillez le supprimer et en recréer un ! Merci !</p>

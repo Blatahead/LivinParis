@@ -13,7 +13,7 @@
     <p class="message-top-panel">Plat du jour</p>
 </div>
 
-<form method="post" class="form-plat">
+<form method="post" class="form-plat" enctype="multipart/form-data">
     <div class="content-today-plat">
         <div class="left-colonne">
             <div class="ligne1">
@@ -54,12 +54,11 @@
             <div class="ligne1">
                 <div class="charge">
                     <p>Photo</p>
-                    <button class="load-img" type="button"><p>Charger</p></button>
-                    <button type="button"><p>Supprimer</p></button>
+                    <input asp-for="ImageFile" type="file" accept="image/*" />
                 </div>
                 <div class="img-container">
                     <p>Aperçu</p>
-                    <img src="/src/img/plat.png" alt="">
+                    <img id="preview" src="@(Model.ImageUrl ?? "/images/plats/default.png")" alt="Aperçu" />
                 </div>
             </div>
             <div class="ligne2">
@@ -84,3 +83,18 @@
         <button class="btn-back" type="submit" asp-page-handler="CuisinierPanelRetour">Retour</button>
     </div>
 </form>
+@section Scripts {
+    <script>
+        const fileInput = document.querySelector('input[type="file"]');
+        const preview = document.getElementById('preview');
+
+        fileInput?.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => preview.src = e.target.result;
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}
