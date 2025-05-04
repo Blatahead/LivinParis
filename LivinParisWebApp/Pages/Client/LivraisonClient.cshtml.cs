@@ -153,7 +153,7 @@ namespace LivinParisWebApp.Pages.Client
 
             var updateStats = new MySqlCommand(@"UPDATE Statistiques SET
                 Nb_Paniers_Validés = Nb_Paniers_Validés + 1,
-                Nb_Commandes = Nb_Commandes + 1,
+                Nb_Commandes = Nb_Commandes + 1
                 WHERE Id_Statistiques = 3;", conn);
 
             updateStats.Parameters.AddWithValue("@total", prixLignes.Sum());

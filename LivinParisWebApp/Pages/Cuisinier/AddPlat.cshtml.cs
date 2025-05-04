@@ -41,9 +41,9 @@ namespace LivinParisWebApp.Pages.Cuisinier
         [Required]
         [BindProperty] public string Ingredients { get; set; }
 
-        [BindProperty]
-        public bool UsePlatJour { get; set; }
-
+        [BindProperty] public bool UsePlatJour { get; set; }
+        [BindProperty] public IFormFile? ImageFile { get; set; }
+        [BindProperty] public string? ImageUrl { get; set; }
 
         public async Task<IActionResult> OnPostCuisinierPanelConfirm()
         {
@@ -79,9 +79,38 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             int numPlatJour;
 
+            string finalImagePath = "";
+
+            if (UsePlatJour && !string.IsNullOrEmpty(ImageUrl))
+            {
+                finalImagePath = ImageUrl;
+            }
+            else if (ImageFile != null && ImageFile.Length > 0)
+            {
+                var ext = Path.GetExtension(ImageFile.FileName).ToLowerInvariant();
+                if (!new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(ext))
+                {
+                    ModelState.AddModelError("", "Format d’image non valide.");
+                    return Page();
+                }
+                if (ImageFile.Length > 2 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("", "Fichier trop volumineux (max 2 Mo).");
+                    return Page();
+                }
+
+                var imageFileName = Guid.NewGuid().ToString() + ext;
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/plats", imageFileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await ImageFile.CopyToAsync(stream);
+                }
+
+                finalImagePath = "/images/plats/" + imageFileName;
+            }
+
             if (UsePlatJour)
             {
-                //Récupération du plat du jour existant
                 var getPlatJourCmd = new MySqlCommand("SELECT Num_platJ FROM Plat_du_jour WHERE id_Cuisinier = @Cid AND Est_plat_du_jour = TRUE", conn);
                 getPlatJourCmd.Parameters.AddWithValue("@Cid", cuisinierId);
                 object result = await getPlatJourCmd.ExecuteScalarAsync();
@@ -96,7 +125,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             }
             else
             {
-                //Création d’un nouveau plat du jour (faux)
                 var maxNumPlatJCmd = new MySqlCommand("SELECT MAX(Num_platJ) FROM Plat_du_jour", conn);
                 object maxResult = await maxNumPlatJCmd.ExecuteScalarAsync();
                 numPlatJour = maxResult != DBNull.Value ? Convert.ToInt32(maxResult) + 1 : 1;
@@ -114,14 +142,14 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 insertPlatJourCmd.Parameters.AddWithValue("@Prix", Convert.ToDecimal(Prix.Replace(",", ".")));
                 insertPlatJourCmd.Parameters.AddWithValue("@Ingredients", Ingredients);
                 insertPlatJourCmd.Parameters.AddWithValue("@Regime", Regime);
-                insertPlatJourCmd.Parameters.AddWithValue("@Photo", "");
+                insertPlatJourCmd.Parameters.AddWithValue("@Photo", finalImagePath);
                 insertPlatJourCmd.Parameters.AddWithValue("@Fab", $"{AnneeCreation}-{MoisCreation}-{JourCreation}");
                 insertPlatJourCmd.Parameters.AddWithValue("@Cid", cuisinierId);
 
                 await insertPlatJourCmd.ExecuteNonQueryAsync();
             }
 
-            //Insertion dans Plat
+            // Insertion dans Plat
             int numPlat = 1;
             var dernierNumPlat = new MySqlCommand("SELECT MAX(Num_plat) FROM Plat", conn);
             object dernierNumPlatResult = await dernierNumPlat.ExecuteScalarAsync();
@@ -141,7 +169,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
             insertPlatCmd.Parameters.AddWithValue("@Prix", Convert.ToDecimal(Prix.Replace(",", ".")));
             insertPlatCmd.Parameters.AddWithValue("@Ingredients", Ingredients);
             insertPlatCmd.Parameters.AddWithValue("@Regime", Regime);
-            insertPlatCmd.Parameters.AddWithValue("@Photo", "");
+            insertPlatCmd.Parameters.AddWithValue("@Photo", finalImagePath);
             insertPlatCmd.Parameters.AddWithValue("@Fab", $"{AnneeCreation}-{MoisCreation}-{JourCreation}");
             insertPlatCmd.Parameters.AddWithValue("@NumPlatJ", numPlatJour);
             insertPlatCmd.Parameters.AddWithValue("@Cid", cuisinierId);
@@ -164,7 +192,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             }
         }
 
-
         public async Task<IActionResult> OnPostCochePlatDuJour()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -178,7 +205,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Récupération Id_Cuisinier
             var getCidCmd = new MySqlCommand("SELECT Id_Cuisinier FROM Cuisinier WHERE Id_Utilisateur = @Uid", conn);
             getCidCmd.Parameters.AddWithValue("@Uid", userId);
             object result = await getCidCmd.ExecuteScalarAsync();
@@ -191,8 +217,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             int cuisinierId = Convert.ToInt32(result);
 
-            // Récupération du plat du jour
-            var getPlatCmd = new MySqlCommand("SELECT * FROM Plat_du_jour WHERE id_Cuisinier = @Cid", conn);
+            var getPlatCmd = new MySqlCommand("SELECT * FROM Plat_du_jour WHERE id_Cuisinier = @Cid AND Est_plat_du_jour = TRUE", conn);
             getPlatCmd.Parameters.AddWithValue("@Cid", cuisinierId);
 
             using var reader = await getPlatCmd.ExecuteReaderAsync();
@@ -205,13 +230,13 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 Regime = reader["Régime_alimentaire_platJ"].ToString();
                 Type = reader["Type_platJ"].ToString();
                 Ingredients = reader["Ingrédients_platJ"].ToString();
+                ImageUrl = reader["Photo_platJ"]?.ToString();
 
-                // Dates
-                if (DateTime.TryParse(reader["Date_fabrication_platJ"].ToString(), out DateTime fabrication))
+                if (DateTime.TryParse(reader["Date_fabrication_platJ"].ToString(), out DateTime fab))
                 {
-                    JourCreation = fabrication.Day.ToString("D2");
-                    MoisCreation = fabrication.Month.ToString("D2");
-                    AnneeCreation = fabrication.Year.ToString();
+                    JourCreation = fab.Day.ToString("D2");
+                    MoisCreation = fab.Month.ToString("D2");
+                    AnneeCreation = fab.Year.ToString();
                 }
 
                 if (DateTime.TryParse(reader["Date_péremption_platJ"].ToString(), out DateTime peremp))
@@ -225,11 +250,10 @@ namespace LivinParisWebApp.Pages.Cuisinier
             {
                 ModelState.AddModelError("", "Aucun plat du jour trouvé.");
             }
+
             ModelState.Clear();
             return Page();
         }
-
-
 
         public IActionResult OnPostCuisinierPanelRetour()
         {

@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\data\" />
+    <Folder Include="wwwroot\images\plats\" />
   </ItemGroup>
 
   <ItemGroup>

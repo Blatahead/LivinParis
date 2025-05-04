@@ -65,7 +65,8 @@ namespace LivinParisWebApp.Pages
                 SELECT p.Num_plat, p.Nom_plat, p.prix_plat, c.Prenom_cuisinier, 
                        p.Nombre_de_personne_plat, p.Type_plat, p.Nationalité_plat, 
                        p.Date_fabrication_plat, p.Date_péremption_plat, 
-                       p.Ingrédients_plat, p.Régime_alimentaire_plat, c.Adresse_cuisinier
+                       p.Ingrédients_plat, p.Régime_alimentaire_plat, c.Adresse_cuisinier,
+                        p.Photo_plat
                 FROM Plat p
                 JOIN Cuisinier c ON p.id_Cuisinier = c.Id_Cuisinier
                 WHERE p.Disponible = TRUE", conn);
@@ -97,6 +98,7 @@ namespace LivinParisWebApp.Pages
                     Peremption = Convert.ToDateTime(platsReader["Date_péremption_plat"]).ToString("dd/MM/yy"),
                     Ingredients = platsReader["Ingrédients_plat"]?.ToString() ?? "",
                     Regime = platsReader["Régime_alimentaire_plat"]?.ToString() ?? "",
+                    Photo = platsReader["Photo_plat"]?.ToString() ?? "/images/plats/default.png",
                     Latitude = lat,
                     Longitude = lon
                 });
@@ -273,5 +275,6 @@ namespace LivinParisWebApp.Pages
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public int NumPlat { get; set; }
+        public string Photo { get; set; }  //url de l'iamge
     }
 }

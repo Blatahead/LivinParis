@@ -1322,9 +1322,10 @@ header {
                 align-items:center;
                 justify-content:center;
 
-                img{
+                .img-plt{
+                    display:flex;
                     width:90%;
-                    height:90%;
+                    height:19vh;
                 }
             }
         }
@@ -2071,7 +2072,7 @@ header {
                             color: #e0aaff;
                         }
 
-                        button {
+                        button, label {
                             background-color: #e0aaff;
                             color: #fffefe;
                             border: none;
@@ -2083,9 +2084,11 @@ header {
                             cursor: pointer;
 
                             p{
+                                display:flex;
                                 color: #fffefe;
-                                font-size: 1.5vw;
+                                font-size: 1.1vw;
                                 font-family: "Lilita One", sans-serif;
+                                text-align:center;
                             }
                         }
                     }
@@ -2096,6 +2099,12 @@ header {
                         display: flex;
                         flex-direction: column;
                         justify-content: space-evenly;
+
+                        img{
+                               display:flex;
+                               width:60%;
+                               height:80%;
+                           }
                     }
                 }
 

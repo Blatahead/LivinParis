@@ -43,8 +43,61 @@ namespace LivinParisWebApp.Pages.Cuisinier
         [BindProperty] public string Regime { get; set; }
         [Required]
         [BindProperty] public string Ingredients { get; set; }
+        [BindProperty]
+        public IFormFile? ImageFile { get; set; }
+        public string? ImageUrl { get; set; }
 
-        public void OnGet() { }
+
+
+        public async Task OnGetAsync()
+        {
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            if (userId == 0)
+                return;
+
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            await conn.OpenAsync();
+
+            // Récupérer Id_Cuisinier
+            var getCidCmd = new MySqlCommand("SELECT Id_Cuisinier FROM Cuisinier WHERE Id_Utilisateur = @uid", conn);
+            getCidCmd.Parameters.AddWithValue("@uid", userId);
+            object? result = await getCidCmd.ExecuteScalarAsync();
+            if (result == null) return;
+
+            int cuisinierId = Convert.ToInt32(result);
+
+            // Récupérer le plat du jour actuel
+            var getPlatCmd = new MySqlCommand("SELECT * FROM Plat_du_jour WHERE id_Cuisinier = @Cid AND Est_plat_du_jour = TRUE", conn);
+            getPlatCmd.Parameters.AddWithValue("@Cid", cuisinierId);
+
+            using var reader = await getPlatCmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                NomDuPlat = reader["Nom_platJ"].ToString();
+                Prix = reader["prix_platJ"].ToString();
+                NbDePersonnes = reader["Nombre_de_personneJ"].ToString();
+                Type = reader["Type_platJ"].ToString();
+                Nationalite = reader["Nationalité_platJ"].ToString();
+                Regime = reader["Régime_alimentaire_platJ"].ToString();
+                Ingredients = reader["Ingrédients_platJ"].ToString();
+                ImageUrl = reader["Photo_platJ"]?.ToString();
+
+                if (DateTime.TryParse(reader["Date_fabrication_platJ"].ToString(), out DateTime fabrication))
+                {
+                    JourCreation = fabrication.Day.ToString("D2");
+                    MoisCreation = fabrication.Month.ToString("D2");
+                    AnneeCreation = fabrication.Year.ToString();
+                }
+
+                if (DateTime.TryParse(reader["Date_péremption_platJ"].ToString(), out DateTime peremption))
+                {
+                    JourPerem = peremption.Day.ToString("D2");
+                    MoisPerem = peremption.Month.ToString("D2");
+                    AnneePerem = peremption.Year.ToString();
+                }
+            }
+        }
 
         public IActionResult OnPostCuisinierPanelRetour()
         {
@@ -77,7 +130,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             string fabrication = $"{AnneeCreation}-{MoisCreation}-{JourCreation}";
             string peremption = $"{AnneePerem}-{MoisPerem}-{JourPerem}";
-            string photo = "";
 
             // Met à FALSE tous les anciens plats du jour du cuisinier
             var resetCmd = new MySqlCommand("UPDATE Plat_du_jour SET Est_plat_du_jour = FALSE WHERE id_Cuisinier = @IdCuisinier", conn);
@@ -90,6 +142,31 @@ namespace LivinParisWebApp.Pages.Cuisinier
             if (dernierNumPlatResult != DBNull.Value && dernierNumPlatResult != null)
             {
                 idPlat = Convert.ToInt32(dernierNumPlatResult) + 1;
+            }
+            string photo = "";
+            if (ImageFile != null && ImageFile.Length > 0)
+            {
+                var ext = Path.GetExtension(ImageFile.FileName).ToLowerInvariant();
+                if (!new[] { ".jpg", ".jpeg", ".png", ".gif" }.Contains(ext))
+                {
+                    ModelState.AddModelError("", "Format d’image non valide.");
+                    return Page();
+                }
+                if (ImageFile.Length > 2 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("", "Fichier trop volumineux (max 2 Mo).");
+                    return Page();
+                }
+
+                var imageFileName = Guid.NewGuid().ToString() + ext;
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/plats", imageFileName);
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await ImageFile.CopyToAsync(stream);
+                }
+
+                photo = "/images/plats/" + imageFileName;
             }
 
             var insertCmd = new MySqlCommand(
