@@ -32,9 +32,27 @@
                 <div class="creation-container">
                     <p>Création</p>
                     <div class="input-creation">
-                        <input asp-for="JourCreation" placeholder="Jour" />
-                        <input asp-for="MoisCreation" placeholder="Mois" />
-                        <input asp-for="AnneeCreation" placeholder="Année" />
+                        <select asp-for="JourCreation">
+                            <option disabled selected>Jour</option>
+                            @for (int i = 1; i <= 30; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <select asp-for="MoisCreation">
+                            <option disabled selected>Mois</option>
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <select asp-for="AnneeCreation">
+                            <option disabled selected>Année</option>
+                            @for (int i = 2022; i <= 2028; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
                     </div>
                 </div>
             </div>
@@ -42,9 +60,27 @@
                 <div class="peremption-container">
                     <p>Péremption</p>
                     <div class="input-peremption">
-                        <input asp-for="JourPerem" placeholder="Jour" />
-                        <input asp-for="MoisPerem" placeholder="Mois" />
-                        <input asp-for="AnneePerem" placeholder="Année" />
+                        <select asp-for="JourPerem">
+                            <option disabled selected>Jour</option>
+                            @for (int i = 1; i <= 30; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <select asp-for="MoisPerem">
+                            <option disabled selected>Mois</option>
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <select asp-for="AnneePerem">
+                            <option disabled selected>Année</option>
+                            @for (int i = 2025; i <= 2028; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
                     </div>
                 </div>
             </div>

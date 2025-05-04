@@ -27,9 +27,14 @@
                                 <option value="@i">@i</option>
                             }
                         </select>
-                        @* <input asp-for="Arrondissement" placeholder="Arrondissement" /> *@
                         <input asp-for="Voirie" placeholder="Voirie" />
-                        <input asp-for="Numéro" placeholder="Numéro" />
+                        <select asp-for="Numéro">
+                            <option disabled selected>Choisissez un numéro</option>
+                            @for (int i = 1; i <= 500; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
                     </div>
                 </div>
                 <button type="submit" asp-page-handler="CestParti">C'est parti !</button>
