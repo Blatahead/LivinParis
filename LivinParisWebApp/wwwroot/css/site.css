@@ -419,7 +419,7 @@ a {
     font-size: 1.5vw;
 }
 
-input {
+input, select {
     display: flex;
     width: 45%;
     background-color: transparent;
@@ -430,9 +430,14 @@ input {
     box-sizing: border-box;
     cursor: text;
     color: #8E8E8E;
+
+    option
+{
+    color: #8E8E8E;
+}
 }
 
-    input::placeholder {
+    input::placeholder, select::placeholder {
         border: none;
         color: #8E8E8E;
     }
