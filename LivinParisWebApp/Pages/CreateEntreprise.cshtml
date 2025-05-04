@@ -22,9 +22,21 @@
                 <div class="adress-container">
                     <p>Adresse</p>
                     <div class="input-adress">
-                        <input asp-for="Arrondissement" placeholder="Arrondissement" />
+                        <select asp-for="Arrondissement">
+                            <option disabled selected>Choisissez un arrondissement</option>
+                            @for (int i = 1; i <= 20; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
                         <input asp-for="Voirie" placeholder="Voirie" />
-                        <input asp-for="Numéro" placeholder="Numéro" />
+                        <select asp-for="Numéro">
+                            <option disabled selected>Choisissez un numéro</option>
+                            @for (int i = 1; i <= 500; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
                     </div>
                 </div>
                 <button type="submit" asp-page-handler="CestParti">C'est parti !</button>
