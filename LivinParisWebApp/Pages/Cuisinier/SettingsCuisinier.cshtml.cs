@@ -26,6 +26,8 @@ namespace LivinParisWebApp.Pages.Cuisinier
         public decimal RevenusTotaux { get; set; }
         public List<string> ClientsServis { get; set; } = new();
         public string TempsLivraison { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string Tri { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -48,7 +50,12 @@ namespace LivinParisWebApp.Pages.Cuisinier
             userReader.Close();
 
             // Infos cuisinier
-            var cuisCmd = new MySqlCommand("SELECT Prenom_cuisinier, Nom_particulier, Adresse_cuisinier, Liste_commandes_livrees FROM Cuisinier WHERE Id_Utilisateur = @Uid", conn);
+            var cuisCmd = new MySqlCommand(@"
+    SELECT Prenom_cuisinier, Nom_particulier, Adresse_cuisinier, 
+           Liste_commandes_livrees, Revenus_totaux, Clients_servis
+    FROM Cuisinier 
+    WHERE Id_Utilisateur = @Uid", conn);
+
             cuisCmd.Parameters.AddWithValue("@Uid", userId);
             string? livrees = null;
 
@@ -58,10 +65,17 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 Prenom = cuisReader["Prenom_cuisinier"]?.ToString();
                 Nom = cuisReader["Nom_particulier"]?.ToString();
 
+                RevenusTotaux = cuisReader["Revenus_totaux"] != DBNull.Value ? Convert.ToDecimal(cuisReader["Revenus_totaux"]): 0;
+
+                var clientsServisRaw = cuisReader["Clients_servis"]?.ToString();
+                ClientsServis = !string.IsNullOrEmpty(clientsServisRaw)
+                    ? clientsServisRaw.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList()
+                    : new List<string>();
+
                 var adresse = cuisReader["Adresse_cuisinier"]?.ToString()?.Split(',');
                 if (adresse != null && adresse.Length == 2)
                 {
-                    var numeroEtVoirie = adresse[0].Trim().Split(' ', 2); // Séparer le premier espace
+                    var numeroEtVoirie = adresse[0].Trim().Split(' ', 2);
                     if (numeroEtVoirie.Length == 2)
                     {
                         Numero = numeroEtVoirie[0];
@@ -180,6 +194,24 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return RedirectToPage();
         }
 
+        public async Task<IActionResult> OnPostActionPage()
+        {
+            await OnGetAsync(); // recharge les données
+
+            switch (Tri)
+            {
+                case "nc":
+                    ClientsServis = ClientsServis.OrderBy(n => n).ToList();
+                    break;
+                case "nd":
+                    ClientsServis = ClientsServis.OrderByDescending(n => n).ToList();
+                    break;
+                    // Ajoute d'autres cas si tu as des données associées aux clients (ex: note, date)
+            }
+
+            return Page();
+        }
+
         public IActionResult OnPostCuisinierPanel()
         {
             return RedirectToPage("/CuisinierPanel");
@@ -194,11 +226,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
         public IActionResult OnPostSupprimer()
         {
             return RedirectToPage("/Cuisinier/SupprimerCuisinier");
-        }
-
-        public IActionResult OnPostActionPage()
-        {
-            return Page();
         }
     }
 }
