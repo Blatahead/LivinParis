@@ -32,8 +32,21 @@
             </div>
             <div class="ligne2">
                 <div class="inputs">
-                    <input asp-for="NbDePersonnes" placeholder="Nb de Personnes" />
-                    <input asp-for="Type" placeholder="Type" />
+                    <select asp-for="NbDePersonnes">
+                        <option disabled selected>Nombre de personnes</option>
+                        @for (int i = 1; i <= 30; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+                    <select asp-for="Type">
+                        <option disabled selected>Choisissez un type</option>
+                        <option value="Entrée">Entrée</option>
+                        <option value="Plat">Plat</option>
+                        <option value="Dessert">Dessert</option>
+                        <option value="Patisserie">Patisserie</option>
+                        <option value="Confiserie">Confiserie</option>
+                    </select>
                 </div>
             </div>
             <div class="ligne3">
@@ -47,8 +60,6 @@
                                 <option value="@i">@i</option>
                             }
                         </select>
-
-                        <!-- Mois dropdown -->
                         <select asp-for="MoisCreation">
                             <option disabled selected>Mois</option>
                             @for (int i = 1; i <= 12; i++)
@@ -56,8 +67,6 @@
                                 <option value="@i">@i</option>
                             }
                         </select>
-
-                        <!-- Année dropdown -->
                         <select asp-for="AnneeCreation">
                             <option disabled selected>Année</option>
                             @for (int i = 2022; i <= 2028; i++)
@@ -118,8 +127,31 @@
             </div>
             <div class="ligne2">
                 <div class="inputs">
-                    <input asp-for="Nationalite" placeholder="Nationalité" />
-                    <input asp-for="Regime" placeholder="Régime" />
+                    <select asp-for="Nationalite">
+                        <option disabled selected>Choisissez une nationalité</option>
+                        <option value="Française">Française</option>
+                        <option value="Italienne">Italienne</option>
+                        <option value="Espagnole">Espagnole</option>
+                        <option value="Allemande">Allemande</option>
+                        <option value="Portugaise">Portugaise</option>
+                        <option value="Mexicaine">Mexicaine</option>
+                        <option value="Finlandaise">Finlandaise</option>
+                        <option value="Danoise">Danoise</option>
+                        <option value="Suisse">Suisse</option>
+                        <option value="Indonésienne">Indonesienne</option>
+                        <option value="Vietnamienne">Vietnamienne</option>
+                        <option value="Irlandaise">Irlandaise</option>
+                        <option value="Coréenne">Coreenne</option>
+                        <option value="Chinoise">Chinoise</option>
+                        
+                    </select>
+                    <select asp-for="Regime">
+                        <option disabled selected>Choisissez un régime</option>
+                        <option value="Omnivore">Omnivore</option>
+                        <option value="Végétarien">Vegetarien</option>
+                        <option value="Végétalien">Vegetalien</option>
+                        <option value="Végan">Vegan</option>
+                    </select>
                 </div>
             </div>
             <div class="ligne3">
