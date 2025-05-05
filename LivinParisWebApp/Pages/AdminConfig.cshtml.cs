@@ -48,7 +48,8 @@ namespace LivinParisWebApp.Pages
 
 
             //affichage graphe avec Bellman Ford
-            var cheminNoeuds = Parcours.BellmanFord(1, 332, graphe.Arcs);
+            //var cheminNoeuds = Parcours.BellmanFord(20, 95, graphe.Arcs);
+            var cheminNoeuds = Parcours.BellmanFord(246, 223, graphe.Arcs);
 
             //affichage graphe avec Dijkstra
             //var cheminNoeuds = graphe.Dijkstra(1, 170);
