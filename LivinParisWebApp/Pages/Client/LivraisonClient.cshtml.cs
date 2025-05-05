@@ -114,6 +114,9 @@ namespace LivinParisWebApp.Pages.Client
             var getLastIdCmd = new MySqlCommand("SELECT LAST_INSERT_ID();", conn);
             int idCommande = Convert.ToInt32(await getLastIdCmd.ExecuteScalarAsync());
 
+            var idClientCmd = new MySqlCommand("SELECT Id_Client FROM Client_ WHERE Id_Utilisateur = @uid", conn);
+            idClientCmd.Parameters.AddWithValue("@uid", userId);
+            int idClient = Convert.ToInt32(await idClientCmd.ExecuteScalarAsync());
 
             for (int i = 0; i < lignes.Count; i++)
             {
@@ -137,15 +140,30 @@ namespace LivinParisWebApp.Pages.Client
                     insertPlat.Parameters.AddWithValue("@idP", idPlat);
                     await insertPlat.ExecuteNonQueryAsync();
 
+                    var updateClientPlats = new MySqlCommand(@"
+                    UPDATE Client_
+                    SET Liste_plats_commandes = 
+                        CASE 
+                            WHEN Liste_plats_commandes IS NULL OR Liste_plats_commandes = '' THEN @idPlat
+                            ELSE CONCAT(Liste_plats_commandes, ',', @idPlat)
+                        END
+                    WHERE Id_Client = @idClient", conn);
+
+                    updateClientPlats.Parameters.AddWithValue("@idPlat", idPlat);
+                    updateClientPlats.Parameters.AddWithValue("@idClient", idClient);
+                    await updateClientPlats.ExecuteNonQueryAsync();
+
+
                     var disablePlatCmd = new MySqlCommand("UPDATE Plat SET Disponible = FALSE WHERE Num_plat = @idPlat", conn);
                     disablePlatCmd.Parameters.AddWithValue("@idPlat", idPlat);
                     await disablePlatCmd.ExecuteNonQueryAsync();
                 }
             }
 
-            var idClientCmd = new MySqlCommand("SELECT Id_Client FROM Client_ WHERE Id_Utilisateur = @uid", conn);
-            idClientCmd.Parameters.AddWithValue("@uid", userId);
-            int idClient = Convert.ToInt32(await idClientCmd.ExecuteScalarAsync());
+            var updateSolde = new MySqlCommand("UPDATE Client_ SET Solde = Solde - @prix WHERE Id_Client = @idClient", conn);
+            updateSolde.Parameters.AddWithValue("@prix", prixLignes.Sum());
+            updateSolde.Parameters.AddWithValue("@idClient", idClient);
+            await updateSolde.ExecuteNonQueryAsync();
 
             var deletePanier = new MySqlCommand("DELETE FROM Panier WHERE Id_Client = @idClient", conn);
             deletePanier.Parameters.AddWithValue("@idClient", idClient);
@@ -161,6 +179,19 @@ namespace LivinParisWebApp.Pages.Client
             updateStats.Parameters.AddWithValue("@distance", distances.Sum());
             updateStats.Parameters.AddWithValue("@nbplats", platsPanier.Count);
             await updateStats.ExecuteNonQueryAsync();
+
+            var updateClientStats = new MySqlCommand(@"
+            UPDATE Client_ 
+            SET NbPlatsCommandes = NbPlatsCommandes + @nbPlats,
+                DepensesTotales = DepensesTotales + @depense,
+                NbCommandes = NbCommandes + 1
+            WHERE Id_Client = @idClient", conn);
+
+            updateClientStats.Parameters.AddWithValue("@nbPlats", platsPanier.Count);
+            updateClientStats.Parameters.AddWithValue("@depense", prixLignes.Sum());
+            updateClientStats.Parameters.AddWithValue("@idClient", idClient);
+            await updateClientStats.ExecuteNonQueryAsync();
+
 
             HttpContext.Session.Remove("PanierClient");
             HttpContext.Session.Remove("LignesCommandeTemp");

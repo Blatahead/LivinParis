@@ -1983,6 +1983,30 @@ header {
                             border: none;
                             color: #e0aaff;
                         }
+                        select {
+                            display: flex;
+                            height: 6vh;
+                            width: 45%;
+                            background-color: #fffefe;
+                            border: none;
+                            border-radius: 10px;
+                            font-size: 1.5vw;
+                            font-family: "Lilita One", sans-serif;
+                            text-align: center;
+                            box-sizing: border-box;
+                            cursor: text;
+                            color: #e0aaff;
+                            option
+
+                        {
+                            color: #e0aaff;
+                        }
+                        }
+
+                            select::placeholder {
+                                border: none;
+                                color: #e0aaff;
+                            }
                     }
                 }
 
@@ -2025,6 +2049,28 @@ header {
                     }
 
                     input::placeholder {
+                        border: none;
+                        color: #8e8e8e;
+                    }
+                    select {
+                        display: flex;
+                        width: 45%;
+                        background-color: transparent;
+                        border: none;
+                        font-size: 1.2vw;
+                        font-family: "Lilita One", sans-serif;
+                        text-align: center;
+                        box-sizing: border-box;
+                        cursor: text;
+                        color: #8e8e8e;
+                        option
+
+                    {
+                        color: #e0aaff;
+                    }
+                    }
+
+                    select::placeholder {
                         border: none;
                         color: #8e8e8e;
                     }
@@ -2140,6 +2186,29 @@ header {
                         }
 
                         input::placeholder {
+                            border: none;
+                            color: #e0aaff;
+                        }
+                        select {
+                            display: flex;
+                            height: 6vh;
+                            width: 45%;
+                            background-color: #fffefe;
+                            border: none;
+                            border-radius: 10px;
+                            font-size: 1.5vw;
+                            font-family: "Lilita One", sans-serif;
+                            text-align: center;
+                            box-sizing: border-box;
+                            cursor: text;
+                            color: #e0aaff;
+
+                            option{
+                                color: #e0aaff;
+                            }
+                        }
+
+                        select::placeholder {
                             border: none;
                             color: #e0aaff;
                         }

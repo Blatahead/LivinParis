@@ -223,6 +223,87 @@ namespace LivinParisWebApp.Pages.Cuisinier
             cleanCmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
             await cleanCmd.ExecuteNonQueryAsync();
 
+            // 5. Ajout de la commande dans Liste_commandes_livrees
+            var updateLivreesCmd = new MySqlCommand(@"
+            UPDATE Cuisinier 
+            SET Liste_commandes_livrees = 
+                CASE 
+                    WHEN Liste_commandes_livrees = '' OR Liste_commandes_livrees IS NULL THEN @id
+                    ELSE CONCAT(Liste_commandes_livrees, ',', @id)
+                END
+            WHERE Id_Cuisinier = @idCuisinier", conn);
+
+            updateLivreesCmd.Parameters.AddWithValue("@id", idLigneCommande);
+            updateLivreesCmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
+            await updateLivreesCmd.ExecuteNonQueryAsync();
+
+            // 6. Mise à jour des revenus totaux et des clients servis
+            var getRevenusEtClientsCmd = new MySqlCommand(@"
+    SELECT Revenus_totaux, Clients_servis
+    FROM Cuisinier
+    WHERE Id_Cuisinier = @idCuisinier", conn);
+            getRevenusEtClientsCmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
+
+            decimal revenusActuels = 0;
+            string clientsActuels = "";
+
+            using var revenusEtClientsReader = await getRevenusEtClientsCmd.ExecuteReaderAsync();
+            if (await revenusEtClientsReader.ReadAsync())
+            {
+                revenusActuels = revenusEtClientsReader.IsDBNull(0) ? 0 : revenusEtClientsReader.GetDecimal(0);
+                clientsActuels = revenusEtClientsReader.IsDBNull(1) ? "" : revenusEtClientsReader.GetString(1);
+            }
+            await revenusEtClientsReader.CloseAsync();
+
+            // Ajouter le prix total de la commande aux revenus existants
+            decimal nouveauxRevenus = revenusActuels + prixTotal;
+
+            // Ajouter le client à la liste s'il n'est pas déjà présent
+            string nomClientFinal = "";
+
+            // Récupérer le nom du client (Particulier ou Entreprise)
+            var getNomClientCmd = new MySqlCommand(@"
+SELECT 
+    p.Prenom_particulier, p.Nom_particulier,
+    e.Nom_référent, e.Nom_entreprise
+FROM Client_ c
+LEFT JOIN Particulier p ON c.Id_Client = p.Id_Client
+LEFT JOIN Entreprise e ON c.Id_Client = e.Id_Client
+WHERE c.Id_Utilisateur = @uid", conn);
+            getNomClientCmd.Parameters.AddWithValue("@uid", idUtilisateur);
+
+            using var clientReader = await getNomClientCmd.ExecuteReaderAsync();
+            if (await clientReader.ReadAsync())
+            {
+                if (clientReader["Prenom_particulier"] != DBNull.Value && clientReader["Nom_particulier"] != DBNull.Value)
+                {
+                    nomClientFinal = $"{clientReader["Prenom_particulier"]} {clientReader["Nom_particulier"]}";
+                }
+                else if (clientReader["Nom_référent"] != DBNull.Value && clientReader["Nom_entreprise"] != DBNull.Value)
+                {
+                    nomClientFinal = $"{clientReader["Nom_référent"]} ({clientReader["Nom_entreprise"]})";
+                }
+            }
+            await clientReader.CloseAsync();
+
+            List<string> listeClients = clientsActuels.Split(',').Select(c => c.Trim()).ToList();
+            if (!listeClients.Contains(nomClientFinal))
+            {
+                listeClients.Add(nomClientFinal);
+            }
+            string nouvelleListeClients = string.Join(", ", listeClients);
+
+            // Mettre à jour la base de données
+            var updateRevenusEtClientsCmd = new MySqlCommand(@"
+    UPDATE Cuisinier
+    SET Revenus_totaux = @revenusTotaux,
+        Clients_servis = @clientsServis
+    WHERE Id_Cuisinier = @idCuisinier", conn);
+            updateRevenusEtClientsCmd.Parameters.AddWithValue("@revenusTotaux", nouveauxRevenus);
+            updateRevenusEtClientsCmd.Parameters.AddWithValue("@clientsServis", nouvelleListeClients);
+            updateRevenusEtClientsCmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
+            await updateRevenusEtClientsCmd.ExecuteNonQueryAsync();
+
             return RedirectToPage("/CuisinierPanel");
         }
     }

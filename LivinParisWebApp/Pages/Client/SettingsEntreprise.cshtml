@@ -13,21 +13,24 @@
         <div class="ligne1">
             <div>
                 <p class="nb rose">Nombre de plats commandés :</p>
-                <p>10</p>
+                <p>@Model.NbPlatsCommandes</p>
             </div>
             <div>
                 <p class="nb rose">Argent :</p>
-                <p>135 €</p>
+                <p>@Model.Solde €</p>
+                <form method="post" asp-page-handler="AddArgent" style="display:inline;">
+                    <button type="submit" class="ajout-argent">+</button>
+                </form>
             </div>
         </div>
         <div class="ligne2">
             <div>
                 <p class="revenus rose">Dépenses totales :</p>
-                <p>35€</p>
+                <p>@Model.DepensesTotales €</p>
             </div>
             <div>
                 <p class="revenus rose">Prix moy. de commande :</p>
-                <p>35€</p>
+                <p>@Model.PrixMoyenCommande €</p>
             </div>
         </div>
         <div class="ligne3">
@@ -35,7 +38,7 @@
             <div>
                 <form method="post" asp-page-handler="ActionPage" class="tri-form">
                     <label for="tri">Trier par :</label>
-                    <select id="tri" name="tri" class="tri-select">
+                    <select id="tri" name="Tri" class="tri-select">
                         <option value="nc">Nom croissant</option>
                         <option value="nd">Nom décroissant</option>
                         <option value="npc">Nb personnes croissant</option>
@@ -45,35 +48,18 @@
                         <option value="pc">Prix croissante</option>
                         <option value="pd">Prix décroissante</option>
                     </select>
+                    <button type="submit">Trier</button>
                 </form>
             </div>
             <div class="clients-list">
-                <!-- Carte d’un client -->
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Pâtes bolognaise</p>
+                @foreach (var plat in Model.PlatsCommandes)
+                {
+                    <div class="client-card">
+                        <div class="dish-info">
+                            <p>@plat.Nom</p>
+                        </div>
                     </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Pâtes bolognaise</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Pâtes bolognaise</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Pâtes bolognaise</p>
-                    </div>
-                </div>
-                <div class="client-card">
-                    <div class="dish-info">
-                        <p>Pâtes bolognaise</p>
-                    </div>
-                </div>
+                }
             </div>
         </div>
         <div class="ligne4">
