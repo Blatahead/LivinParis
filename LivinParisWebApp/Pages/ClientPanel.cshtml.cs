@@ -242,6 +242,43 @@ namespace LivinParisWebApp.Pages
             return RedirectToPage();
         }
 
+        public IActionResult OnPostSettingsClient()
+        {
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            if (userId == 0)
+            {
+                return RedirectToPage("/Login");
+            }
+
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            conn.Open();
+
+            // Étape 1 : récupérer l’Id_Client
+            int idClient;
+            using (var cmdClient = new MySqlCommand("SELECT Id_Client FROM Client_ WHERE Id_Utilisateur = @uid", conn))
+            {
+                cmdClient.Parameters.AddWithValue("@uid", userId);
+                var result = cmdClient.ExecuteScalar();
+                if (result == null) return RedirectToPage("/Login");
+                idClient = Convert.ToInt32(result);
+            }
+
+            // Étape 2 : tester s'il est dans Particulier
+            using (var cmdTest = new MySqlCommand("SELECT COUNT(*) FROM Particulier WHERE Id_Client = @cid", conn))
+            {
+                cmdTest.Parameters.AddWithValue("@cid", idClient);
+                var count = Convert.ToInt32(cmdTest.ExecuteScalar());
+                if (count > 0)
+                {
+                    return RedirectToPage("/Client/SettingsParticulier");
+                }
+            }
+
+            // Étape 3 : sinon rediriger vers entreprise
+            return RedirectToPage("/Client/SettingsEntreprise");
+        }
+
         public IActionResult OnPostPassCommand()
         {
             var panier = PanierPlats.Select(p => p.NumPlat).ToList();

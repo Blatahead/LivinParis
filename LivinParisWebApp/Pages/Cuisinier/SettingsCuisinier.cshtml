@@ -74,9 +74,6 @@
                     <div class="adress-container">
                         <p>Adresse</p>
                         <div class="input-adress">
-                            @* <input asp-for="Arrondissement" *@
-                            @*        placeholder="Arrondissement" value="@Model.Arrondissement" /> *@
-                            @* <input asp-for="Numero" placeholder="Numéro" value="@Model.Numero" /> *@
                             <select asp-for="Arrondissement">
                                 <option disabled selected>@Model.Arrondissement</option>
                                 @for (int i = 75001; i <= 75020; i++)
