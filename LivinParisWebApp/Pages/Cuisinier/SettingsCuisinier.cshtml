@@ -74,10 +74,24 @@
                     <div class="adress-container">
                         <p>Adresse</p>
                         <div class="input-adress">
-                            <input asp-for="Arrondissement"
-                                   placeholder="Arrondissement" value="@Model.Arrondissement" />
+                            @* <input asp-for="Arrondissement" *@
+                            @*        placeholder="Arrondissement" value="@Model.Arrondissement" /> *@
+                            @* <input asp-for="Numero" placeholder="Numéro" value="@Model.Numero" /> *@
+                            <select asp-for="Arrondissement">
+                                <option disabled selected>@Model.Arrondissement</option>
+                                @for (int i = 75001; i <= 75020; i++)
+                                {
+                                    <option value="@i">@i Paris</option>
+                                }
+                            </select>
                             <input asp-for="Voirie" placeholder="Voirie" value="@Model.Voirie" />
-                            <input asp-for="Numero" placeholder="Numéro" value="@Model.Numero" />
+                            <select asp-for="Numero">
+                                <option disabled selected>@Model.Numero</option>
+                                @for (int i = 1; i <= 500; i++)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
                         </div>
                     </div>
                     <button type="submit" asp-page-handler="Validate">
