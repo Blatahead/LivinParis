@@ -11,6 +11,12 @@ namespace ClassLibrary
     {
         private static string cle_API; 
 
+        /// <summary>
+        /// Cette méthode renvoie les coordonnées GPS en utilisant l'API de Google Maps
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static async Task<(double Latitude, double Longitude)> GetCoordinatesAsync(string address)
         {
             DotNetEnv.Env.Load("../.env");

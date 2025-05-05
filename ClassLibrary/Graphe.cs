@@ -13,12 +13,25 @@ namespace ClassLibrary
         public List<StationNoeud> Stations { get; set; } = new();
         public List<Arc> Arcs { get; set; } = new();
 
+
+        /// <summary>
+        /// Cette méthode permet d'ajouter un noeud correspondant à une station
+        /// </summary>
+        /// <param name="station"></param>
         public void AjouterStation(StationNoeud station)
         {
             if (!Stations.Any(s => s.Id == station.Id))
                 Stations.Add(station);
         }
 
+        /// <summary>
+        /// Cette méthode permet de créer un arc reliant deux stations
+        /// </summary>
+        /// <param name="idSource"></param>
+        /// <param name="idDestination"></param>
+        /// <param name="distance"></param>
+        /// <param name="ligne"></param>
+        /// <exception cref="Exception"></exception>
         public void AjouterArc(int idSource, int idDestination, double distance, string ligne)
         {
             var source = Stations.FirstOrDefault(s => s.Id == idSource);
@@ -32,6 +45,10 @@ namespace ClassLibrary
             source.ArcsSortants.Add(arc);
             Arcs.Add(arc);
         }
+        /// <summary>
+        /// Cette méthode permet de récupérer les informations dans la base de données à partir de requêtes SQL
+        /// </summary>
+        /// <param name="connectionString"></param>
         public void ChargerDepuisBDD(string connectionString)
         {
             using var conn = new MySqlConnection(connectionString);
@@ -91,7 +108,6 @@ namespace ClassLibrary
                 }
             }
         }
-
         public List<StationNoeud> Dijkstra(int idDepart, int idArrivee)
         {
             var distances = new Dictionary<int, double>();
@@ -135,7 +151,7 @@ namespace ClassLibrary
 
                         if (nouvelleDistance < distances[voisin.Id])
                         {
-                            file.Remove((distances[voisin.Id], voisin.Id)); // supprimer ancienne entrée
+                            file.Remove((distances[voisin.Id], voisin.Id)); 
                             distances[voisin.Id] = nouvelleDistance;
                             precedent[voisin.Id] = idActuel;
                             file.Add((nouvelleDistance, voisin.Id));
@@ -153,10 +169,8 @@ namespace ClassLibrary
                 chemin.Insert(0, stationsParId[courant.Value]);
                 courant = precedent[courant.Value];
             }
-
-            // Si le premier noeud n’est pas le départ, aucun chemin trouvé
             if (chemin.Count == 0 || chemin[0].Id != idDepart)
-                return new List<StationNoeud>(); // chemin vide donc pas de chemin
+                return new List<StationNoeud>();
 
             return chemin;
         }

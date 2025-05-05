@@ -58,8 +58,6 @@ namespace LivinParisWebApp.Pages
             //var cheminNoeuds = graphe.Dijkstra(258, 332);
             //var cheminNoeuds = graphe.Dijkstra(1, 332);
 
-
-            // Conversion en DTO pour casser les cycles
             var cheminDTOs = cheminNoeuds.Select(StationConvertisseurs.ToDTO).ToList();
             CheminJson = JsonConvert.SerializeObject(cheminDTOs);
 
@@ -86,7 +84,6 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
             ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
-            //////////////////
 
             //// Graphe 2 ////
             var graphe2 = new ClassLibrary.Graphe2();
@@ -110,10 +107,8 @@ namespace LivinParisWebApp.Pages
 
             ViewData["NoeudsJson"] = JsonConvert.SerializeObject(noeuds);
             ViewData["LiensJson"] = JsonConvert.SerializeObject(liens);
-            ///////////////////
 
             //// Statistiques ////
-            //envoi des clients et cuisiniers
             var clientsDTOs = new List<object>();
             var cuisiniersDTOs = new List<object>();
 
@@ -193,8 +188,6 @@ namespace LivinParisWebApp.Pages
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
-
-                // Récupération du nombre de commandes depuis la table Statistiques
                 var cmd = new MySqlCommand("SELECT Nb_Commandes FROM Statistiques WHERE Id_Statistiques = 3", conn);
                 var result = await cmd.ExecuteScalarAsync();
                 ViewData["NbCommandesTotales"] = result != null ? Convert.ToInt32(result) : 0;
@@ -264,8 +257,6 @@ namespace LivinParisWebApp.Pages
                         ID_commande = reader.GetInt32("Num_commande")
                     });
                 }
-
-                //aucune commande ne correspond
                 if (CommandesSansPlatAbordable.Count == 0)
                 {
                     CommandesSansPlatAbordable.Add(new CommandeSansPlatBonMarcheDTO
@@ -299,7 +290,6 @@ namespace LivinParisWebApp.Pages
                     });
                 }
             }
-
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
@@ -352,7 +342,6 @@ namespace LivinParisWebApp.Pages
                 var nbClients = Convert.ToInt32(await cmdNbClients.ExecuteScalarAsync());
                 ViewData["NbClients"] = nbClients;
             }
-            ///////////////////////
             return Page();
         }
         public IActionResult OnPostDeleteContenuStations()
@@ -379,7 +368,6 @@ namespace LivinParisWebApp.Pages
             var (latitude, longitude) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresse);
             return (latitude, longitude);
         }
-
         public IActionResult OnPostLoadStationInBDD()
         {
             var import = new ImportStations(_config);
@@ -422,13 +410,25 @@ namespace LivinParisWebApp.Pages
             return Page();
         }
 
-
+        /// <summary>
+        /// Cette méthode permet de récupérer une chaîne XML et de la désérialiser en un objet C#
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="xml"></param>
+        /// <returns></returns>
         public T DeserializeFromXml<T>(string xml)
         {
             var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
             using var reader = new StringReader(xml);
             return (T)serializer.Deserialize(reader);
         }
+
+        /// <summary>
+        /// Cette méthode permet de récupérer une chaîne JSON et de la désérialiser en un objet C#
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="json"></param>
+        /// <returns></returns>
         public T DeserializeFromJson<T>(string json)
         {
             var options = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -454,14 +454,9 @@ namespace LivinParisWebApp.Pages
             using var conn = new MySqlConnection(connStr);
             conn.Open();
 
-            List<Client<object>> clients = new List<Client<object>>();
-
-            
+            List<Client<object>> clients = new List<Client<object>>();    
             var cmd = new MySqlCommand("SELECT Id_Client, Id_Utilisateur FROM Client_", conn);
-
             using var reader = cmd.ExecuteReader();
-
-            
             while (reader.Read())
             {
                 

@@ -10,7 +10,6 @@ namespace ClassLibrary
     {
         private double Heuristique(StationNoeud a, StationNoeud b)
         {
-            // Heuristique basée sur la distance euclidienne entre deux points (latitude/longitude)
             double dx = a.Longitude - b.Longitude;
             double dy = a.Latitude - b.Latitude;
             return Math.Sqrt(dx * dx + dy * dy);
@@ -55,15 +54,13 @@ namespace ClassLibrary
                         precedent[voisinId] = currentId;
                         gScore[voisinId] = tentativeG;
                         fScore[voisinId] = tentativeG + Heuristique(arc.Destination, stations[idArrivee]);
-
-                        // Retirer l’ancienne entrée (si présente) et ajouter la nouvelle
                         ouvert.RemoveWhere(t => t.idStation == voisinId);
                         ouvert.Add((fScore[voisinId], voisinId));
                     }
                 }
             }
 
-            return new List<StationNoeud>(); // Aucun chemin trouvé
+            return new List<StationNoeud>(); 
         }
 
         private List<StationNoeud> ReconstituerChemin(Dictionary<int, int?> precedent, Dictionary<int, StationNoeud> stations, int idArrivee)
@@ -79,8 +76,6 @@ namespace ClassLibrary
 
             return chemin;
         }
-
-        // Comparateur pour le tri dans le SortedSet
         private class DistanceComparer : IComparer<(double fScore, int id)>
         {
             public int Compare((double fScore, int id) x, (double fScore, int id) y)
