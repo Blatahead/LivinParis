@@ -7,6 +7,21 @@
 
 <head>
     <link rel="stylesheet" href="/css/site.css" />
+    <style>
+        .btn-confirm {
+            height: 6vh;
+            background-color: #e0aaff;
+            color: #fffefe;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.5vw;
+            font-family: "Lilita One", sans-serif;
+            text-align: center;
+            width: 50%;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <div class="top-panel-plat">
@@ -95,13 +110,11 @@
 
     <div class="bottom-actions">
         <button class="btn-confirm" asp-page-handler="CuisinierPanelConfirm" type="submit">Confirmer</button>
+        <button class="btn-back" type="submit" asp-page-handler="CuisinierPanelRetour">Retour</button>
     </div>
 </form>
 
 <!-- FORM SECONDAIRE POUR RETOUR -->
-<form method="post" class="form-bottom-plat">
-    <button class="btn-back" type="submit" asp-page-handler="CuisinierPanelRetour">Retour</button>
-</form>
 @section Scripts {
     <script>
         const fileInput = document.querySelector('input[type="file"]');
