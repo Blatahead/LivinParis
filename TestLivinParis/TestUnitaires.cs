@@ -95,11 +95,9 @@ namespace ClassLibrary
     {
         [TestMethod]
         public void AStar_Trouve_Chemin_Correct()
-        {
-            // Création du graphe
+        { 
             var graphe = new Graphe();
 
-            // Ajout des stations (id, nom, lat, lon, ligne)
             var s1 = new StationNoeud(1, "A", 0, 0, "L1");
             var s2 = new StationNoeud(2, "B", 0, 1, "L1");
             var s3 = new StationNoeud(3, "C", 1, 1, "L1");
@@ -109,17 +107,11 @@ namespace ClassLibrary
             graphe.AjouterStation(s2);
             graphe.AjouterStation(s3);
             graphe.AjouterStation(s4);
-
-            // Connexions (poids = distance)
             graphe.AjouterArc(1, 2, 1, "L1");
             graphe.AjouterArc(2, 3, 1, "L1");
             graphe.AjouterArc(3, 4, 1, "L1");
-
-            // Lancement de A*
             var aStar = new AStar();
             var chemin = aStar.TrouverChemin(graphe, 1, 4);
-
-            // Validation
             Assert.AreEqual(4, chemin.Count);
             Assert.AreEqual("A", chemin[0].Nom);
             Assert.AreEqual("D", chemin[3].Nom);
@@ -138,15 +130,10 @@ namespace ClassLibrary
         [TestMethod]
         public void DeserializeFromJson_ShouldReturnCorrectObject()
         {
-            // Arrange
             var json = "{\"Name\":\"Alice\",\"Age\":30}";
             var expected = new Person { Name = "Alice", Age = 30 };
-
-            // Act
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var result = JsonSerializer.Deserialize<Person>(json, options);
-
-            // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(expected.Name, result.Name);
             Assert.AreEqual(expected.Age, result.Age);
@@ -166,19 +153,14 @@ namespace ClassLibrary
         [TestMethod]
         public void DeserializeFromXml_ShouldReturnCorrectObject()
         {
-            // Arrange
             var xml = "<Person><Name>Bob</Name><Age>40</Age></Person>";
             var expected = new Person { Name = "Bob", Age = 40 };
-
-            // Act
             var serializer = new XmlSerializer(typeof(Person));
             Person result;
             using (var reader = new StringReader(xml))
             {
                 result = (Person)serializer.Deserialize(reader);
             }
-
-            // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(expected.Name, result.Name);
             Assert.AreEqual(expected.Age, result.Age);

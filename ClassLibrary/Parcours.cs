@@ -47,8 +47,6 @@ namespace ClassLibrary
             var distances = new Dictionary<int, double>();
             var predecessors = new Dictionary<int, int>();
             var idToStation = new Dictionary<int, StationNoeud>();
-
-            // Remplir idToStation et distances à partir des arcs
             foreach (var arc in arcs)
             {
                 if (!idToStation.ContainsKey(arc.Source.Id))
@@ -76,8 +74,6 @@ namespace ClassLibrary
                     }
                 }
             }
-
-            // Détection de cycles de poids négatif
             foreach (var arc in arcs)
             {
                 double poids = arc.Distance;
@@ -86,13 +82,11 @@ namespace ClassLibrary
                     throw new Exception("Le graphe contient un cycle de poids négatif.");
                 }
             }
-
-            // Reconstruction du chemin
             var chemin = new List<StationNoeud>();
             int courant = idArrivee;
 
             if (!predecessors.ContainsKey(courant) && courant != idDepart)
-                return new List<StationNoeud>(); // pas de chemin
+                return new List<StationNoeud>(); 
 
             while (courant != idDepart)
             {

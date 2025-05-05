@@ -15,6 +15,10 @@ namespace ClassLibrary
             _config = config;
         }
 
+        /// <summary>
+        /// Cette méthode permet de récupérer les informations de chaque station depuis le fichier stations.mtx
+        /// </summary>
+        /// <param name="cheminFichier"></param>
         public void ImporterDepuisMTX(string cheminFichier)
         {
             string connStr = _config.GetConnectionString("MyDb");
@@ -33,8 +37,6 @@ namespace ClassLibrary
                     continue;
 
                 var dto = StationConvertisseurs.FromMtxLine(parties);
-
-
                 var cmd = new MySqlCommand("INSERT INTO Station (ID_station, Libelle_station, Longitude, Latitude, Libelle_ligne, Commune_code, Temps_2_stations, Depart, Arrivee, Sens, Distance) " +
                                             "VALUES (@Id, @Nom, @Longitude, @Latitude, @Ligne, @CodePostal, @Temps, @Depart, @Arrivee, @Sens, @Distance)", conn);
 

@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 public static class WelshPowell
 {
+    /// <summary>
+    /// Cette méthode permet de colorier chaque sommet en fonction de la couleur des sommets adjacents
+    /// </summary>
+    /// <param name="graphe"></param>
+    /// <returns></returns>
     public static Dictionary<Noeud, int> ColorierGraphe(Graphe2 graphe)
     {
         var couleurs = new Dictionary<Noeud, int>();
@@ -33,6 +38,12 @@ public static class WelshPowell
         return couleurs;
     }
 
+    /// <summary>
+    /// Cette méthode retourne les noeuds voisins
+    /// </summary>
+    /// <param name="n"></param>
+    /// <param name="g"></param>
+    /// <returns></returns>
     private static List<Noeud> GetVoisins(Noeud n, Graphe2 g)
     {
         return g.Liens

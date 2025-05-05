@@ -47,6 +47,11 @@ namespace ClassLibrary
         }
 
 
+        /// <summary>
+        /// Cette méthode permet de charger les informations dans la base de données à partir de requêtes SQL
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
         public async Task ChargerDepuisBDD2(string connectionString)
         {
             using var conn = new MySqlConnection(connectionString);
@@ -60,8 +65,6 @@ namespace ClassLibrary
 
             var adressesUtilisateurs = new Dictionary<string, (double lat, double lon)>();
             var userToClient = new Dictionary<string, string>();
-
-            // Particuliers
             var cmdPart = new MySqlCommand("SELECT Id_Client, Adresse_particulier FROM Particulier", conn);
             using var readerPart = await cmdPart.ExecuteReaderAsync();
             while (await readerPart.ReadAsync())
@@ -72,8 +75,6 @@ namespace ClassLibrary
                 adressesUtilisateurs[idClient] = (lat, lon);
             }
             await readerPart.CloseAsync();
-
-            // Entreprises
             var cmdEnt = new MySqlCommand("SELECT id_Client, Adresse_entreprise FROM Entreprise", conn);
             using var readerEnt = await cmdEnt.ExecuteReaderAsync();
             while (await readerEnt.ReadAsync())
@@ -84,8 +85,6 @@ namespace ClassLibrary
                 adressesUtilisateurs[idClient] = (lat, lon);
             }
             await readerEnt.CloseAsync();
-
-            // Clients
             var cmdLien = new MySqlCommand("SELECT Id_Client, Id_Utilisateur FROM Client_", conn);
             using var readerLien = await cmdLien.ExecuteReaderAsync();
             while (await readerLien.ReadAsync())
@@ -100,8 +99,6 @@ namespace ClassLibrary
                 clients.Add(noeudClient);
             }
             await readerLien.CloseAsync();
-
-            // Commandes
             var cmdCommandes = new MySqlCommand("SELECT Num_commande, Id_Utilisateur FROM Commande", conn);
             using var readerCommandes = await cmdCommandes.ExecuteReaderAsync();
             while (await readerCommandes.ReadAsync())
@@ -117,8 +114,6 @@ namespace ClassLibrary
                 commandes.Add((noeudCommande, numCommande));
             }
             await readerCommandes.CloseAsync();
-
-            //plats avec coordonnées du cuisinier associé
             var cmdPlats = new MySqlCommand(@"SELECT p.Num_plat, c.Adresse_cuisinier
                 FROM Plat p
                 JOIN Cuisinier c ON p.id_Cuisinier = c.Id_Cuisinier", conn);
@@ -135,9 +130,6 @@ namespace ClassLibrary
                 plats.Add((noeudPlat, numPlat));
             }
             await readerPlats.CloseAsync();
-
-
-            //cuisiniers
             var cmdCuisiniers = new MySqlCommand("SELECT Id_Cuisinier, Id_Utilisateur, Adresse_cuisinier FROM Cuisinier", conn);
             using var readerCuisiniers = await cmdCuisiniers.ExecuteReaderAsync();
             while (await readerCuisiniers.ReadAsync())
@@ -151,8 +143,6 @@ namespace ClassLibrary
                 cuisiniers.Add((noeudCuisinier, idUser, adresse));
             }
             await readerCuisiniers.CloseAsync();
-
-            //lignes de commandes
             var lignesCommande = new List<(int Id_LigneCommande, int Id_Commande)>();
 
             var cmdLignes = new MySqlCommand("SELECT Id_LigneCommande, Id_Commande FROM LigneCommande", conn);
@@ -165,8 +155,6 @@ namespace ClassLibrary
                 ));
             }
             await readerLignes.CloseAsync();
-
-            //plats des lignes de commandes
             var platLigneCommande = new List<(int Id_LigneCommande, int Num_Plat)>();
 
             var cmdPLC = new MySqlCommand("SELECT Id_LigneCommande, Num_Plat FROM Plat_LigneCommande", conn);
@@ -179,8 +167,6 @@ namespace ClassLibrary
                 ));
             }
             await readerPLC.CloseAsync();
-
-            //liaison cuisinier - plat
             foreach (var (noeudPlat, numPlatId) in plats)
             {
                 var cmd = new MySqlCommand($"SELECT id_Cuisinier FROM Plat WHERE Num_plat = {numPlatId}", conn);
@@ -194,8 +180,6 @@ namespace ClassLibrary
                     AjouterLien(noeudCuisinier, noeudPlat, "prépare");
                 }
             }
-
-            //liaison plat - commande
             foreach (var (noeudCommande, numCommande) in commandes)
             {
                 var lignes = lignesCommande.Where(l => l.Id_Commande == numCommande);
@@ -217,9 +201,6 @@ namespace ClassLibrary
                     }
                 }
             }
-
-
-            //liaisons commande - client
             foreach (var (noeudCommande, numCommande) in commandes)
             {
                 var cmd = new MySqlCommand($"SELECT Id_Utilisateur FROM Commande WHERE Num_commande = {numCommande}", conn);
@@ -234,9 +215,6 @@ namespace ClassLibrary
                     }
                 }
             }
-
-
-            //liaison client - cuisinier
             foreach (var client in clients)
             {
                 foreach (var (cuisinier, idUserCuisinier, _) in cuisiniers)
@@ -260,32 +238,24 @@ namespace ClassLibrary
             var liens = new List<Lien>();
 
             var noeudDict = new Dictionary<string, Noeud>();
-
-            // Ajout des cuisiniers
             foreach (var cuisiner in cuisiniers)
             {
                 var noeud = new Noeud($"Cuisinier:{cuisiner.Id_Cuisinier}", "Cuisinier");
                 noeuds.Add(noeud);
                 noeudDict[noeud.Id] = noeud;
             }
-
-
             foreach (var particulier in particuliers)
             {
                 var noeud = new Noeud($"Particulier:{particulier.IdParticulier}", "Particulier");
                 noeuds.Add(noeud);
                 noeudDict[noeud.Id] = noeud;
             }
-
-
             foreach (var entreprise in entreprises)
             {
                 var noeud = new Noeud($"Entreprise:{entreprise.NumeroSiret}", "Entreprise");
                 noeuds.Add(noeud);
                 noeudDict[noeud.Id] = noeud;
             }
-
-
             foreach (var commande in commandes)
             {
                 string clientId;
