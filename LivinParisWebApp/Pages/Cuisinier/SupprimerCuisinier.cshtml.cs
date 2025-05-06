@@ -6,20 +6,35 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class SupprimerCuisinierModel : PageModel
     {
+        #region Attribut
         private readonly IConfiguration _config;
+        #endregion
 
+        #region Constructeur
         public SupprimerCuisinierModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
+
+        #region Methodes
         public void OnGet()
         {
         }
+
+        /// <summary>
+        /// clic sur l'option non
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostNo()
         {
             return RedirectToPage("/Cuisinier/SettingsCuisinier");
         }
 
+        /// <summary>
+        /// clic sur l'option oui
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostYes()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -36,12 +51,10 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             try
             {
-                //supprimer le cuisinier lié à l'utilisateur
                 MySqlCommand deleteCmd = new MySqlCommand("DELETE FROM Cuisinier WHERE Id_Utilisateur = @UserId", conn);
                 deleteCmd.Parameters.AddWithValue("@UserId", userId.Value);
                 deleteCmd.ExecuteNonQuery();
 
-                //supprimer la session
                 HttpContext.Session.Clear();
 
                 return RedirectToPage("/Register");
@@ -51,5 +64,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 return Page();
             }
         }
+        #endregion
     }
 }

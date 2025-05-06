@@ -6,24 +6,45 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class RefuseCommandeModel : PageModel
     {
+        #region Attribut
         private readonly IConfiguration _config;
-        public int IdLigneCommande { get; set; }
+        #endregion
 
+        #region Propriete
+        public int IdLigneCommande { get; set; }
+        #endregion
+
+        #region Constructeur
         public RefuseCommandeModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Methodes
+        /// <summary>
+        /// au lancement de la page
+        /// </summary>
+        /// <param name="idLigneCommande"></param>
         public void OnGet(int idLigneCommande)
         {
             IdLigneCommande = idLigneCommande;
         }
 
+        /// <summary>
+        /// au clic sur non
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostSeeCurrentCommandNo()
         {
             return RedirectToPage("/Cuisinier/SeeCurrentCommand");
         }
 
+        /// <summary>
+        /// au clic sur oui
+        /// </summary>
+        /// <param name="idLigneCommande"></param>
+        /// <returns></returns>
         public IActionResult OnPostSeeCurrentCommandYes(int idLigneCommande)
         {
             string connStr = _config.GetConnectionString("MyDb");
@@ -31,7 +52,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             conn.Open();
 
-            // Id_Commande lié à la ligne
             int idCommande = 0;
             var getCmd = new MySqlCommand("SELECT Id_Commande FROM LigneCommande WHERE Id_LigneCommande = @id", conn);
             getCmd.Parameters.AddWithValue("@id", idLigneCommande);
@@ -39,17 +59,14 @@ namespace LivinParisWebApp.Pages.Cuisinier
             if (result != null)
                 idCommande = Convert.ToInt32(result);
 
-            // supp les plats liés à la ligne
             var deletePlats = new MySqlCommand("DELETE FROM Plat_LigneCommande WHERE Id_LigneCommande = @id", conn);
             deletePlats.Parameters.AddWithValue("@id", idLigneCommande);
             deletePlats.ExecuteNonQuery();
 
-            // supp la ligne de commande
             var deleteLigne = new MySqlCommand("DELETE FROM LigneCommande WHERE Id_LigneCommande = @id", conn);
             deleteLigne.Parameters.AddWithValue("@id", idLigneCommande);
             deleteLigne.ExecuteNonQuery();
 
-            // maj liste dans le cuisinier
             int idUtilisateur = int.Parse(HttpContext.Session.GetString("Id_Utilisateur") ?? "0");
             var getListe = new MySqlCommand("SELECT Id_Cuisinier, Liste_commandes FROM Cuisinier WHERE Id_Utilisateur = @idU", conn);
             getListe.Parameters.AddWithValue("@idU", idUtilisateur);
@@ -74,7 +91,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             updateListe.Parameters.AddWithValue("@cid", idCuisinier);
             updateListe.ExecuteNonQuery();
 
-            // supp la commande si plus aucune ligne liée
             var checkLignes = new MySqlCommand("SELECT COUNT(*) FROM LigneCommande WHERE Id_Commande = @idCmd", conn);
             checkLignes.Parameters.AddWithValue("@idCmd", idCommande);
             int nbLignes = Convert.ToInt32(checkLignes.ExecuteScalar());
@@ -88,5 +104,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             return RedirectToPage("/Cuisinier/SeeCurrentCommand");
         }
+        #endregion
     }
 }

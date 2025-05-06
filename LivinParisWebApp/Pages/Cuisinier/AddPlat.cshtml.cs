@@ -7,13 +7,18 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class AddPlatModel : PageModel
     {
+        #region Attributs
         private readonly IConfiguration _config;
+        #endregion
 
+        #region Constructeur
         public AddPlatModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Proprietes
         [Required]
         [BindProperty] public string NomDuPlat { get; set; }
         [Required]
@@ -44,7 +49,13 @@ namespace LivinParisWebApp.Pages.Cuisinier
         [BindProperty] public bool UsePlatJour { get; set; }
         [BindProperty] public IFormFile? ImageFile { get; set; }
         [BindProperty] public string? ImageUrl { get; set; }
+        #endregion
 
+        #region Methodes
+        /// <summary>
+        /// valide la creation d'un plat
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostCuisinierPanelConfirm()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -58,7 +69,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Récupération Id_Cuisinier
             int cuisinierId;
             string? listeExistante = null;
             var getCmd = new MySqlCommand("SELECT Id_Cuisinier, Liste_de_plats FROM Cuisinier WHERE Id_Utilisateur = @Uid", conn);
@@ -149,7 +159,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 await insertPlatJourCmd.ExecuteNonQueryAsync();
             }
 
-            // Insertion dans Plat
             int numPlat = 1;
             var dernierNumPlat = new MySqlCommand("SELECT MAX(Num_plat) FROM Plat", conn);
             object dernierNumPlatResult = await dernierNumPlat.ExecuteScalarAsync();
@@ -192,6 +201,10 @@ namespace LivinParisWebApp.Pages.Cuisinier
             }
         }
 
+        /// <summary>
+        /// cocher l'option d'utiliser le plat du jour
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostCochePlatDuJour()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -255,9 +268,14 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return Page();
         }
 
+        /// <summary>
+        /// bouton de retour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostCuisinierPanelRetour()
         {
             return RedirectToPage("/CuisinierPanel");
         }
+        #endregion
     }
 }
