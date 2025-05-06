@@ -7,7 +7,7 @@ namespace LivinParisWebApp.Pages
 {
     public class CuisinierPanelModel : PageModel
     {
-        #region PropriÈtÈs
+        #region Propri√©t√©s
         private readonly IConfiguration _config;
         public CuisinierPanelModel(IConfiguration config)
         {
@@ -16,13 +16,13 @@ namespace LivinParisWebApp.Pages
 
         public string ProchaineLivraison { get; set; }
         public int NbCommandesEnCours { get; set; }
-        public string MoyenneNotation { get; set; } = "En cours de dÈveloppement";
+        public string MoyenneNotation { get; set; } = "En cours de d√©veloppement";
 
         public PlatDuJourDto PlatDuJour { get; set; }
         public List<PlatDispoDto> PlatsDisponibles { get; set; } = new();
 
         #endregion
-        #region Methodes
+        #region M√©thodes
 
         /// <summary>
         /// Connexion panel Cuisinier
@@ -65,13 +65,13 @@ namespace LivinParisWebApp.Pages
             }
             reader.Close();
 
-            ProchaineLivraison = !string.IsNullOrEmpty(pretes) ? DateTime.Now.AddMinutes(30).ToString("dd/MM/yy ‡ HH:mm") : "Aucune";
+            ProchaineLivraison = !string.IsNullOrEmpty(pretes) ? DateTime.Now.AddMinutes(30).ToString("dd/MM/yy √† HH:mm") : "Aucune";
             NbCommandesEnCours = string.IsNullOrEmpty(commandes)? 0: commandes.Split(',', StringSplitOptions.RemoveEmptyEntries)
                .Distinct()
                .Count();
 
 
-            var platCmd = new MySqlCommand(@"SELECT Nom_platJ, prix_platJ, Nombre_de_personneJ, NationalitÈ_platJ, RÈgime_alimentaire_platJ
+            var platCmd = new MySqlCommand(@"SELECT Nom_platJ, prix_platJ, Nombre_de_personneJ, Nationalit√©_platJ, R√©gime_alimentaire_platJ
                 FROM Plat_du_jour
                 WHERE id_Cuisinier = @Cid AND Est_plat_du_jour = TRUE
                 ORDER BY Date_fabrication_platJ DESC
@@ -86,8 +86,8 @@ namespace LivinParisWebApp.Pages
                     Nom = platReader["Nom_platJ"]?.ToString(),
                     Prix = platReader["prix_platJ"]?.ToString(),
                     NbPersonnes = platReader["Nombre_de_personneJ"] is DBNull ? 0 : Convert.ToInt32(platReader["Nombre_de_personneJ"]),
-                    Nationalite = platReader["NationalitÈ_platJ"]?.ToString(),
-                    Regime = platReader["RÈgime_alimentaire_platJ"]?.ToString()
+                    Nationalite = platReader["Nationalit√©_platJ"]?.ToString(),
+                    Regime = platReader["R√©gime_alimentaire_platJ"]?.ToString()
                 };
             }
             platReader.Close();
@@ -120,13 +120,39 @@ namespace LivinParisWebApp.Pages
             return Page();
         }
 
+        /// <summary>
+        /// Redirection vers param√®tres Cuisinier
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostSettingsCuisinier() => RedirectToPage("/Cuisinier/SettingsCuisinier");
+        /// <summary>
+        /// Redirection page de modification plat du jour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostChangeTodaysPlat() => RedirectToPage("/Cuisinier/ChangeTodaysPlat");
+        /// <summary>
+        /// Redirection page d√©tails Plat
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostChangeDetailsPlat() => RedirectToPage("/Cuisinier/DetailsPlat");
+        /// <summary>
+        /// Redirection page de suppression Plat
+        /// </summary>
+        /// <param name="nomPlat"></param>
+        /// <returns></returns>
         public IActionResult OnPostDeletePlat(string nomPlat) => RedirectToPage("/Cuisinier/DeletePlat", new { nomPlat });
+        /// <summary>
+        /// Redirection page ajouter Plat
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostAddPlat() => RedirectToPage("/Cuisinier/AddPlat");
+        /// <summary>
+        /// Redirection page Commande en cours
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostSeeCurrentCommand() => RedirectToPage("/Cuisinier/SeeCurrentCommand");
         #endregion
+
         #region Classes DTO
         public class PlatDuJourDto
         {

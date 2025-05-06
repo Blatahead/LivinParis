@@ -8,6 +8,7 @@ namespace LivinParis.Pages
 {
     public class LoginModel : PageModel
     {
+        #region Propriétés
         private readonly IConfiguration _config;
         [Required]
         [BindProperty]
@@ -23,7 +24,8 @@ namespace LivinParis.Pages
         {
             _config = configuration;
         }
-
+        #endregion
+        #region Méthodes
         public void OnGet() { }
 
         /// <summary>
@@ -76,5 +78,6 @@ namespace LivinParis.Pages
                 return RedirectToPage("/ChoixCC");
             return Page();
         }
+        #endregion
     }
 }
