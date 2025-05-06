@@ -10,9 +10,15 @@ namespace LivinParisWebApp.Pages.Client
 {
     public class LivraisonClientModel : PageModel
     {
+        #region Attributs
         private readonly IConfiguration _config;
-        public LivraisonClientModel(IConfiguration config) => _config = config;
+        #endregion
 
+        #region Constructeur
+        public LivraisonClientModel(IConfiguration config) => _config = config;
+        #endregion
+
+        #region Proprietes
         public List<List<StationDTO>> Chemins { get; set; } = new();
         public List<StationDTO> ToutesStations { get; set; } = new();
         public List<ArcDTO> TousArcs { get; set; } = new();
@@ -20,7 +26,13 @@ namespace LivinParisWebApp.Pages.Client
         public List<List<string>> StationsTraversees { get; set; } = new();
         public List<decimal> PrixParLigne { get; set; } = new();
         public decimal PrixTotalCommande { get; set; }
+        #endregion
 
+        #region Methodes
+        /// <summary>
+        /// Au lancement de la page
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             var lignes = HttpContext.Session.GetObjectFromJson<List<LigneCommandeTemp>>("LignesCommandeTemp");
@@ -37,7 +49,6 @@ namespace LivinParisWebApp.Pages.Client
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Récupération des prix des plats
             var cmdPrix = new MySqlCommand($"SELECT Num_plat, Prix_plat FROM Plat WHERE Num_plat IN ({string.Join(",", platsPanier)})", conn);
             var prixMap = new Dictionary<int, decimal>();
             using var readerPrix = await cmdPrix.ExecuteReaderAsync();
@@ -89,6 +100,10 @@ namespace LivinParisWebApp.Pages.Client
             return Page();
         }
 
+        /// <summary>
+        /// au clic sur le bouton confirmer
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostConfirm()
         {
             var lignes = HttpContext.Session.GetObjectFromJson<List<LigneCommandeTemp>>("LignesCommandeTemp");
@@ -104,13 +119,11 @@ namespace LivinParisWebApp.Pages.Client
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // 1. Exécuter l'insertion
             var insertCommande = new MySqlCommand("INSERT INTO Commande (Prix_commande, Id_Utilisateur) VALUES (@prix, @uid)", conn);
             insertCommande.Parameters.AddWithValue("@prix", prixLignes.Sum());
             insertCommande.Parameters.AddWithValue("@uid", userId);
             await insertCommande.ExecuteNonQueryAsync();
 
-            // 2. Récupérer le dernier ID généré
             var getLastIdCmd = new MySqlCommand("SELECT LAST_INSERT_ID();", conn);
             int idCommande = Convert.ToInt32(await getLastIdCmd.ExecuteScalarAsync());
 
@@ -127,7 +140,7 @@ namespace LivinParisWebApp.Pages.Client
                 insertLigne.Parameters.AddWithValue("@lieu", ligne.LieuLivraison);
                 int idLigne = Convert.ToInt32(await insertLigne.ExecuteScalarAsync());
 
-                var idPlatRef = ligne.Plats.First(); // on récupère juste un plat pour déterminer le cuisinier
+                var idPlatRef = ligne.Plats.First();
                 var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = CONCAT_WS(',', Liste_commandes, @idL) WHERE Id_Cuisinier = (SELECT Id_Cuisinier FROM Plat WHERE Num_plat = @idPlat)", conn);
                 updateCmd.Parameters.AddWithValue("@idL", idLigne);
                 updateCmd.Parameters.AddWithValue("@idPlat", idPlatRef);
@@ -202,8 +215,18 @@ namespace LivinParisWebApp.Pages.Client
             return RedirectToPage("/ClientPanel");
         }
 
+        /// <summary>
+        /// redirection vers détails commande car bouton retour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostRetour() => RedirectToPage("/Client/DetailsCommande");
 
+        /// <summary>
+        /// Récupération de l'addresse du cuisinier
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="idPlat"></param>
+        /// <returns></returns>
         private async Task<string> GetAdresseCuisinierAsync(MySqlConnection conn, int idPlat)
         {
             var cmd = new MySqlCommand(@"SELECT Adresse_cuisinier FROM Cuisinier 
@@ -212,5 +235,6 @@ namespace LivinParisWebApp.Pages.Client
             var result = await cmd.ExecuteScalarAsync();
             return result?.ToString() ?? "Paris, France";
         }
+        #endregion
     }
 }

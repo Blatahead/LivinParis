@@ -8,16 +8,26 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class SeeCurrentCommandModel : PageModel
     {
+        #region Attribut
         private readonly IConfiguration _config;
+        #endregion
 
+        #region Proprietes
         public List<LigneCommandeInfo> CommandesEnCours { get; set; } = new();
         public List<LigneCommandeInfo> CommandesPretes { get; set; } = new();
+        #endregion
 
+        #region Constrcuteur
         public SeeCurrentCommandModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Methodes
+        /// <summary>
+        /// au lancement de la page
+        /// </summary>
         public void OnGet()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -28,7 +38,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             conn.Open();
 
-            // Récupérer les lignes de commandes liées au cuisinier
             var getCmds = new MySqlCommand("SELECT Liste_commandes, Liste_commandes_pretes FROM Cuisinier WHERE Id_Utilisateur = @uid", conn);
             getCmds.Parameters.AddWithValue("@uid", userId);
 
@@ -61,12 +70,18 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 CommandesPretes = RecupererDetailsLignes(conn, pretes);
         }
 
+        /// <summary>
+        /// recuperer les details des lignes de commande
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="commandeIds"></param>
+        /// <returns></returns>
         private List<LigneCommandeInfo> RecupererDetailsLignes(MySqlConnection conn, int[] commandeIds)
         {
             var result = new List<LigneCommandeInfo>();
             if (commandeIds.Length == 0) return result;
 
-            var idList = string.Join(",", commandeIds.Select(id => $"'{id}'")); // format sécurisé
+            var idList = string.Join(",", commandeIds.Select(id => $"'{id}'"));
 
             var query = $@"SELECT lc.Id_LigneCommande, lc.Id_Commande, COALESCE(p.Prenom_particulier, e.Nom_référent, 'Inconnu') AS ClientNom, COUNT(pl.Num_Plat) AS NbPlats
                 FROM LigneCommande lc
@@ -94,19 +109,38 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return result;
         }
 
+        /// <summary>
+        /// retour au panel cuisinier
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostCuisinierPanel() => RedirectToPage("/CuisinierPanel");
 
+        /// <summary>
+        /// refuser une commande
+        /// </summary>
+        /// <param name="idLigneCommande"></param>
+        /// <returns></returns>
         public IActionResult OnPostRefuseCommande(int idLigneCommande)
         {
             return RedirectToPage("/Cuisinier/RefuseCommande", new { idLigneCommande });
         }
 
+        /// <summary>
+        /// voir les details d'une commande
+        /// </summary>
+        /// <param name="idLigneCommande"></param>
+        /// <returns></returns>
         public IActionResult OnPostDetailsCommande(int idLigneCommande)
         {
             TempData["IdLigneCommande"] = idLigneCommande;
             return RedirectToPage("/Cuisinier/DetailsCommande");
         }
 
+        /// <summary>
+        /// annuler une commande prete à livrer
+        /// </summary>
+        /// <param name="commandeId"></param>
+        /// <returns></returns>
         public IActionResult OnPostCancelCommande(string commandeId)
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -163,11 +197,17 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// clic pour aller sur la page de livraison
+        /// </summary>
+        /// <param name="idLigneCommande"></param>
+        /// <returns></returns>
         public IActionResult OnPostLivrerCommande(int idLigneCommande)
         {
             TempData["IdLigneCommande"] = idLigneCommande;
             return RedirectToPage("/Cuisinier/LivraisonCuisinier");
         }
+        #endregion
     }
 
     public class LigneCommandeInfo

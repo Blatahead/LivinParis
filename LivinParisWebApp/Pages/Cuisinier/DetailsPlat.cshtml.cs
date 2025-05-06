@@ -6,16 +6,21 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class DetailsPlatModel : PageModel
     {
+        #region Attribut
         private readonly IConfiguration _config;
+        #endregion
+
+        #region Contructeur
         public DetailsPlatModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Proprietes
         [BindProperty(SupportsGet = true)]
         public string NomPlat { get; set; }
 
-        // Propriétés du plat
         public string Prix { get; set; }
         public string NbPersonnes { get; set; }
         public string Nationalite { get; set; }
@@ -24,7 +29,13 @@ namespace LivinParisWebApp.Pages.Cuisinier
         public string Peremption { get; set; }
         public string Ingredients { get; set; }
         public string? PhotoPath { get; set; }
+        #endregion
 
+        #region Methodes
+        /// <summary>
+        /// au lancement de la page
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -57,9 +68,14 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return Page();
         }
 
+        /// <summary>
+        /// retour vers le panel cuisinier
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostCuisinierPanel()
         {
             return RedirectToPage("/CuisinierPanel");
         }
+        #endregion
     }
 }

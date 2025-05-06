@@ -8,20 +8,34 @@ namespace LivinParisWebApp.Pages.Client
 {
     public class DetailsCommandeModel : PageModel
     {
+        #region Attributs
         private readonly IConfiguration _config;
+        private const string SessionKey = "LignesCommandeTemp";
+        #endregion
+
+        #region Constructeur
         public DetailsCommandeModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
-        private const string SessionKey = "LignesCommandeTemp";
+        #region Proprietes
         public List<PlatDisponibleDTO> PlatsDisponibles { get; set; } = new();
 
         [BindProperty]
         public List<LigneCommandeTemp> Lignes { get; set; } = new();
         [BindProperty]
         public int NombreDeLignesSouhaitees { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int ligneIndex { get; set; }
+        #endregion
 
+        #region Methodes
+        /// <summary>
+        /// Lancement de la page details commande cote client
+        /// </summary>
+        /// <returns></returns>
         public async Task OnGetAsync()
         {
             var data = HttpContext.Session.GetString(SessionKey);
@@ -31,6 +45,10 @@ namespace LivinParisWebApp.Pages.Client
             await ChargerPlatsDisponiblesAsync();
         }
 
+        /// <summary>
+        /// load les plats dispo
+        /// </summary>
+        /// <returns></returns>
         private async Task ChargerPlatsDisponiblesAsync()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -56,30 +74,28 @@ namespace LivinParisWebApp.Pages.Client
             while (await reader.ReadAsync())
             {
                 int id = Convert.ToInt32(reader["Num_plat"]);
-                plats.Add(id); // pour la session
+                plats.Add(id);
                 PlatsDisponibles.Add(new PlatDisponibleDTO
                 {
                     Id = id,
                     Nom = reader["Nom_plat"]?.ToString() ?? ""
                 });
             }
-
-            //Ajout : on stocke la liste dans la session
             HttpContext.Session.SetObject("PanierClient", plats);
         }
 
-
+        /// <summary>
+        /// Au clic sur le bouton livrer la commande
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostLivrerCommande()
         {
             var panier = HttpContext.Session.GetObjectFromJson<List<int>>("PanierClient") ?? new();
 
-            // Liste de tous les plats cochés dans toutes les lignes
             var tousPlatsCoches = Lignes.SelectMany(l => l.Plats).ToList();
 
-            // Vérif : chaque plat du panier est bien utilisé au moins une fois
             var tousInclus = panier.All(p => tousPlatsCoches.Contains(p));
 
-            // Vérif : aucun plat n'est coché plusieurs fois
             var doublons = tousPlatsCoches
                 .GroupBy(p => p)
                 .Where(g => g.Count() > 1)
@@ -98,11 +114,14 @@ namespace LivinParisWebApp.Pages.Client
                 return Page();
             }
 
-            // OK sauvegarde
             HttpContext.Session.SetObject("LignesCommandeTemp", Lignes);
             return RedirectToPage("/Client/LivraisonClient");
         }
 
+        /// <summary>
+        /// load le panier client
+        /// </summary>
+        /// <returns></returns>
         private async Task ChargerPanierClientDansSession()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -128,12 +147,11 @@ namespace LivinParisWebApp.Pages.Client
 
             HttpContext.Session.SetObject("PanierClient", ids);
         }
-
-
-
-        [BindProperty(SupportsGet = true)]
-        public int ligneIndex { get; set; }
-
+        
+        /// <summary>
+        /// clic sur bouton supprimer du panier
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostSupprimerLigne()
         {
             var lignes = Lignes ?? new List<LigneCommandeTemp>();
@@ -148,6 +166,10 @@ namespace LivinParisWebApp.Pages.Client
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// utiliser l'addresse du client dans l'input
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostUtiliserAdresse()
         {
             var lignes = Lignes ?? new List<LigneCommandeTemp>();
@@ -164,6 +186,10 @@ namespace LivinParisWebApp.Pages.Client
             return Page();
         }
 
+        /// <summary>
+        /// récupération de l'adresse du user associé
+        /// </summary>
+        /// <returns></returns>
         private async Task<string> GetAdresseUtilisateur()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -193,6 +219,10 @@ namespace LivinParisWebApp.Pages.Client
             return "";
         }
 
+        /// <summary>
+        /// au clic pour choisir le nb de lignes de commandes
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostChoisirNombreLignesAsync()
         {
             var lignes = new List<LigneCommandeTemp>();
@@ -202,7 +232,6 @@ namespace LivinParisWebApp.Pages.Client
                 lignes.Add(new LigneCommandeTemp());
             }
 
-            // Si des données postées existent, les réinjecter
             if (Lignes != null && Lignes.Count > 0)
             {
                 for (int i = 0; i < Math.Min(lignes.Count, Lignes.Count); i++)
@@ -220,11 +249,16 @@ namespace LivinParisWebApp.Pages.Client
             return Page();
         }
 
+        /// <summary>
+        /// au clic sur le bouton retour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostRetour()
         {
             return RedirectToPage("/ClientPanel");
         }
     }
+    #endregion
 
     public class LigneCommandeTemp
     {

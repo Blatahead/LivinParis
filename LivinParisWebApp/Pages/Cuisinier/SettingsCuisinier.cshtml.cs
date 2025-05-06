@@ -7,13 +7,18 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class SettingsCuisinierModel : PageModel
     {
+        #region Attribut
         private readonly IConfiguration _config;
+        #endregion
 
+        #region Constrcuteur
         public SettingsCuisinierModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Proprietes
         [BindProperty] public string Email { get; set; }
         [BindProperty] public string Password { get; set; }
         [BindProperty] public string Prenom { get; set; }
@@ -28,7 +33,13 @@ namespace LivinParisWebApp.Pages.Cuisinier
         public string TempsLivraison { get; set; }
         [BindProperty(SupportsGet = true)]
         public string Tri { get; set; }
+        #endregion
 
+        #region Methodes
+        /// <summary>
+        /// au lancement de la page
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -38,7 +49,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Infos utilisateur
             var userCmd = new MySqlCommand("SELECT Mail_Utilisateur, Mdp FROM Utilisateur WHERE Id_Utilisateur = @Uid", conn);
             userCmd.Parameters.AddWithValue("@Uid", userId);
             using var userReader = await userCmd.ExecuteReaderAsync();
@@ -49,12 +59,11 @@ namespace LivinParisWebApp.Pages.Cuisinier
             }
             userReader.Close();
 
-            // Infos cuisinier
             var cuisCmd = new MySqlCommand(@"
-    SELECT Prenom_cuisinier, Nom_particulier, Adresse_cuisinier, 
-           Liste_commandes_livrees, Revenus_totaux, Clients_servis
-    FROM Cuisinier 
-    WHERE Id_Utilisateur = @Uid", conn);
+                SELECT Prenom_cuisinier, Nom_particulier, Adresse_cuisinier, 
+                       Liste_commandes_livrees, Revenus_totaux, Clients_servis
+                FROM Cuisinier 
+                WHERE Id_Utilisateur = @Uid", conn);
 
             cuisCmd.Parameters.AddWithValue("@Uid", userId);
             string? livrees = null;
@@ -93,7 +102,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             }
             cuisReader.Close();
 
-            // Statistiques
             if (!string.IsNullOrEmpty(livrees))
             {
                 var commandes = livrees.Split(',').Select(commande => commande.Trim()).ToList();
@@ -128,12 +136,10 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
                         string nomPrenom = null;
 
-                        // Si c’est un particulier
                         if (reader["Prenom_particulier"] != DBNull.Value && reader["Nom_particulier"] != DBNull.Value)
                         {
                             nomPrenom = $"{reader["Prenom_particulier"]} {reader["Nom_particulier"]}";
                         }
-                        // Sinon si c’est une entreprise
                         else if (reader["Nom_référent"] != DBNull.Value && reader["Nom_entreprise"] != DBNull.Value)
                         {
                             nomPrenom = $"{reader["Nom_référent"]} ({reader["Nom_entreprise"]})";
@@ -144,15 +150,18 @@ namespace LivinParisWebApp.Pages.Cuisinier
                     }
                     reader.Close();
 
-                    totalLivraison += TimeSpan.FromMinutes(15); // 15 min pour une livraison pour l'instant
+                    totalLivraison += TimeSpan.FromMinutes(15);
                 }
-
                 TempsLivraison = $"{(int)totalLivraison.TotalHours} h {totalLivraison.Minutes} min";
             }
 
             return Page();
         }
 
+        /// <summary>
+        /// valider les changements dans les champs des donnees
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostValidate()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -196,7 +205,7 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
         public async Task<IActionResult> OnPostActionPage()
         {
-            await OnGetAsync(); // recharge les données
+            await OnGetAsync();
 
             switch (Tri)
             {
@@ -206,26 +215,37 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 case "nd":
                     ClientsServis = ClientsServis.OrderByDescending(n => n).ToList();
                     break;
-                    // Ajoute d'autres cas si tu as des données associées aux clients (ex: note, date)
             }
-
             return Page();
         }
 
+        /// <summary>
+        /// bouton de retour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostCuisinierPanel()
         {
             return RedirectToPage("/CuisinierPanel");
         }
 
+        /// <summary>
+        /// deconnexion du cuisinier
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostDeconnexion()
         {
             HttpContext.Session.Clear();
             return RedirectToPage("/Login");
         }
 
+        /// <summary>
+        /// suppression du cuisinier
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostSupprimer()
         {
             return RedirectToPage("/Cuisinier/SupprimerCuisinier");
         }
+        #endregion
     }
 }

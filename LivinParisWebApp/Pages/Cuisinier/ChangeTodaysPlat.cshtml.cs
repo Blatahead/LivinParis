@@ -8,13 +8,18 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class ChangeTodaysPlatModel : PageModel
     {
+        #region Attribut
         private readonly IConfiguration _config;
+        #endregion
 
+        #region Constructeur
         public ChangeTodaysPlatModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Proprietes
         [Required]
         [BindProperty] public string NomDuPlat { get; set; }
         [Required]
@@ -46,9 +51,13 @@ namespace LivinParisWebApp.Pages.Cuisinier
         [BindProperty]
         public IFormFile? ImageFile { get; set; }
         public string? ImageUrl { get; set; }
+        #endregion
 
-
-
+        #region Methodes
+        /// <summary>
+        /// au lancement de la page
+        /// </summary>
+        /// <returns></returns>
         public async Task OnGetAsync()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -59,7 +68,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Récupérer Id_Cuisinier
             var getCidCmd = new MySqlCommand("SELECT Id_Cuisinier FROM Cuisinier WHERE Id_Utilisateur = @uid", conn);
             getCidCmd.Parameters.AddWithValue("@uid", userId);
             object? result = await getCidCmd.ExecuteScalarAsync();
@@ -67,7 +75,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             int cuisinierId = Convert.ToInt32(result);
 
-            // Récupérer le plat du jour actuel
             var getPlatCmd = new MySqlCommand("SELECT * FROM Plat_du_jour WHERE id_Cuisinier = @Cid AND Est_plat_du_jour = TRUE", conn);
             getPlatCmd.Parameters.AddWithValue("@Cid", cuisinierId);
 
@@ -98,12 +105,19 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 }
             }
         }
-
+        /// <summary>
+        /// bouton de retour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostCuisinierPanelRetour()
         {
             return RedirectToPage("/CuisinierPanel");
         }
 
+        /// <summary>
+        /// conformer la creation du plat du jour
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostCuisinierPanelConfirm()
         {
             int userId = (int)(HttpContext.Session.GetInt32("UserId") ?? 0);
@@ -131,7 +145,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             string fabrication = $"{AnneeCreation}-{MoisCreation}-{JourCreation}";
             string peremption = $"{AnneePerem}-{MoisPerem}-{JourPerem}";
 
-            // Met à FALSE tous les anciens plats du jour du cuisinier
             var resetCmd = new MySqlCommand("UPDATE Plat_du_jour SET Est_plat_du_jour = FALSE WHERE id_Cuisinier = @IdCuisinier", conn);
             resetCmd.Parameters.AddWithValue("@IdCuisinier", cuisinierId);
             await resetCmd.ExecuteNonQueryAsync();
@@ -198,5 +211,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 return Page();
             }
         }
+        #endregion
     }
 }

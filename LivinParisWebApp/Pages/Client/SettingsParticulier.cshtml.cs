@@ -7,13 +7,18 @@ namespace LivinParisWebApp.Pages.Client
 {
     public class SettingsParticulierModel : PageModel
     {
+        #region Attributs
         private readonly IConfiguration _config;
+        #endregion
 
+        #region Constructeur
         public SettingsParticulierModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Proprietes
         [BindProperty] public string Email { get; set; }
         [BindProperty] public string Password { get; set; }
         [BindProperty] public string Prenom { get; set; }
@@ -30,7 +35,12 @@ namespace LivinParisWebApp.Pages.Client
         public decimal Solde { get; set; }
 
         public List<PlatDTO> PlatsCommandes { get; set; } = new();
+        #endregion
 
+        /// <summary>
+        /// au lancement de la page
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -94,6 +104,10 @@ namespace LivinParisWebApp.Pages.Client
             return Page();
         }
 
+        /// <summary>
+        /// tri des pkats
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostActionPage()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -119,6 +133,12 @@ namespace LivinParisWebApp.Pages.Client
             return Page();
         }
 
+        /// <summary>
+        /// charger les plats commandes par le client
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         private async Task<List<PlatDTO>> ChargerPlatsCommandesAsync(MySqlConnection conn, int userId)
         {
             var result = new List<PlatDTO>();
@@ -151,6 +171,10 @@ namespace LivinParisWebApp.Pages.Client
             return result;
         }
 
+        /// <summary>
+        /// rajouter de l'argent au client
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostAddArgent()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -167,8 +191,16 @@ namespace LivinParisWebApp.Pages.Client
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// bouton de retour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostClientPanel() => RedirectToPage("/ClientPanel");
 
+        /// <summary>
+        /// validation des modifications donnees client
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostValidate()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -206,12 +238,20 @@ namespace LivinParisWebApp.Pages.Client
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// Deconnexion du client
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostDeconnexion()
         {
             HttpContext.Session.Clear();
             return RedirectToPage("/Login");
         }
 
+        /// <summary>
+        /// suppression du compte client
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostSupprimer()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -229,11 +269,4 @@ namespace LivinParisWebApp.Pages.Client
             return RedirectToPage("/Login");
         }
     }
-
-    //public class PlatDTO
-    //{
-    //    public string Nom { get; set; }
-    //    public decimal Prix { get; set; }
-    //    public DateTime DateCommande { get; set; }
-    //}
 }

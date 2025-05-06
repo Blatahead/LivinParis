@@ -6,26 +6,40 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class DeletePlatModel : PageModel
     {
+        #region Attribut
         private readonly IConfiguration _config;
+        #endregion
 
+        #region Constrcuteur
         public DeletePlatModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Propriete
         [BindProperty(SupportsGet = true)]
         public string NomPlat { get; set; }
+        #endregion
 
-
+        #region Methodes
         public void OnGet()
         {
         }
 
+        /// <summary>
+        /// non pour supprimer un plat
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostCuisinierPanelNo()
         {
             return RedirectToPage("/CuisinierPanel");
         }
 
+        /// <summary>
+        /// oui pour supprimer un plat
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostCuisinierPanelYes()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -42,7 +56,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             int cuisinierId = 0;
             string? liste = null;
 
-            // 1. Récupérer le cuisinier et la liste
             var getCmd = new MySqlCommand("SELECT Id_Cuisinier, Liste_de_plats FROM Cuisinier WHERE Id_Utilisateur = @Uid", conn);
             getCmd.Parameters.AddWithValue("@Uid", userId);
             using (var reader = await getCmd.ExecuteReaderAsync())
@@ -60,13 +73,11 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 return Page();
             }
 
-            // 2. Supprimer dans `Plat`
             var deleteCmd = new MySqlCommand("DELETE FROM Plat WHERE Nom_plat = @Nom AND id_Cuisinier = @Cid", conn);
             deleteCmd.Parameters.AddWithValue("@Nom", NomPlat);
             deleteCmd.Parameters.AddWithValue("@Cid", cuisinierId);
             await deleteCmd.ExecuteNonQueryAsync();
 
-            // 3. Supprimer du champ `Liste_de_plats`
             if (!string.IsNullOrEmpty(liste))
             {
                 var plats = liste.Split(',').Select(p => p.Trim()).ToList();
@@ -81,5 +92,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             return RedirectToPage("/CuisinierPanel");
         }
+        #endregion
     }
 }

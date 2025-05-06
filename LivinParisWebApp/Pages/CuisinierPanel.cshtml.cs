@@ -7,7 +7,7 @@ namespace LivinParisWebApp.Pages
 {
     public class CuisinierPanelModel : PageModel
     {
-        #region Propriétés
+        #region PropriÃ©tÃ©s
         private readonly IConfiguration _config;
         public CuisinierPanelModel(IConfiguration config)
         {
@@ -16,13 +16,13 @@ namespace LivinParisWebApp.Pages
 
         public string ProchaineLivraison { get; set; }
         public int NbCommandesEnCours { get; set; }
-        public string MoyenneNotation { get; set; } = "En cours de développement";
+        public string MoyenneNotation { get; set; } = "En cours de dÃ©veloppement";
 
         public PlatDuJourDto PlatDuJour { get; set; }
         public List<PlatDispoDto> PlatsDisponibles { get; set; } = new();
 
         #endregion
-        #region Méthodes
+        #region MÃ©thodes
 
         /// <summary>
         /// Connexion panel Cuisinier
@@ -65,13 +65,13 @@ namespace LivinParisWebApp.Pages
             }
             reader.Close();
 
-            ProchaineLivraison = !string.IsNullOrEmpty(pretes) ? DateTime.Now.AddMinutes(30).ToString("dd/MM/yy à HH:mm") : "Aucune";
+            ProchaineLivraison = !string.IsNullOrEmpty(pretes) ? DateTime.Now.AddMinutes(30).ToString("dd/MM/yy Ã  HH:mm") : "Aucune";
             NbCommandesEnCours = string.IsNullOrEmpty(commandes)? 0: commandes.Split(',', StringSplitOptions.RemoveEmptyEntries)
                .Distinct()
                .Count();
 
 
-            var platCmd = new MySqlCommand(@"SELECT Nom_platJ, prix_platJ, Nombre_de_personneJ, Nationalité_platJ, Régime_alimentaire_platJ
+            var platCmd = new MySqlCommand(@"SELECT Nom_platJ, prix_platJ, Nombre_de_personneJ, NationalitÃ©_platJ, RÃ©gime_alimentaire_platJ
                 FROM Plat_du_jour
                 WHERE id_Cuisinier = @Cid AND Est_plat_du_jour = TRUE
                 ORDER BY Date_fabrication_platJ DESC
@@ -86,8 +86,8 @@ namespace LivinParisWebApp.Pages
                     Nom = platReader["Nom_platJ"]?.ToString(),
                     Prix = platReader["prix_platJ"]?.ToString(),
                     NbPersonnes = platReader["Nombre_de_personneJ"] is DBNull ? 0 : Convert.ToInt32(platReader["Nombre_de_personneJ"]),
-                    Nationalite = platReader["Nationalité_platJ"]?.ToString(),
-                    Regime = platReader["Régime_alimentaire_platJ"]?.ToString()
+                    Nationalite = platReader["NationalitÃ©_platJ"]?.ToString(),
+                    Regime = platReader["RÃ©gime_alimentaire_platJ"]?.ToString()
                 };
             }
             platReader.Close();
@@ -121,7 +121,7 @@ namespace LivinParisWebApp.Pages
         }
 
         /// <summary>
-        /// Redirection vers paramètres Cuisinier
+        /// Redirection vers paramÃ¨tres Cuisinier
         /// </summary>
         /// <returns></returns>
         public IActionResult OnPostSettingsCuisinier() => RedirectToPage("/Cuisinier/SettingsCuisinier");
@@ -131,7 +131,7 @@ namespace LivinParisWebApp.Pages
         /// <returns></returns>
         public IActionResult OnPostChangeTodaysPlat() => RedirectToPage("/Cuisinier/ChangeTodaysPlat");
         /// <summary>
-        /// Redirection page détails Plat
+        /// Redirection page dÃ©tails Plat
         /// </summary>
         /// <returns></returns>
         public IActionResult OnPostChangeDetailsPlat() => RedirectToPage("/Cuisinier/DetailsPlat");

@@ -7,25 +7,35 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class DetailsCommandeModel : PageModel
     {
+        #region Attribut
         private readonly IConfiguration _config;
+        #endregion
 
+        #region Constructeur
         public DetailsCommandeModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Proprietes
         public List<string> NomsPlats { get; set; } = new();
         public decimal PrixTotal { get; set; }
         public string DateLivraison { get; set; } = "";
         public string LieuLivraison { get; set; } = "";
+        #endregion
 
-
+        #region Methodes
+        /// <summary>
+        /// au lancement de la page
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             if (!TempData.TryGetValue("IdLigneCommande", out var ligneObj) || ligneObj is not int idLigneCommande)
                 return RedirectToPage("/Cuisinier/SeeCurrentCommand");
 
-            TempData.Keep("IdLigneCommande"); // pour le bouton "Valider"
+            TempData.Keep("IdLigneCommande");
 
             string connStr = _config.GetConnectionString("MyDb");
             using var conn = new MySqlConnection(connStr);
@@ -56,8 +66,16 @@ namespace LivinParisWebApp.Pages.Cuisinier
             return Page();
         }
 
+        /// <summary>
+        /// bouton retour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostRetour() => RedirectToPage("/Cuisinier/SeeCurrentCommand");
 
+        /// <summary>
+        /// redirection vers la livraison cuisinier
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostLivrerCommande()
         {
             if (!TempData.TryGetValue("IdLigneCommande", out var ligneObj) || ligneObj is not int idLigneCommande)
@@ -103,12 +121,10 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 .Where(id => id != -1)
                 .ToList();
 
-            // Mise à jour des listes
             listeCommandes.Remove(idLigneCommande);
             if (!listePretes.Contains(idLigneCommande))
                 listePretes.Add(idLigneCommande);
 
-            // Mise à jour de la base
             var updateCmd = new MySqlCommand("UPDATE Cuisinier SET Liste_commandes = @Cmds, Liste_commandes_pretes = @Pretes WHERE Id_Cuisinier = @Cid", conn);
             updateCmd.Parameters.AddWithValue("@Cmds", string.Join(",", listeCommandes));
             updateCmd.Parameters.AddWithValue("@Pretes", string.Join(",", listePretes));
@@ -117,6 +133,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             return RedirectToPage("/Cuisinier/SeeCurrentCommand");
         }
-
+        #endregion
     }
 }
