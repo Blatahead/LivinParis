@@ -9,6 +9,7 @@ namespace ClassLibrary
 {
     public class StationNoeud
     {
+        #region Proprietes
         public int Id { get; set; }
         public string Nom { get; set; }
         public double Latitude { get; set; }
@@ -17,8 +18,13 @@ namespace ClassLibrary
         public int Depart { get; set; }
         public int Arrivee { get; set; }
         public double Distance { get; set; }
+        #endregion
 
+        #region Attribut
         public List<Arc> ArcsSortants { get; set; } = new();
+        #endregion
+
+        #region Constructeurs
         public StationNoeud(int id, string nom, double latitude, double longitude, string ligne)
         {
             Id = id;
@@ -38,5 +44,6 @@ namespace ClassLibrary
             Arrivee = arrivee;
             Distance = distance;
         }
+        #endregion
     }
 }

@@ -9,14 +9,18 @@ namespace LivinParisWebApp.Pages.Cuisinier
 {
     public class LivraisonCuisinierModel : PageModel
     {
-        //chargement du graphe
+        #region Attribut
         private readonly IConfiguration _config;
+        #endregion
 
-
+        #region Constructeur
         public LivraisonCuisinierModel(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
+
+        #region Proprietes
         public List<StationDTO> Chemin { get; set; } = new();
         public List<string> StationsTraversees { get; set; } = new();
         public double DistanceKm { get; set; }
@@ -24,7 +28,13 @@ namespace LivinParisWebApp.Pages.Cuisinier
         public List<string> LignesTraversees { get; set; } = new();
         public int NbStations { get; set; }
         public string CheminJson { get; set; }
+        #endregion
 
+        #region Methodes
+        /// <summary>
+        /// au lancement de la page
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             if (!TempData.TryGetValue("IdLigneCommande", out var obj) || obj is not int idLigneCommande)
@@ -37,7 +47,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Récupérer l'adresse du cuisinier et du client
             var getAdressesCmd = new MySqlCommand(@"
             SELECT cu.Adresse_cuisinier, lc.LieuLivraison
             FROM LigneCommande lc
@@ -58,7 +67,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             }
             await reader.CloseAsync();
 
-            // Convertir en coordonnées
             var (latCuis, lonCuis) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresseCuisinier);
             var (latClient, lonClient) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresseClient);
 
@@ -79,11 +87,9 @@ namespace LivinParisWebApp.Pages.Cuisinier
                     LignesTraversees.Add(arc.Ligne);
             }
 
-            // Calcul de la distance
             for (int i = 0; i < cheminNoeuds.Count - 1; i++)
                 DistanceKm += Station<StationNoeud>.CalculDistance2stations(cheminNoeuds[i], cheminNoeuds[i + 1]);
 
-            // Calcul du prix de la ligne
             var getPrixCmd = new MySqlCommand(@"
             SELECT SUM(p.Prix_plat)
             FROM Plat p
@@ -93,7 +99,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             var prixObj = await getPrixCmd.ExecuteScalarAsync();
             PrixLigne = prixObj != null ? Convert.ToDecimal(prixObj) : 0;
 
-            // Conversion en DTOs
             var stationDTOs = graphe.Stations.Select(st => new StationDTO
             {
                 Id = st.Id,
@@ -114,24 +119,32 @@ namespace LivinParisWebApp.Pages.Cuisinier
                 Distance = arc.Distance
             }).ToList();
 
-            // Sérialisation dans ViewData pour le JavaScript
             ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
             ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
 
             return Page();
         }
 
+        /// <summary>
+        /// retour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostBack()
         {
             return RedirectToPage("/Cuisinier/SeeCurrentCommand");
         }
+
+        /// <summary>
+        /// confirmation de la livraison
+        /// </summary>
+        /// <param name="idLigneCommande"></param>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostConfirm(int idLigneCommande)
         {
             string connStr = _config.GetConnectionString("MyDb");
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // 1. Infos sur la ligne
             var cmdInfo = new MySqlCommand(@"
         SELECT 
             SUM(p.Prix_plat), 
@@ -161,7 +174,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             }
             await reader.CloseAsync();
 
-            // 2. Adresse cuisinier
             var getAdresseCmd = new MySqlCommand(@"
         SELECT cu.Adresse_cuisinier
         FROM Plat p
@@ -187,7 +199,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
 
             double tempsMinutes = distanceKm / 20 * 60;
 
-            // 3. MAJ stats pour ID 3
             var updateCmd = new MySqlCommand(@"
         UPDATE Statistiques SET
             Nb_Paniers_Validés = Nb_Paniers_Validés + 1,
@@ -204,7 +215,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             updateCmd.Parameters.AddWithValue("@ajoutClient", 1);
             await updateCmd.ExecuteNonQueryAsync();
 
-            // 4. Suppression ligne de Liste_commandes_pretes du cuisinier
             var getIdCuisinierCmd = new MySqlCommand(@"
         SELECT cu.Id_Cuisinier
         FROM Cuisinier cu
@@ -223,7 +233,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             cleanCmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
             await cleanCmd.ExecuteNonQueryAsync();
 
-            // 5. Ajout de la commande dans Liste_commandes_livrees
             var updateLivreesCmd = new MySqlCommand(@"
             UPDATE Cuisinier 
             SET Liste_commandes_livrees = 
@@ -237,7 +246,6 @@ namespace LivinParisWebApp.Pages.Cuisinier
             updateLivreesCmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
             await updateLivreesCmd.ExecuteNonQueryAsync();
 
-            // 6. Mise à jour des revenus totaux et des clients servis
             var getRevenusEtClientsCmd = new MySqlCommand(@"
     SELECT Revenus_totaux, Clients_servis
     FROM Cuisinier
@@ -255,21 +263,18 @@ namespace LivinParisWebApp.Pages.Cuisinier
             }
             await revenusEtClientsReader.CloseAsync();
 
-            // Ajouter le prix total de la commande aux revenus existants
             decimal nouveauxRevenus = revenusActuels + prixTotal;
 
-            // Ajouter le client à la liste s'il n'est pas déjà présent
             string nomClientFinal = "";
 
-            // Récupérer le nom du client (Particulier ou Entreprise)
             var getNomClientCmd = new MySqlCommand(@"
-SELECT 
-    p.Prenom_particulier, p.Nom_particulier,
-    e.Nom_référent, e.Nom_entreprise
-FROM Client_ c
-LEFT JOIN Particulier p ON c.Id_Client = p.Id_Client
-LEFT JOIN Entreprise e ON c.Id_Client = e.Id_Client
-WHERE c.Id_Utilisateur = @uid", conn);
+                SELECT 
+                    p.Prenom_particulier, p.Nom_particulier,
+                    e.Nom_référent, e.Nom_entreprise
+                FROM Client_ c
+                LEFT JOIN Particulier p ON c.Id_Client = p.Id_Client
+                LEFT JOIN Entreprise e ON c.Id_Client = e.Id_Client
+                WHERE c.Id_Utilisateur = @uid", conn);
             getNomClientCmd.Parameters.AddWithValue("@uid", idUtilisateur);
 
             using var clientReader = await getNomClientCmd.ExecuteReaderAsync();
@@ -293,12 +298,11 @@ WHERE c.Id_Utilisateur = @uid", conn);
             }
             string nouvelleListeClients = string.Join(", ", listeClients);
 
-            // Mettre à jour la base de données
             var updateRevenusEtClientsCmd = new MySqlCommand(@"
-    UPDATE Cuisinier
-    SET Revenus_totaux = @revenusTotaux,
-        Clients_servis = @clientsServis
-    WHERE Id_Cuisinier = @idCuisinier", conn);
+                UPDATE Cuisinier
+                SET Revenus_totaux = @revenusTotaux,
+                    Clients_servis = @clientsServis
+                WHERE Id_Cuisinier = @idCuisinier", conn);
             updateRevenusEtClientsCmd.Parameters.AddWithValue("@revenusTotaux", nouveauxRevenus);
             updateRevenusEtClientsCmd.Parameters.AddWithValue("@clientsServis", nouvelleListeClients);
             updateRevenusEtClientsCmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
@@ -306,5 +310,6 @@ WHERE c.Id_Utilisateur = @uid", conn);
 
             return RedirectToPage("/CuisinierPanel");
         }
+        #endregion
     }
 }

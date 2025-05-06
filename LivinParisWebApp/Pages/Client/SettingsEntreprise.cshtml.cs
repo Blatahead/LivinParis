@@ -7,6 +7,7 @@ namespace LivinParisWebApp.Pages.Client
 {
     public class SettingsEntrepriseModel : PageModel
     {
+        #region Proprietes
         [BindProperty]
         public string Email { get; set; }
 
@@ -26,8 +27,6 @@ namespace LivinParisWebApp.Pages.Client
 
         [BindProperty]
         public string Numero { get; set; }
-        private readonly IConfiguration _config;
-
         public int NbPlatsCommandes { get; set; }
         public decimal DepensesTotales { get; set; }
         public int NbCommandes { get; set; }
@@ -37,12 +36,25 @@ namespace LivinParisWebApp.Pages.Client
 
         public List<PlatDTO> PlatsCommandes { get; set; } = new();
         public decimal Solde { get; set; }
+        #endregion
 
+        #region Attribut
+        private readonly IConfiguration _config;
+        #endregion
+
+        #region Constructeur
         public SettingsEntrepriseModel(IConfiguration config)
         {
             _config = config;
         }
 
+        #endregion
+
+        #region Methodes
+        /// <summary>
+        /// au lancement de la page
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -52,7 +64,6 @@ namespace LivinParisWebApp.Pages.Client
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Récupération de l'email et mdp
             var userCmd = new MySqlCommand("SELECT Mail_Utilisateur, Mdp FROM Utilisateur WHERE Id_Utilisateur = @Uid", conn);
             userCmd.Parameters.AddWithValue("@Uid", userId);
 
@@ -64,7 +75,6 @@ namespace LivinParisWebApp.Pages.Client
             }
             userReader.Close();
 
-            // Récupération de l'entreprise via Client_
             var entrepriseCmd = new MySqlCommand(@"
         SELECT e.Nom_entreprise, e.Num_siret, e.Nom_référent, e.Adresse_entreprise
         FROM Client_ c
@@ -144,6 +154,10 @@ namespace LivinParisWebApp.Pages.Client
             return Page();
         }
 
+        /// <summary>
+        /// au clic sur le bouton de tri
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostActionPage()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -153,10 +167,8 @@ namespace LivinParisWebApp.Pages.Client
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Recharge toutes les infos utilisateur/entreprise/statistiques
-            await OnGetAsync(); // appelle la méthode GET pour remplir tout le reste du modèle
+            await OnGetAsync();
 
-            // Et trie les plats comme avant
             PlatsCommandes = await ChargerPlatsCommandesAsync(conn, userId);
 
             switch (Tri)
@@ -178,7 +190,12 @@ namespace LivinParisWebApp.Pages.Client
             return Page();
         }
 
-
+        /// <summary>
+        /// load plats commandés par le client
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         private async Task<List<PlatDTO>> ChargerPlatsCommandesAsync(MySqlConnection conn, int userId)
         {
             var result = new List<PlatDTO>();
@@ -204,7 +221,7 @@ namespace LivinParisWebApp.Pages.Client
                             {
                                 Nom = reader["Nom_plat"].ToString() ?? "",
                                 Prix = reader.GetDecimal("Prix_plat"),
-                                DateCommande = DateTime.Now // ou une vraie date si dispo
+                                DateCommande = DateTime.Now
                             });
                         }
                         reader.Close();
@@ -215,6 +232,10 @@ namespace LivinParisWebApp.Pages.Client
             return result;
         }
 
+        /// <summary>
+        /// ajoute de l'argent au client
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostAddArgent()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -231,11 +252,19 @@ namespace LivinParisWebApp.Pages.Client
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// bouton de retour 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostClientPanel()
         {
             return RedirectToPage("/ClientPanel");
         }
 
+        /// <summary>
+        /// valide les modifications des données client
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostValidate()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -245,7 +274,6 @@ namespace LivinParisWebApp.Pages.Client
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Met à jour Utilisateur
             var updateUser = new MySqlCommand(@"
         UPDATE Utilisateur 
         SET Mail_Utilisateur = COALESCE(NULLIF(@mail, ''), Mail_Utilisateur),
@@ -256,10 +284,8 @@ namespace LivinParisWebApp.Pages.Client
             updateUser.Parameters.AddWithValue("@Uid", userId);
             await updateUser.ExecuteNonQueryAsync();
 
-            // Recompose l'adresse complète
             string adresseComplete = $"{Numero} {Voirie}, {Arrondissement}";
 
-            // Met à jour Entreprise
             var updateEntreprise = new MySqlCommand(@"
         UPDATE Entreprise 
         SET Nom_entreprise = COALESCE(NULLIF(@nomentre, ''), Nom_entreprise),
@@ -278,12 +304,21 @@ namespace LivinParisWebApp.Pages.Client
             return RedirectToPage();
         }
 
+
+        /// <summary>
+        /// deconnexion client
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostDeconnexion()
         {
             HttpContext.Session.Clear();
             return RedirectToPage("/Login");
         }
 
+        /// <summary>
+        /// supprimer compte client
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostSupprimer()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -300,12 +335,12 @@ namespace LivinParisWebApp.Pages.Client
             HttpContext.Session.Clear();
             return RedirectToPage("/Login");
         }
+        #endregion
     }
     public class PlatDTO
     {
         public string Nom { get; set; }
-        public decimal Prix { get; set; } // à remplir si nécessaire
-        public DateTime DateCommande { get; set; } // idem
+        public decimal Prix { get; set; }
+        public DateTime DateCommande { get; set; }
     }
-
 }
