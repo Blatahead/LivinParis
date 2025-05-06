@@ -26,11 +26,15 @@ namespace LivinParis.Pages
 
         public void OnGet() { }
 
+        /// <summary>
+        /// Connexion avec email et mot de passe
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostLoginAsync()
         {
             if (!ModelState.IsValid)
             {
-                return Page(); // recharge la page avec les erreurs
+                return Page(); 
             }
 
             string connStr = _config.GetConnectionString("MyDb");
@@ -38,7 +42,6 @@ namespace LivinParis.Pages
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Récupérer l'ID utilisateur si les identifiants sont corrects
             var cmd = new MySqlCommand("SELECT Id_Utilisateur FROM Utilisateur WHERE Mail_Utilisateur = @Email AND Mdp = @Pwd", conn);
             cmd.Parameters.AddWithValue("@Email", Email);
             cmd.Parameters.AddWithValue("@Pwd", Password);
@@ -53,27 +56,22 @@ namespace LivinParis.Pages
             int userId = reader.GetInt32(0);
             reader.Close();
 
-            // Stocker l'ID en session
             HttpContext.Session.SetInt32("UserId", userId);
 
-            // check client
             cmd = new MySqlCommand("SELECT COUNT(*) FROM Client_ WHERE Id_Utilisateur = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", userId);
             bool isClient = Convert.ToInt32(await cmd.ExecuteScalarAsync()) > 0;
 
-            // check cuisinier
             cmd = new MySqlCommand("SELECT COUNT(*) FROM Cuisinier WHERE Id_Utilisateur = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", userId);
             bool isCuisinier = Convert.ToInt32(await cmd.ExecuteScalarAsync()) > 0;
 
-            // Redirection selon le rôle
             if (isClient && isCuisinier)
-                return RedirectToPage("/CuisinierPanel"); // par défaut Cuisinier
+                return RedirectToPage("/CuisinierPanel"); 
             else if (isClient)
                 return RedirectToPage("/ClientPanel");
             else if (isCuisinier)
                 return RedirectToPage("/CuisinierPanel");
-            //le cas où la personne est utilisateur sans compte cuisinier ou client (après suppression de compte par exemple)
             else if (!isClient && !isCuisinier)
                 return RedirectToPage("/ChoixCC");
             return Page();

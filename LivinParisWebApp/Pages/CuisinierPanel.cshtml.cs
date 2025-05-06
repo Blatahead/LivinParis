@@ -7,6 +7,7 @@ namespace LivinParisWebApp.Pages
 {
     public class CuisinierPanelModel : PageModel
     {
+        #region Propriétés
         private readonly IConfiguration _config;
         public CuisinierPanelModel(IConfiguration config)
         {
@@ -20,6 +21,13 @@ namespace LivinParisWebApp.Pages
         public PlatDuJourDto PlatDuJour { get; set; }
         public List<PlatDispoDto> PlatsDisponibles { get; set; } = new();
 
+        #endregion
+        #region
+
+        /// <summary>
+        /// Connexion panel Cuisinier
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -87,8 +95,6 @@ namespace LivinParisWebApp.Pages
             if (!string.IsNullOrEmpty(plats))
             {
                 var noms = plats.Split(',').Select(n => n.Trim()).ToList();
-
-                // Requête SQL pour ne garder que les plats encore disponibles
                 var placeholders = string.Join(",", noms.Select((_, i) => $"@plat{i}"));
                 var filterQuery = $"SELECT Nom_plat FROM Plat WHERE Nom_plat IN ({placeholders}) AND Disponible = TRUE";
 
@@ -121,6 +127,7 @@ namespace LivinParisWebApp.Pages
         public IActionResult OnPostAddPlat() => RedirectToPage("/Cuisinier/AddPlat");
         public IActionResult OnPostSeeCurrentCommand() => RedirectToPage("/Cuisinier/SeeCurrentCommand");
 
+        #region Classes DTO
         public class PlatDuJourDto
         {
             public string Nom { get; set; }
@@ -135,5 +142,6 @@ namespace LivinParisWebApp.Pages
             public string? Nom { get; set; }
             public string? Cuisinier { get; set; }
         }
+        #endregion
     }
 }

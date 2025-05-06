@@ -8,14 +8,19 @@ namespace LivinParisWebApp.Pages
         public void OnGet()
         {
         }
-
-        //penser à rediriger vers le panel (login pour test)
+        /// <summary>
+        /// Redirection vers le panel Client
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostClientPanel()
         {
             return RedirectToPage("/ClientPanel");
         }
 
-        // bien penser au fait que ce passage skip la page register (donc récup les valeurs mises dans login)
+        /// <summary>
+        /// Redirection vers la création Cuisinier
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostCreateCuisinier()
         {
             return RedirectToPage("/CreateCuisinier");
