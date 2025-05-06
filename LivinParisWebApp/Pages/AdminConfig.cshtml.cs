@@ -17,6 +17,7 @@ namespace LivinParisWebApp.Pages
 {
     public class AdminConfigModel : PageModel
     {
+        #region Constructeur
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
 
@@ -25,6 +26,9 @@ namespace LivinParisWebApp.Pages
             _env = env;
             _config = config;
         }
+        #endregion
+
+        #region Proprietes
         public string CheminJson { get; set; }
         public List<ClientCommandesDTO> ClientsCommandes { get; set; } 
         public List<ClientAvecPlusieursCommandesDTO> ClientsActifs { get; set; } 
@@ -36,26 +40,23 @@ namespace LivinParisWebApp.Pages
         public List<ClientCommandePlusChereDTO> ClientsAvecCommandeMax { get; set; } 
         public List<CommandeVarieeDTO> CommandesDiversifiees { get; set; } 
         public List<ClientPlatCherDTO> ClientsPlatsChers { get; set; }
+        #endregion
 
-
-        //public List<StationNoeud> Chemin { get; set; }
+        /// <summary>
+        /// Se déclenche à l'arrivée sur la page AdminConfig
+        /// Remplis toutes les valeurs, affiche les graphes
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
-            ///// Graphe 1 ////
+            #region Graphe Station & PCC
             var graphe = new ClassLibrary.Graphe();
             string connStr = _config.GetConnectionString("MyDb");
             graphe.ChargerDepuisBDD(connStr);
 
-
-            //affichage graphe avec Bellman Ford
             //var cheminNoeuds = Parcours.BellmanFord(20, 95, graphe.Arcs);
             var cheminNoeuds = Parcours.BellmanFord(246, 223, graphe.Arcs);
 
-            //affichage graphe avec Dijkstra
-            //var cheminNoeuds = graphe.Dijkstra(1, 170);
-            //var cheminNoeuds = graphe.Dijkstra(96, 300);
-            //var cheminNoeuds = graphe.Dijkstra(210, 66);
-            //var cheminNoeuds = graphe.Dijkstra(258, 332);
             //var cheminNoeuds = graphe.Dijkstra(1, 332);
 
             var cheminDTOs = cheminNoeuds.Select(StationConvertisseurs.ToDTO).ToList();
@@ -84,8 +85,9 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Stations"] = JsonConvert.SerializeObject(stationDTOs);
             ViewData["Arcs"] = JsonConvert.SerializeObject(arcDTOs);
+            #endregion
 
-            //// Graphe 2 ////
+            #region Graphe coloré
             var graphe2 = new ClassLibrary.Graphe2();
             string connStr2 = _config.GetConnectionString("MyDb");
             await graphe2.ChargerDepuisBDD2(connStr2);
@@ -107,8 +109,9 @@ namespace LivinParisWebApp.Pages
 
             ViewData["NoeudsJson"] = JsonConvert.SerializeObject(noeuds);
             ViewData["LiensJson"] = JsonConvert.SerializeObject(liens);
+            #endregion
 
-            //// Statistiques ////
+            #region Clients & Cuisiniers
             var clientsDTOs = new List<object>();
             var cuisiniersDTOs = new List<object>();
 
@@ -184,7 +187,10 @@ namespace LivinParisWebApp.Pages
 
             ViewData["Clients"] = JsonConvert.SerializeObject(clientsDTOs);
             ViewData["Cuisiniers"] = JsonConvert.SerializeObject(cuisiniersDTOs);
+            #endregion
 
+            #region Statistiques
+            #region NbCommandes
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
@@ -192,8 +198,9 @@ namespace LivinParisWebApp.Pages
                 var result = await cmd.ExecuteScalarAsync();
                 ViewData["NbCommandesTotales"] = result != null ? Convert.ToInt32(result) : 0;
             }
+            #endregion
 
-
+            #region Client Actifs
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
@@ -214,7 +221,9 @@ namespace LivinParisWebApp.Pages
                     });
                 }
             }
+            #endregion
 
+            #region Cuisinier dispo
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
@@ -234,7 +243,9 @@ namespace LivinParisWebApp.Pages
                     });
                 }
             }
+            #endregion
 
+            #region CommandeSansPlatAbordables
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
@@ -265,7 +276,9 @@ namespace LivinParisWebApp.Pages
                     });
                 }
             }
+            #endregion
 
+            #region Plat le plus commandé
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
@@ -290,26 +303,9 @@ namespace LivinParisWebApp.Pages
                     });
                 }
             }
-            using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
-            {
-                await conn.OpenAsync();
+            #endregion
 
-                var cmd = new MySqlCommand(@"SELECT DISTINCT c.Id_Client FROM Client_ c
-                    JOIN Commande co ON c.Id_Client = co.Id_Utilisateur
-                    JOIN Commande dc ON co.Num_commande = dc.Num_commande
-                    JOIN Plat p ON dc.liste_plats = p.Nom_plat
-                    WHERE p.prix_plat > 20;", conn);
-
-                using var reader = await cmd.ExecuteReaderAsync();
-                ClientsPlatsChers = new List<ClientPlatCherDTO>();
-                while (await reader.ReadAsync())
-                {
-                    ClientsPlatsChers.Add(new ClientPlatCherDTO
-                    {
-                        ID_client = reader.GetInt32("Id_Client")
-                    });
-                }
-            }
+            #region Depuis table Stats
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
@@ -334,6 +330,9 @@ namespace LivinParisWebApp.Pages
                     ViewData["NbPlats"] = reader.GetInt32("Nb_Plats_Livrés");
                 }
             }
+            #endregion
+
+            #region NbClients
             using (var conn = new MySqlConnection(_config.GetConnectionString("MyDb")))
             {
                 await conn.OpenAsync();
@@ -342,8 +341,15 @@ namespace LivinParisWebApp.Pages
                 var nbClients = Convert.ToInt32(await cmdNbClients.ExecuteScalarAsync());
                 ViewData["NbClients"] = nbClients;
             }
+            #endregion
+            #endregion
             return Page();
         }
+
+        /// <summary>
+        /// Vide la table Station
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostDeleteContenuStations()
         {
             string connStr = _config.GetConnectionString("MyDb");
@@ -360,6 +366,11 @@ namespace LivinParisWebApp.Pages
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// Renvoie un tuple lat lon depuis une adresse en entrée
+        /// </summary>
+        /// <param name="adresse"></param>
+        /// <returns></returns>
         public async Task<(double latitude, double longitude)> GetCoordinatesFromAdresseAsync(string adresse)
         {
             if (string.IsNullOrWhiteSpace(adresse))
@@ -368,6 +379,11 @@ namespace LivinParisWebApp.Pages
             var (latitude, longitude) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresse);
             return (latitude, longitude);
         }
+
+        /// <summary>
+        /// Rempli la table des stations depuis le fichier .mtx
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostLoadStationInBDD()
         {
             var import = new ImportStations(_config);
@@ -382,9 +398,6 @@ namespace LivinParisWebApp.Pages
             try
             {
                 import.ImporterDepuisMTX(cheminFichier);
-
-                TempData["Message"] = "Importation réussie";
-
             }
             catch (Exception ex)
             {
@@ -394,19 +407,74 @@ namespace LivinParisWebApp.Pages
             return Page();
         }
 
+        /// <summary>
+        /// Vide toutes les classes nécessaires pour le rendu final
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostVoidBDD()
         {
+            string connStr = _config.GetConnectionString("MyDb");
+            using var conn = new MySqlConnection(connStr);
+            conn.Open();
+
+            using var transaction = conn.BeginTransaction();
+
+            try
+            {
+                string[] tablesToClearInOrder = new[]
+                {
+                    "Plat_LigneCommande",
+                    "Plat_du_jour",
+                    "Plat",
+                    "Panier",
+                    "LigneCommande",
+                    "Commande",
+                    "Particulier",
+                    "Entreprise",
+                    "Client_",
+                    "Cuisinier",
+                    "Utilisateur"
+                };
+
+                foreach (var table in tablesToClearInOrder)
+                {
+                    var clearCmd = new MySqlCommand($"DELETE FROM {table};", conn, transaction);
+                    clearCmd.ExecuteNonQuery();
+                }
+
+                var resetStatsCmd = new MySqlCommand(@"UPDATE Statistiques
+                    SET 
+                        Nb_Paniers_Validés = 0,
+                        Nb_Commandes = 0,
+                        Argent_Total = 0,
+                        Temps_Livraison_Total = 0,
+                        Distance_Totale = 0,
+                        Nb_Plats_Livrés = 0,
+                        Nb_Clients_Uniques = 0
+                    WHERE Id_Statistiques = 3;", conn, transaction);
+
+                resetStatsCmd.ExecuteNonQuery();
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+            }
 
             return Page();
         }
 
+        /// <summary>
+        /// Instancie le graphe des stations
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostGenererGraphe()
         {
             var graphe = new Graphe();
             string connStr = _config.GetConnectionString("MyDb");
             graphe.ChargerDepuisBDD(connStr);
 
-            TempData["Message"] = "Graphe généré avec succès.";
             return Page();
         }
 
@@ -441,7 +509,6 @@ namespace LivinParisWebApp.Pages
             StreamWriter wr = new StreamWriter("/data"); 
             wr.WriteLine(JsonString);
             wr.Close();
-
         }
 
         /// <summary>
@@ -565,7 +632,5 @@ namespace LivinParisWebApp.Pages
 
             return RedirectToPage();
         }
-
-
     }
 }
