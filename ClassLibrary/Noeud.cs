@@ -9,7 +9,7 @@ namespace ClassLibrary
     public class Noeud
     {
         public string Id { get; set; }
-        public string Type { get; set; }  // Client, Commande, Plat, Cuisinier
+        public string Type { get; set; }  
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
@@ -26,7 +26,6 @@ namespace ClassLibrary
             Id = id;
             Type = type;
         }
-
         public override string ToString() => $"[{Type}] {Id}";
     }
 }

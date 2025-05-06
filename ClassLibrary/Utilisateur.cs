@@ -87,8 +87,6 @@ namespace ClassLibrary
                 using (MySqlCommand cmd = new MySqlCommand(demande4)) ;
                 using (MySqlCommand cmd = new MySqlCommand(demande5)) ;
                 using (MySqlCommand cmd = new MySqlCommand(demande6)) ;
-
-
             }
             catch
             {

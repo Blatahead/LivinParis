@@ -138,8 +138,6 @@
             }).addTo(map);
             marker.bindPopup(`<strong>${st.nom}</strong><br/>ID: ${st.id}`);
         });
-
-                // Ajout des arcs
         arcs.forEach(arc => {
             const srcLat = arc.SourceLat;
             const srcLong = arc.SourceLong;
@@ -159,10 +157,7 @@
             }).addTo(map);
         });
 
-                // Affichage du chemin trouvé en noir
         if (chemin && chemin.length > 1) {
-            // console.log("Coordonnées utilisées dans latlngs :", chemin.map(s => [s.Latitude, s.Longitude]));
-
             const latlngs = chemin.map(s => [parseFloat(s.latitude), parseFloat(s.longitude)]);
 
             L.polyline(latlngs, {

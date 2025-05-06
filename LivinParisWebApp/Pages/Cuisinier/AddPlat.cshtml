@@ -126,14 +126,10 @@
             <div class="ligne1">
                 <div class="charge">
                     <p>Photo</p>
-                    <!-- Input masqué -->
                     <input asp-for="ImageFile" type="file" id="fileInput" accept="image/*" style="display: none;" />
-
-                    <!-- Label stylé pour déclencher l'ouverture du sélecteur de fichiers -->
                     <label for="fileInput" class="load-img">
                         <p>Choisir une image</p>
                     </label>
-                    @* <button class="load-img" type="button"><p>Charger</p></button> *@
                 </div>
                 <div class="img-container">
                     <p>Aperçu</p>
@@ -186,13 +182,10 @@
     </div>
 </form>
 
-<!-- FORM SECONDAIRE POUR RETOUR -->
 @section Scripts {
     <script>
         const fileInput = document.querySelector('input[type="file"]');
         const preview = document.getElementById('preview');
-
-        // Aperçu si on choisit manuellement une image
         fileInput?.addEventListener('change', e => {
             const file = e.target.files[0];
             if (file) {
@@ -201,16 +194,12 @@
                 reader.readAsDataURL(file);
             }
         });
-
-        // Aperçu automatique si ImageUrl est déjà défini côté C#
         const imageUrl = '@Model.ImageUrl';
         if (imageUrl && imageUrl !== 'null') {
             preview.src = imageUrl;
             const hiddenInput = document.querySelector('input[name="ImageUrl"]');
             if (hiddenInput) hiddenInput.value = imageUrl;
         }
-
-        //Met à jour le champ ImageUrl pour le POST
         const hiddenImageInput = document.querySelector('input[name="ImageUrl"]');
         if (hiddenImageInput) {
             hiddenImageInput.value = imageUrl;
