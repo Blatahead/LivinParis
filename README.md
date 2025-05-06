@@ -33,19 +33,33 @@ Nous envisageons la même structure que le rendu 2, mis à part le fait que la l
 2. Très important, installez les outils de développement Web en suivant les étapes suivantes :
    a. Cliquez une fois sur le bouton Windows et cherchez **Visual Studio Installer**  
    ![alt text](image.png)
+
+
    b. Lancez ce logiciel, puis cliquez sur **Modifier** 
    ![alt text](image-1.png) 
+
+
    c. Cochez la case **Développement web et ASP.NET** 
    ![alt text](image-2.png) 
+
+
    d. Puis sur la droite cochez les mêmes cases que ci-dessous  
    ![alt text](image-3.png)
+
+
    e. Enfin, cliquez sur **Modifier** et l’installation se lancera
    ![alt text](image-4.png)
+
+
 3. Installez tous les packages **NuGet** nécessaires au lancement du projet :
    a. Rendez-vous dans **Outils** puis dans **Gérer les packages**  
    ![alt text](image-5.png)
+
+
    b. Veuillez installer les packages suivants (le 2e s’installant avec le 3e)
    ![alt text](image-6.png)
+
+
 4. Au niveau des références du build, tout devrait être bon directement sur Github, donc vous ne devriez pas rencontrer de problème vis-à-vis de ça sur la version finale, c’est-à-dire au lancement du projet **LivinParisWebApp**.
 5. Veillez à bien avoir un fichier `.env` au même niveau que le fichier `.exe` du projet **LivinParisWebApp**.  
    L’arborescence doit être la suivante :  
@@ -58,6 +72,8 @@ Nous envisageons la même structure que le rendu 2, mis à part le fait que la l
 
 - Afin de lancer le bon projet (**LivinParisWebApp**), veillez à bien sélectionner le bon projet de démarrage.
 ![alt text](image-7.png)
+
+
 - Une fois ceci fait, vous pouvez lancer le projet avec le bouton **▶️** juste sur la droite.
 ![alt text](image-8.png)
 
