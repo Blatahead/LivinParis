@@ -22,7 +22,7 @@ namespace LivinParisWebApp.Pages
         public List<PlatDispoDto> PlatsDisponibles { get; set; } = new();
 
         #endregion
-        #region
+        #region Methodes
 
         /// <summary>
         /// Connexion panel Cuisinier
@@ -126,7 +126,7 @@ namespace LivinParisWebApp.Pages
         public IActionResult OnPostDeletePlat(string nomPlat) => RedirectToPage("/Cuisinier/DeletePlat", new { nomPlat });
         public IActionResult OnPostAddPlat() => RedirectToPage("/Cuisinier/AddPlat");
         public IActionResult OnPostSeeCurrentCommand() => RedirectToPage("/Cuisinier/SeeCurrentCommand");
-
+        #endregion
         #region Classes DTO
         public class PlatDuJourDto
         {
