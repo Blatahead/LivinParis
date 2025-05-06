@@ -137,7 +137,7 @@ namespace ClassLibrary
             while (await readerLignes.ReadAsync())
             {
                 lignesCommande.Add((
-                    readerLignes.GetInt32(0),
+                    readerLignes.GetInt32(0), 
                     readerLignes.GetInt32(1)
                 ));
             }
