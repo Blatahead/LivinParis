@@ -9,6 +9,7 @@ namespace ClassLibrary
 {
     public class StationDTO
     {
+        #region Proprietes
         public int Id { get; set; }
         public string Nom { get; set; }
         public double Longitude { get; set; }
@@ -20,6 +21,6 @@ namespace ClassLibrary
         public int Arrivee { get; set; }
         public int Sens { get; set; }
         public double Distance { get; set; }
+        #endregion
     }
-
 }

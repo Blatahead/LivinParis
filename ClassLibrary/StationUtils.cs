@@ -7,6 +7,7 @@ namespace ClassLibrary
 {
     public static class StationUtils
     {
+        #region Methodes
         /// <summary>
         /// Calcule la distance entre deux points GPS avec la formule de Haversine
         /// </summary>
@@ -39,7 +40,6 @@ namespace ClassLibrary
                     plusProche = station;
                 }
             }
-
             return plusProche;
         }
 
@@ -51,5 +51,6 @@ namespace ClassLibrary
             var (latitude, longitude) = await Convertisseur_coordonnees.GetCoordinatesAsync(adresse);
             return GetStationProche(latitude, longitude, stations);
         }
+        #endregion
     }
 }

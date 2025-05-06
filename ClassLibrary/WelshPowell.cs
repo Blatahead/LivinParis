@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 public static class WelshPowell
 {
+    #region Methodes
     /// <summary>
     /// Cette méthode permet de colorier chaque sommet en fonction de la couleur des sommets adjacents
     /// </summary>
@@ -19,7 +20,7 @@ public static class WelshPowell
             n => n,
             n => graphe.Liens.Count(l => l.Noeud1 == n || l.Noeud2 == n)
         );
-        var noeudsTries = degres.OrderByDescending(pair => pair.Value).Select(pair => pair.Key).ToList();
+        var noeudsTries = degres.OrderByDescending(paire => paire.Value).Select(paire => paire.Key).ToList();
         foreach (var noeud in noeudsTries)
         {
             var voisins = GetVoisins(noeud, graphe);
@@ -52,4 +53,5 @@ public static class WelshPowell
             .Distinct()
             .ToList();
     }
+    #endregion
 }

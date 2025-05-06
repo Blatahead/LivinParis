@@ -8,8 +8,9 @@ namespace ClassLibrary
 {
     public class ClientCommandePlusChereDTO
     {
+        #region Proprietes
         public int ID_client { get; set; }
         public string Nom { get; set; }
+        #endregion
     }
-
 }

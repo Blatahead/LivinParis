@@ -8,8 +8,9 @@ namespace ClassLibrary
 {
     public class ClientPlatCherDTO
     {
+        #region Proprietes
         public int ID_client { get; set; }
         public string Nom { get; set; }
+        #endregion
     }
-
 }

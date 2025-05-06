@@ -13,6 +13,7 @@ namespace ClassLibrary
 {
     public class Station<T>
     {
+        #region Attributs
         int identifiantStation;
         string nomStation;
         double longitude;
@@ -24,7 +25,7 @@ namespace ClassLibrary
         int arrivee;
         int sens;
         double distance;
-        
+        #endregion
 
         #region constructeur
         public Station(int identifiantStation, string nomStation, double longitude, double latitude, string libelle_ligne, int code_postal, int temps_2_station, int depart, int arrivee, int sens, double distance)
@@ -64,13 +65,11 @@ namespace ClassLibrary
         {
             get { return libelle_ligne; }
             set { libelle_ligne=value; }
-
         }
         public int Code_postal
         {
             get { return code_postal; }
             set { code_postal=value; }
-
         }
         public int Temps_2_station
         {
@@ -91,10 +90,6 @@ namespace ClassLibrary
         }
         public double Distance
         { get { return distance; } set { distance=value; } }    
-
-
-
-
         #endregion
 
         #region Méthodes

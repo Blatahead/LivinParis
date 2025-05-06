@@ -10,10 +10,12 @@ namespace ClassLibrary
 {
     public class Graphe
     {
+        #region Proprietes
         public List<StationNoeud> Stations { get; set; } = new();
         public List<Arc> Arcs { get; set; } = new();
+        #endregion
 
-
+        #region Methodes
         /// <summary>
         /// Cette méthode permet d'ajouter un noeud correspondant à une station
         /// </summary>
@@ -108,6 +110,13 @@ namespace ClassLibrary
                 }
             }
         }
+
+        /// <summary>
+        /// Algo de Dijkstra (renvoie une liste de StationNoeud)
+        /// </summary>
+        /// <param name="idDepart"></param>
+        /// <param name="idArrivee"></param>
+        /// <returns></returns>
         public List<StationNoeud> Dijkstra(int idDepart, int idArrivee)
         {
             var distances = new Dictionary<int, double>();
@@ -139,9 +148,6 @@ namespace ClassLibrary
                     break;
                 if (stationsParId.TryGetValue(idActuel, out var stationActuelle))
                 {
-                    
-
-
                     stationActuelle = stationsParId[idActuel];
 
                     foreach (var arc in stationActuelle.ArcsSortants)
@@ -160,7 +166,6 @@ namespace ClassLibrary
                 }
             }
 
-            
             var chemin = new List<StationNoeud>();
             int? courant = idArrivee;
 
@@ -174,5 +179,6 @@ namespace ClassLibrary
 
             return chemin;
         }
+        #endregion
     }
 }

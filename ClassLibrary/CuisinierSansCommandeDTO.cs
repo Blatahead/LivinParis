@@ -8,8 +8,9 @@ namespace ClassLibrary
 {
     public class CuisinierSansCommandeDTO
     {
+        #region Proprietes
         public int ID_cuisinier { get; set; }
         public string Nom { get; set; }
+        #endregion
     }
-
 }

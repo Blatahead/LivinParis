@@ -11,6 +11,7 @@ namespace ClassLibrary
 {
     public class Plat<T>: Plat_du_Jour<T>
     {
+        #region Attributs
         int numPlat;
         string nomPlat;
         int ndpPlat;
@@ -22,7 +23,7 @@ namespace ClassLibrary
         string regimeAlimentaire;
         string photo;
         string dateFabrication;
-
+        #endregion
 
         #region constructeur
         public Plat(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees, List<T> liste_de_plats, int numPlatJ, string nomPlatJ, int ndpPlatJ, string typePlatJ, string nationalitePlatJ, string datePeremptionJ, float prixPlatJ, string ingredientsJ, string regimeAlimentaireJ, string photoJ, string dateFabricationJ,  int numPlat, string nomPlat, int ndpPlat, string typePlat, string nationalitePlat, string datePeremption, float prixPlat, string ingredients, string regimeAlimentaire,string photo,string dateFabrication): base(id_Cuisinier, idUser, mdp, adresse_mail,nomCuisinier, prenomCuisinier, adresseCuisinier, liste_commandes,liste_commandes_pretes,liste_commandes_livrees, liste_de_plats, numPlatJ, nomPlatJ, ndpPlatJ, typePlatJ, nationalitePlatJ, datePeremptionJ, prixPlatJ, ingredientsJ, regimeAlimentaireJ, photoJ, dateFabricationJ)
@@ -40,6 +41,7 @@ namespace ClassLibrary
             this.dateFabrication = dateFabrication;
         }
         #endregion
+
         #region propriétés
         public int NumPlat
         {

@@ -31,6 +31,7 @@ namespace ClassLibrary
 
 
         #endregion
+
         #region propriétés
         public int IdClient
         {
