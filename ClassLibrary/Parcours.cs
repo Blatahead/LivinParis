@@ -8,37 +8,42 @@ namespace ClassLibrary
 {
     public class SommetPrioritaire : IComparable<SommetPrioritaire>
     {
+        #region Proprietes
         public int Id { get; set; }
         public double Distance { get; set; }
+        #endregion
 
+        #region Proprietes
         public SommetPrioritaire(int id, double distance)
         {
             Id = id;
             Distance = distance;
         }
+        #endregion
 
+        #region Methode
         public int CompareTo(SommetPrioritaire other)
         {
             int result = Distance.CompareTo(other.Distance);
             return result != 0 ? result : Id.CompareTo(other.Id);
         }
+        #endregion
     }
 
     public class Parcours
     {
+        #region Attribut
         private Graphe graphe;
+        #endregion
 
+        #region Constructeur
         public Parcours(Graphe graphe)
         {
             this.graphe = graphe;
         }
+        #endregion
 
-        /// <summary>
-        /// Algorithme de Dijkstra pour calculer le plus court chemin
-        /// </summary>
-
-        //mis dans la classe Graphe
-
+        #region Methodes
         /// <summary>
         /// Squelette de l'algorithme de Bellman-Ford pour gérer des graphes avec poids négatifs
         /// </summary>
@@ -97,8 +102,6 @@ namespace ClassLibrary
 
             return chemin;
         }
-
-
-
+        #endregion
     }
 }

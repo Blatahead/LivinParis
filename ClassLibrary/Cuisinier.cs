@@ -10,6 +10,7 @@ namespace ClassLibrary
 {
     public class Cuisinier<T> : Utilisateur<T>
     {
+        #region Attributs
         int id_Cuisinier;
         string nom;
         string prenom;
@@ -18,7 +19,7 @@ namespace ClassLibrary
         List<T> liste_commandes_pretes;
         List<T> liste_commandes_livrees;
         List<T> liste_de_plats;
-
+        #endregion
 
         #region constructeur
         public Cuisinier(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees, List<T> liste_de_plats) : base(idUser, mdp, adresse_mail)
@@ -52,6 +53,7 @@ namespace ClassLibrary
 
 
         #endregion
+
         #region propriétés
         public string Nom
         {
@@ -107,8 +109,6 @@ namespace ClassLibrary
             ConnexionDB.ConnectToDatabase();
             string demande = "INSERT INTO Cuisinier (Id_Cuisinier,Prenom_cuisinier,Nom_particulier,Adresse_cuisinier,Liste_commandes,Liste_commandes_pretes, Liste_commandes_livrees, Liste_de_plats, Id_Utilisateur) VALUES ("+p1.id_Cuisinier+","+p1.prenom+","+p1.nom+","+p1.adresseCuisinier+","+p1.liste_commandes+","+p1.liste_commandes_pretes+","+p1.liste_commandes_livrees+","+p1.liste_de_plats+","+p1.IdUser+"+)";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
-
-
         }
 
 
@@ -118,13 +118,10 @@ namespace ClassLibrary
         /// <param name="p1"></param>
         public void ModifierCuisinier(Cuisinier<T> p1)
         {
-
             ConnexionDB.ConnectToDatabase();
             string demande = "UPDATE Cuisinier SET Id_Cuisinier="+p1.id_Cuisinier+", Prenom_cuisinier="+p1.prenom+", Nom_particulier="+p1.nom+", Adresse_cuisinier="+p1.adresseCuisinier+", Liste_commandes="+p1.liste_commandes+", Liste_commandes_pretes="+p1.liste_commandes_pretes+", Liste_commandes_livrees="+p1.liste_commandes_livrees+", Liste_de_plats="+p1.liste_de_plats+", WHERE Id_Cuisinier="+p1.id_Cuisinier+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
-
         }
-
 
         /// <summary>
         /// Méthode supprimant un cuisinier de la table 'Cuisinier' en s'assurant d'abord que toutes les clés étrangères liées dans les autres tables soient préalablement supprimées
@@ -132,8 +129,6 @@ namespace ClassLibrary
         /// <param name="p1"></param>
         public void DeleteCuisinier(Cuisinier<T> p1)
         {
-
-
             ConnexionDB.ConnectToDatabase();
             try
             {
@@ -147,8 +142,6 @@ namespace ClassLibrary
             }
             string demande = "DELETE FROM Cuisinier WHERE Id_Cuisinier="+p1.id_Cuisinier+";";
             using (MySqlCommand cmd = new MySqlCommand(demande)) ;
-
-
         }
         #endregion
     }

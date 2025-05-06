@@ -8,7 +8,8 @@ namespace ClassLibrary
 {
     public class CommandeVarieeDTO
     {
+        #region Propriete
         public int ID_commande { get; set; }
+        #endregion
     }
-
 }

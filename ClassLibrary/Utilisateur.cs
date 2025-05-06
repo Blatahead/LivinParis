@@ -8,9 +8,11 @@ namespace ClassLibrary
 {
     public class Utilisateur<T>
     {
+        #region Attributs
         int idUser;
         string mdp;
         string adresse_mail;
+        #endregion
 
         #region constructeur
         public Utilisateur(int idUser, string mdp, string adresse_mail)
@@ -20,6 +22,7 @@ namespace ClassLibrary
             this.adresse_mail= adresse_mail;
         }
         #endregion
+
         #region propriétés
         public int IdUser
         {
@@ -35,6 +38,7 @@ namespace ClassLibrary
             set { adresse_mail=value; }
         }
         #endregion
+
         #region Méthodes
 
         /// <summary>

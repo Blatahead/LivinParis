@@ -8,12 +8,14 @@ namespace ClassLibrary
 {
     public class Noeud
     {
+        #region Proprietes
         public string Id { get; set; }
         public string Type { get; set; }  
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        #endregion
 
-
+        #region Constructeurs
         public Noeud(string id, string type, double latitude, double longitude)
         {
             Id = id;
@@ -26,6 +28,10 @@ namespace ClassLibrary
             Id = id;
             Type = type;
         }
+        #endregion
+
+        #region Methode
         public override string ToString() => $"[{Type}] {Id}";
+        #endregion
     }
 }

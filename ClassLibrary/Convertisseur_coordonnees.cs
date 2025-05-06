@@ -9,8 +9,11 @@ namespace ClassLibrary
 {
     public static class Convertisseur_coordonnees
     {
-        private static string cle_API; 
+        #region Attribut
+        private static string cle_API;
+        #endregion
 
+        #region Methode
         /// <summary>
         /// Cette méthode renvoie les coordonnées GPS en utilisant l'API de Google Maps
         /// </summary>
@@ -43,5 +46,6 @@ namespace ClassLibrary
 
             return (latitude, longitude);
         }
+        #endregion
     }
 }

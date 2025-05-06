@@ -8,13 +8,18 @@ namespace ClassLibrary
 {
     public class ImportStations
     {
+        #region Attribut
         private readonly IConfiguration _config;
+        #endregion
 
+        #region Constructeur
         public ImportStations(IConfiguration config)
         {
             _config = config;
         }
+        #endregion
 
+        #region Methodes
         /// <summary>
         /// Cette méthode permet de récupérer les informations de chaque station depuis le fichier stations.mtx
         /// </summary>
@@ -62,5 +67,6 @@ namespace ClassLibrary
                 }
             }
         }
+        #endregion
     }
 }

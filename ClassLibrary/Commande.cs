@@ -10,10 +10,13 @@ namespace ClassLibrary
 {
     public class Commande<T> : Plat<T>
     {
+        #region Attributs
         int numeroCommande;
         float prixCommande;
         int noteCommande;
         string liste_plats;
+        #endregion
+
         #region constructeur
         public Commande(int id_Cuisinier, int idUser, string mdp, string adresse_mail, string nomCuisinier, string prenomCuisinier, string adresseCuisinier, List<T> liste_de_plats, List<T> liste_commandes, List<T> liste_commandes_pretes, List<T> liste_commandes_livrees, int numPlatJ, string nomPlatJ, int ndpPlatJ, string typePlatJ, string nationalitePlatJ, string datePeremptionJ, float prixPlatJ, string ingredientsJ, string regimeAlimentaireJ, string photoJ, string dateFabricationJ, int numPlat, string nomPlat, int ndpPlat, string typePlat, string nationalitePlat, string datePeremption, float prixPlat, string ingredients, string regimeAlimentaire, string photo, string dateFabrication, int numeroCommande, float prixCommande, int noteCommande, string liste_plats) : base(id_Cuisinier, idUser, mdp, adresse_mail, nomCuisinier, prenomCuisinier, adresseCuisinier, liste_de_plats, liste_commandes, liste_commandes_pretes, liste_commandes_livrees, numPlatJ, nomPlatJ, ndpPlatJ, typePlatJ, nationalitePlatJ, datePeremptionJ, prixPlatJ, ingredientsJ, regimeAlimentaireJ, photoJ, dateFabricationJ, numPlat, nomPlat, ndpPlat, typePlat, nationalitePlat, datePeremption, prixPlat, ingredients, regimeAlimentaire, photo, dateFabrication)
         {
@@ -23,6 +26,7 @@ namespace ClassLibrary
             this.liste_plats+=NumPlat+";";
         }
         #endregion
+
         #region propriétés
         public int NumeroCommande
         {
@@ -44,6 +48,7 @@ namespace ClassLibrary
             set { liste_plats=value; }
         }
         #endregion
+
         #region Méthodes
         /// <summary>
         /// Méthode permettant de créer une commande dans la table 'Commande'

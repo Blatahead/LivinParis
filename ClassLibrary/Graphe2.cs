@@ -11,41 +11,28 @@ namespace ClassLibrary
 {
     public class Graphe2
     {
+        #region Attributs
         public List<Noeud> Noeuds = new();
         public List<Lien> Liens = new();
+        #endregion
 
+        #region Methodes
+        /// <summary>
+        /// Ajoute un noeud à la liste de noeuds
+        /// </summary>
+        /// <param name="n"></param>
         public void AjouterNoeud(Noeud n) => Noeuds.Add(n);
 
+        /// <summary>
+        /// Ajoute un lien à la liste de liens
+        /// </summary>
+        /// <param name="n1"></param>
+        /// <param name="n2"></param>
+        /// <param name="libelle"></param>
         public void AjouterLien(Noeud n1, Noeud n2, string libelle)
         {
             Liens.Add(new Lien(n1, n2, libelle));
         }
-
-        public void Afficher()
-        {
-            Console.WriteLine("=== Noeuds ===");
-            foreach (var n in Noeuds)
-                Console.WriteLine(n);
-
-            Console.WriteLine("\n=== Liens (non orientés) ===");
-            foreach (var l in Liens)
-                Console.WriteLine(l);
-        }
-
-        public void ColorierEtAfficher()
-        {
-            var couleurs = WelshPowell.ColorierGraphe(this);
-            var nbCouleurs = couleurs.Values.Distinct().Count();
-
-            Console.WriteLine("\n=== Coloration des nœuds (Welsh-Powell) ===");
-            foreach (var kvp in couleurs.OrderBy(kvp => kvp.Value))
-            {
-                Console.WriteLine($"{kvp.Key} -> Couleur {kvp.Value}");
-            }
-
-            Console.WriteLine($"\nNombre total de couleurs utilisées : {nbCouleurs}");
-        }
-
 
         /// <summary>
         /// Cette méthode permet de charger les informations dans la base de données à partir de requêtes SQL
@@ -151,7 +138,7 @@ namespace ClassLibrary
             {
                 lignesCommande.Add((
                     readerLignes.GetInt32(0), 
-                    readerLignes.GetInt32(1)  
+                    readerLignes.GetInt32(1)
                 ));
             }
             await readerLignes.CloseAsync();
@@ -228,6 +215,14 @@ namespace ClassLibrary
             }
         }
 
+        /// <summary>
+        /// Construit le graphe 2 avec noeuds, arcs
+        /// </summary>
+        /// <param name="cuisiniers"></param>
+        /// <param name="particuliers"></param>
+        /// <param name="entreprises"></param>
+        /// <param name="commandes"></param>
+        /// <returns></returns>
         public async Task<(List<Noeud> noeuds, List<Lien> liens)> BuildGraphAsync(
             List<Cuisinier<object>> cuisiniers,
             List<Particulier<object>> particuliers,
@@ -282,15 +277,6 @@ namespace ClassLibrary
 
             return (noeuds, liens);
         }
-    
-
-        
-
-
-
-
-
-
-
+        #endregion
     }
 }

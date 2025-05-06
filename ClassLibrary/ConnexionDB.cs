@@ -13,6 +13,10 @@ namespace ClassLibrary
 {
     public class ConnexionDB
     {
+        #region Méthode
+        /// <summary>
+        /// Instancie une connexion MySql à la database depuis le fichier .env
+        /// </summary>
         public static void ConnectToDatabase()
         {
             Env.Load("../../../../.env");
@@ -33,25 +37,12 @@ namespace ClassLibrary
                 MySqlCommand myCommand = new MySqlCommand
                 {
                     Connection = myConnection,
-                    //CommandText = @"SELECT * FROM city WHERE ID = @cityId;"
                 };
-                //myCommand.Parameters.AddWithValue("@cityId", 1);
-
-                //using var myReader = myCommand.ExecuteReader();
-                //while (myReader.Read())
-                //{
-                //    var id = myReader.GetInt32("ID");
-                //    var name = myReader.GetString("Name");
-                //    var countryCode = myReader.GetString("CountryCode");
-                //    var population = myReader.GetInt32("Population");
-
-                //    MessageBox.Show($"ID: {id}, Name: {name}, CountryCode: {countryCode}, Population: {population}");
-                //
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
-                //MessageBox.Show(ex.Message);
             }
         }
+        #endregion
     }
 }

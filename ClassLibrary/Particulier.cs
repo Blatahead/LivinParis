@@ -10,10 +10,13 @@ namespace ClassLibrary
 {
     public class Particulier<T>: Client<T>
     {
+        #region Attributs
         int idParticulier;
         string prenomParticulier;
         string nomParticulier;
         string adresseParticulier;
+        #endregion
+
         #region constructeur
         public Particulier(int idUser, string mdp, string adresse_mail, int idClient,int numeroParticulier, string prenomParticulier, string nomParticulier, string adresseParticulier):base(idUser, mdp, adresse_mail,idClient)
         {
@@ -23,6 +26,7 @@ namespace ClassLibrary
             this.adresseParticulier=adresseParticulier;
         }
         #endregion 
+
         #region propriétés
         public int IdParticulier
         {

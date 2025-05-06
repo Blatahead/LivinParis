@@ -8,8 +8,9 @@ namespace ClassLibrary
 {
     public class MontantMoyenClientDTO
     {
+        #region Proprietes
         public int ID_client { get; set; }
         public decimal Montant_moyen { get; set; }
+        #endregion
     }
-
 }

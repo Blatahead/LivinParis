@@ -9,6 +9,7 @@ namespace ClassLibrary
 {
     public class ArcDTO
     {
+        #region Proprietes
         public int SourceId { get; set; }
         public int DestinationId { get; set; }
         public double Distance { get; set; }
@@ -18,5 +19,6 @@ namespace ClassLibrary
         public double DestLat { get; set; }
         public double SourceLong { get; set; }
         public double DestLong { get; set; }
+        #endregion
     }
 }

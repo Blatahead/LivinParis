@@ -8,8 +8,9 @@ namespace ClassLibrary
 {
     public class PlatPlusCommandeDTO
     {
+        #region Proprietes
         public string Nom { get; set; }
         public int Fois_commande { get; set; }
+        #endregion
     }
-
 }
