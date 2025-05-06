@@ -10,6 +10,7 @@ namespace LivinParisWebApp.Pages
 {
     public class ClientPanelModel : PageModel
     {
+        #region Propriétés et Attributs
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
         public List<PlatDisponibleDTO> PlatsDisponibles { get; set; } = new();
@@ -21,6 +22,8 @@ namespace LivinParisWebApp.Pages
         });
         [BindProperty]
         public PlatAjouteModel ModelAjout { get; set; }
+        #endregion
+        #region Classes
         public class PlatAjouteModel
         {
             public int PlatId { get; set; }
@@ -38,18 +41,21 @@ namespace LivinParisWebApp.Pages
             _env = env;
             _config = config;
         }
+        #endregion
+        #region Méthodes
 
+        /// <summary>
+        /// Accès page navigation des plats
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
-            //vérfication qu'un utilisateur est connecté
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
             if (userId == 0) return RedirectToPage("/Login");
 
             string connStr = _config.GetConnectionString("MyDb");
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
-
-            //vérification qu'un Client est associé au userID
             MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM Client_ WHERE Id_Utilisateur = @id", conn);
             cmd.Parameters.AddWithValue("@id", userId);
 
@@ -59,8 +65,6 @@ namespace LivinParisWebApp.Pages
             {
                 return RedirectToPage("/NoClientAccount");
             }
-
-            // Récupération des plats disponibles
             var platsCmd = new MySqlCommand(@"
                 SELECT p.Num_plat, p.Nom_plat, p.prix_plat, c.Prenom_cuisinier, 
                        p.Nombre_de_personne_plat, p.Type_plat, p.Nationalité_plat, 
@@ -105,8 +109,6 @@ namespace LivinParisWebApp.Pages
             }
             platsReader.Close();
             ViewData["PlatsCoords"] = JsonConvert.SerializeObject(PlatsDisponibles);
-
-            //récupération du panier
             var panierCmd = new MySqlCommand(@"SELECT p.Num_plat, p.Nom_plat, p.prix_plat, c.Prenom_cuisinier
                 FROM Panier pa
                 JOIN Plat p ON pa.Num_plat = p.Num_plat
@@ -128,8 +130,6 @@ namespace LivinParisWebApp.Pages
                 });
             }
             panierReader.Close();
-
-            // Récupérer coordonnées client
             var cmdCoord = new MySqlCommand(@"SELECT a.Adresse_particulier FROM Client_ c
             JOIN Particulier a ON c.Id_Client = a.Id_Client
             WHERE c.Id_Utilisateur = @id", conn);
@@ -167,18 +167,12 @@ namespace LivinParisWebApp.Pages
             string connStr = _config.GetConnectionString("MyDb");
             using var conn = new MySqlConnection(connStr);
             await conn.OpenAsync();
-
-            // Récupérer l'Id_Client
             var cmdClient = new MySqlCommand("SELECT Id_Client FROM Client_ WHERE Id_Utilisateur = @userId", conn);
             cmdClient.Parameters.AddWithValue("@userId", userId);
             var idClient = Convert.ToInt32(await cmdClient.ExecuteScalarAsync());
-
-            // Obtenir le cuisinier du plat à ajouter
             var getChefCmd = new MySqlCommand("SELECT id_Cuisinier FROM Plat WHERE Num_plat = @platId", conn);
             getChefCmd.Parameters.AddWithValue("@platId", ModelAjout.PlatId);
             var newChefId = Convert.ToInt32(await getChefCmd.ExecuteScalarAsync());
-
-            // Obtenir les cuisiniers des plats déjà dans le panier
             var getCartChefCmd = new MySqlCommand(@"
         SELECT DISTINCT p.id_Cuisinier
         FROM Panier pa
@@ -194,15 +188,11 @@ namespace LivinParisWebApp.Pages
                     existingChefIds.Add(reader.GetInt32(0));
                 }
             }
-
-            // Vérifier si un autre cuisinier est déjà présent
             if (existingChefIds.Count > 0 && existingChefIds.Any(id => id != newChefId))
             {
                 TempData["ErrorMessage"] = "Tous les plats du panier doivent provenir du même cuisinier.";
                 return RedirectToPage();
             }
-
-            // Vérifier si le plat est déjà dans le panier
             var checkCmd = new MySqlCommand("SELECT COUNT(*) FROM Panier WHERE Id_Client = @idClient AND Num_plat = @platId", conn);
             checkCmd.Parameters.AddWithValue("@idClient", idClient);
             checkCmd.Parameters.AddWithValue("@platId", ModelAjout.PlatId);
@@ -253,8 +243,6 @@ namespace LivinParisWebApp.Pages
             string connStr = _config.GetConnectionString("MyDb");
             using var conn = new MySqlConnection(connStr);
             conn.Open();
-
-            // Étape 1 : récupérer l’Id_Client
             int idClient;
             using (var cmdClient = new MySqlCommand("SELECT Id_Client FROM Client_ WHERE Id_Utilisateur = @uid", conn))
             {
@@ -263,8 +251,6 @@ namespace LivinParisWebApp.Pages
                 if (result == null) return RedirectToPage("/Login");
                 idClient = Convert.ToInt32(result);
             }
-
-            // Étape 2 : tester s'il est dans Particulier
             using (var cmdTest = new MySqlCommand("SELECT COUNT(*) FROM Particulier WHERE Id_Client = @cid", conn))
             {
                 cmdTest.Parameters.AddWithValue("@cid", idClient);
@@ -274,8 +260,6 @@ namespace LivinParisWebApp.Pages
                     return RedirectToPage("/Client/SettingsParticulier");
                 }
             }
-
-            // Étape 3 : sinon rediriger vers entreprise
             return RedirectToPage("/Client/SettingsEntreprise");
         }
 
@@ -292,10 +276,11 @@ namespace LivinParisWebApp.Pages
         }
         public IActionResult OnPostCuisinierPanel()
         {
-            //checker l'existance du cuisinier
             return RedirectToPage("/CuisinierPanel");
         }
     }
+    #endregion
+    #region Classe DTO
     public class PlatDisponibleDTO
     {
         public int Id { get; set; }
@@ -312,6 +297,7 @@ namespace LivinParisWebApp.Pages
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public int NumPlat { get; set; }
-        public string Photo { get; set; }  //url de l'iamge
+        public string Photo { get; set; }
     }
+    #endregion
 }

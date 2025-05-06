@@ -22,7 +22,7 @@ namespace LivinParisWebApp.Pages
         public List<PlatDispoDto> PlatsDisponibles { get; set; } = new();
 
         #endregion
-        #region
+        #region Méthodes
 
         /// <summary>
         /// Connexion panel Cuisinier
@@ -120,12 +120,38 @@ namespace LivinParisWebApp.Pages
             return Page();
         }
 
+        /// <summary>
+        /// Redirection vers paramètres Cuisinier
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostSettingsCuisinier() => RedirectToPage("/Cuisinier/SettingsCuisinier");
+        /// <summary>
+        /// Redirection page de modification plat du jour
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostChangeTodaysPlat() => RedirectToPage("/Cuisinier/ChangeTodaysPlat");
+        /// <summary>
+        /// Redirection page détails Plat
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostChangeDetailsPlat() => RedirectToPage("/Cuisinier/DetailsPlat");
+        /// <summary>
+        /// Redirection page de suppression Plat
+        /// </summary>
+        /// <param name="nomPlat"></param>
+        /// <returns></returns>
         public IActionResult OnPostDeletePlat(string nomPlat) => RedirectToPage("/Cuisinier/DeletePlat", new { nomPlat });
+        /// <summary>
+        /// Redirection page ajouter Plat
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostAddPlat() => RedirectToPage("/Cuisinier/AddPlat");
+        /// <summary>
+        /// Redirection page Commande en cours
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostSeeCurrentCommand() => RedirectToPage("/Cuisinier/SeeCurrentCommand");
+        #endregion
 
         #region Classes DTO
         public class PlatDuJourDto
