@@ -27,12 +27,14 @@ namespace LivinParisWebApp.Pages
 
         public void OnGet() { }
 
+        /// <summary>
+        /// Inscription utilisateur
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnPostRegister()
         {
             if (!ModelState.IsValid)
                 return Page();
-
-            // Vérifier si l'utilisateur existe
             string connStr = _config.GetConnectionString("MyDb");
 
             using var conn = new MySqlConnection(connStr);

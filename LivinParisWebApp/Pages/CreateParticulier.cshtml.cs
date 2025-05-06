@@ -7,6 +7,7 @@ namespace LivinParis.Pages
 {
     public class CreateParticulierModel : PageModel
     {
+        #region Propriétés
         private readonly IConfiguration _config;
         [BindProperty]
         public string FirstName { get; set; }
@@ -29,8 +30,8 @@ namespace LivinParis.Pages
         {
             _config = config;
         }
-
-        //quand on clique sur "C'est parti"
+        #endregion
+        #region Méthodes
 
         public async Task<IActionResult> OnPostCestParti()
         {
@@ -46,7 +47,6 @@ namespace LivinParis.Pages
 
             try
             {
-                //si pas encore connecté, créer un nouvel utilisateur
                 if (userId == 0 && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
                 {
                     var insertUserCmd = new MySqlCommand(
@@ -64,14 +64,10 @@ namespace LivinParis.Pages
                     ModelState.AddModelError("", "Utilisateur non identifié.");
                     return Page();
                 }
-
-                //Client_
                 var insertClientCmd = new MySqlCommand(
                     "INSERT INTO Client_ (Id_Utilisateur) VALUES (@UserId); SELECT LAST_INSERT_ID();", conn, transaction);
                 insertClientCmd.Parameters.AddWithValue("@UserId", userId);
                 int clientId = Convert.ToInt32(await insertClientCmd.ExecuteScalarAsync());
-
-                //Particulier
                 string adresse = $"{Voirie} {Numéro}, 750{Arrondissement} Paris";
                 var insertPartCmd = new MySqlCommand(
                     "INSERT INTO Particulier (Prenom_particulier, Nom_particulier, Adresse_particulier, Id_Client) " +
@@ -99,5 +95,6 @@ namespace LivinParis.Pages
         {
             return RedirectToPage("/ChoixPe");
         }
+        #endregion
     }
 }
