@@ -51,8 +51,6 @@ namespace ClassLibrary
                 Distance = s.Distance
             };
         }
-
-
         public static StationDTO ToDTO(StationNoeud station)
         {
             return new StationDTO

@@ -18,10 +18,7 @@ namespace ClassLibrary
         public int Arrivee { get; set; }
         public double Distance { get; set; }
 
-
-
         public List<Arc> ArcsSortants { get; set; } = new();
-
         public StationNoeud(int id, string nom, double latitude, double longitude, string ligne)
         {
             Id = id;

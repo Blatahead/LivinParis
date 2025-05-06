@@ -18,7 +18,6 @@ namespace ClassLibrary
             Noeud2 = n2;
             Libelle = libelle;
         }
-
         public override string ToString() => $"{Noeud1} — {Libelle} — {Noeud2}";
     }
 }

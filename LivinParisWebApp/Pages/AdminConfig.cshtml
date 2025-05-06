@@ -154,18 +154,12 @@
 
 
 		const chemin = @Html.Raw(Model.CheminJson)
-
 		const stations = @Html.Raw(ViewData["Stations"])
-
 		const arcs = @Html.Raw(ViewData["Arcs"])
-
-		//carte
 		const map = L.map('map').setView([48.8566, 2.3522], 12);
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '© OpenStreetMap contributors'
 		}).addTo(map);
-
-		//Ajout des stations
 		const stationMap = {};
 		stations.forEach(st => {
 			stationMap[st.id] = st;
@@ -181,7 +175,6 @@
 			marker.bindPopup(`<strong>${st.nom}</strong><br/>ID: ${st.id}`);
 		});
 
-		// Ajout des arcs
 		arcs.forEach(arc => {
 			const srcLat = arc.SourceLat;
 			const srcLong = arc.SourceLong;
@@ -200,11 +193,7 @@
 				opacity: 0.8
 			}).addTo(map);
 		});
-
-		// Affichage du chemin trouvé en noir
 		if (chemin && chemin.length > 1) {
-			// console.log("Coordonnées utilisées dans latlngs :", chemin.map(s => [s.Latitude, s.Longitude]));
-
 			const latlngs = chemin.map(s => [parseFloat(s.Latitude), parseFloat(s.Longitude)]);
 
 			L.polyline(latlngs, {
@@ -217,37 +206,26 @@
 		} else {
 			console.log("Aucun chemin trouvé ou chemin trop court.");
 		}
-		/// SURCOUCHE POSITIONS CUISINIERS ET CLIENTS ///
-		//Récupérer les données Clients et Cuisiniers depuis Razor
 		var clients = @Html.Raw(ViewData["Clients"]);
 		var cuisiniers = @Html.Raw(ViewData["Cuisiniers"]);
-		// Fonction pour ajouter un marqueur
 	 	function ajouterMarqueur(lat, lng, texte) {
 	 		L.marker([lat, lng]).addTo(map).bindPopup(texte);
 		}
-		// Ajouter les marqueurs pour les clients
 	 	clients.forEach(function (client) {
 	 		ajouterMarqueur(client.latitude, client.longitude, "Client ID: " + client.id);
 	 	});
-
-	 	// Ajouter les marqueurs pour les cuisiniers
 	 	cuisiniers.forEach(function (cuisinier) {
 	 		ajouterMarqueur(cuisinier.latitude, cuisinier.longitude, "Cuisinier ID: " + cuisinier.id);
 	 	});
-		/////////////////////////////////////////////////
     </script>
 
 	<script>
-		const map2 = L.map('map2').setView([48.8566, 2.3522], 12); // vue centrée sur Paris
+		const map2 = L.map('map2').setView([48.8566, 2.3522], 12); 
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '© OpenStreetMap contributors'
 		}).addTo(map2);
-
-		// Récupération des données Razor
 		const noeuds = @Html.Raw(ViewData["NoeudsJson"]);
 		const liens = @Html.Raw(ViewData["LiensJson"]);
-
-		// Couleurs par type de noeud
 		const couleurs = {
 			"Client": "#ff7f0e",
 			"Commande": "#1f77b4",
@@ -256,15 +234,13 @@
 		};
 
 		function decalerCoordonnees(lat, lon, index = 1) {
-			const angle = Math.random() * 2 * Math.PI; // direction aléatoire
+			const angle = Math.random() * 2 * Math.PI; 
 			const rayon = 0.005;
 			return [
 				lat + rayon * Math.cos(angle),
 				lon + rayon * Math.sin(angle)
 			];
 		}
-
-		// Ajout des marqueurs pour chaque nœud
 		const noeudMap = {};
 		const platsAssocies = new Set(
 			liens
@@ -272,9 +248,7 @@
 				.map(link => link.target)
 		);
 
-		// Recalcule la position des commande au centre de client-plat
 		const commandeCoords = {};
-
 		liens.forEach(link => {
 			if (link.label === "a commandé" && link.source.startsWith("Client") && link.target.startsWith("Commande")) {
 				const commandeId = link.target;
@@ -297,14 +271,10 @@
 					const count = platsAssocies.length + 1;
 					let lat = latSum / count;
 					let lon = lonSum / count;
-
-					// Décalage orthogonal à l’axe client → premier plat
 					const firstPlat = platsAssocies[0];
 					if (firstPlat) {
 						const dx = firstPlat.longitude - client.longitude;
 						const dy = firstPlat.latitude - client.latitude;
-
-						// vecteur orthogonal normalisé
 						const length = Math.sqrt(dx * dx + dy * dy);
 						if (length > 0) {
 							const offset = 0.005;
@@ -338,14 +308,12 @@
 
 				if (n.type === "Plat") {
 					const angle = (i * 2 * Math.PI) / noeuds.length;
-					const rayon = 0.01; // distance de décalage
+					const rayon = 0.01; 
 
 					if (platsAssocies.has(n.id)) {
-						// Plat lié à une commande → côté commande
 						lat = n.latitude + rayon * Math.cos(angle);
 						lon = n.longitude + rayon * Math.sin(angle);
 					} else {
-						// Plat non lié à une commande → côté opposé
 						lat = n.latitude - rayon * Math.cos(angle);
 						lon = n.longitude - rayon * Math.sin(angle);
 					}
@@ -364,8 +332,6 @@
 			}
 		});
 
-
-		// Dessin des liens entre les nœuds
 		liens.forEach(link => {
 			console.log(link)
 			const src = noeudMap[link.source];
