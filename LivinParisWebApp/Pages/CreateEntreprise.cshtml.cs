@@ -7,6 +7,7 @@ namespace LivinParis.Pages
 {
     public class CreateEntrepriseModel : PageModel
     {
+        #region Propriétés
         private readonly IConfiguration _config;
 
         [BindProperty(SupportsGet = true)]
@@ -18,11 +19,12 @@ namespace LivinParis.Pages
         [BindProperty] public string Arrondissement { get; set; }
         [BindProperty] public string Voirie { get; set; }
         [BindProperty] public string Numéro { get; set; }
-
         public CreateEntrepriseModel(IConfiguration configuration)
         {
             _config = configuration;
         }
+        #endregion
+        #region Méthodes
 
         public void OnGet()
         {
@@ -49,7 +51,6 @@ namespace LivinParis.Pages
 
             try
             {
-                //Utilisateur
                 var insertUserCmd = new MySqlCommand(@"
                     INSERT INTO Utilisateur (Mail_Utilisateur, Mdp)
                     VALUES (@Email, @Pwd);
@@ -59,17 +60,11 @@ namespace LivinParis.Pages
                 insertUserCmd.Parameters.AddWithValue("@Pwd", password);
 
                 int userId = Convert.ToInt32(await insertUserCmd.ExecuteScalarAsync());
-
-                //Client_
                 var insertClientCmd = new MySqlCommand("INSERT INTO Client_ (Id_Utilisateur) VALUES (@UserId)", conn, transaction);
                 insertClientCmd.Parameters.AddWithValue("@UserId", userId);
                 await insertClientCmd.ExecuteNonQueryAsync();
-
-                //Récupérer Id_Client
                 var getLastIdCmd = new MySqlCommand("SELECT LAST_INSERT_ID()", conn, transaction);
                 int clientId = Convert.ToInt32(await getLastIdCmd.ExecuteScalarAsync());
-
-                //Insertion dans Entreprise
                 string adresse = $"{Voirie} {Numéro}, 750{Arrondissement} Paris";
                 var insertEntrepriseCmd = new MySqlCommand(@"
                     INSERT INTO Entreprise (Id_Client, Nom_entreprise, Nom_référent, Adresse_entreprise, Num_SIRET)
@@ -83,8 +78,6 @@ namespace LivinParis.Pages
 
                 await insertEntrepriseCmd.ExecuteNonQueryAsync();
                 await transaction.CommitAsync();
-
-                // Enregistrer l’utilisateur en session
                 HttpContext.Session.SetInt32("UserId", userId);
                 return RedirectToPage("/ClientPanel");
             }
@@ -100,5 +93,6 @@ namespace LivinParis.Pages
         {
             return RedirectToPage("/ChoixPe");
         }
+        #endregion
     }
 }

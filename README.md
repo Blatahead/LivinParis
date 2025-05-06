@@ -27,7 +27,7 @@ Nous envisageons la même structure que le rendu 2, mis à part le fait que la l
 
 ---
 
-## ⚙️ Prérequis avant lancement (certainement incomplet)
+## ⚙️ Prérequis avant lancement
 
 1. Avoir la version **9.0 du SDK .NET** : [Lien de téléchargement](https://dotnet.microsoft.com/fr-fr/download/dotnet/9.0)
 2. Très important, installez les outils de développement Web en suivant les étapes suivantes :
@@ -45,7 +45,7 @@ Nous envisageons la même structure que le rendu 2, mis à part le fait que la l
 
    d. Puis sur la droite cochez les mêmes cases que ci-dessous  
    ![alt text](image-3.png)
-
+   
 
    e. Enfin, cliquez sur **Modifier** et l’installation se lancera
    ![alt text](image-4.png)
@@ -70,12 +70,31 @@ Nous envisageons la même structure que le rendu 2, mis à part le fait que la l
 
 ## 🚀 Lancement
 
+- Ajouter le **.env** au niveau des projets
+   ![alt text](image-13.png)
+
+
+- Veillez à lancer le **.sln** dans le dossier LivinParis
+![alt text](image-15.png)
+
+
 - Afin de lancer le bon projet (**LivinParisWebApp**), veillez à bien sélectionner le bon projet de démarrage.
 ![alt text](image-7.png)
 
 
+- Si **LivinParisWebApp** ne s'affiche pas, Allez dans le sélecteur de projet et appuyer sur **Configurer des projets de start-up**
+![alt text](image-16.png)
+
+
+- Sélectionnez **Projet de démarrage unique** et **LivinParisWebApp**
+![alt text](image-17.png)
+
+
 - Une fois ceci fait, vous pouvez lancer le projet avec le bouton **▶️** juste sur la droite.
 ![alt text](image-8.png)
+
+
+- SI JAMAIS vous avez une erreur du type : **SQL cannot connect to the host**, **stoppez le projet et relancez-le**
 
 ---
 
@@ -92,6 +111,9 @@ Pour vous rendre sur cette page bien cachée pour des raisons évidentes, veuill
 
 3. Cliquez sur la touche **Entrer** et vous serez alors redirigé sur la page **Admin**, avec toutes les stats et actions possibles en tant qu’administrateur de l’application (non terminée).
 ![alt text](image-12.png)
+
+4. **ATTENTION :** Veuillez ne pas utiliser les 5 premiers boutons ci-dessous
+![alt text](image-14.png)
 
 ---
 

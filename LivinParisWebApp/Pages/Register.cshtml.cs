@@ -8,6 +8,7 @@ namespace LivinParisWebApp.Pages
 {
     public class RegisterModel : PageModel
     {
+        #region Propriétés
         private readonly IConfiguration _config;
 
         public string Message { get; set; }
@@ -24,6 +25,9 @@ namespace LivinParisWebApp.Pages
         {
             _config = config;
         }
+        #endregion
+
+        #region Méthodes
 
         public void OnGet() { }
 
@@ -54,5 +58,6 @@ namespace LivinParisWebApp.Pages
 
             return RedirectToPage("/ChoixCC");
         }
+        #endregion
     }
 }

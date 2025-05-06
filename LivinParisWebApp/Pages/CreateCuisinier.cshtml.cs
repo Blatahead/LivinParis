@@ -6,6 +6,7 @@ namespace LivinParisWebApp.Pages
 {
     public class CreateCuisinierModel : PageModel
     {
+        #region Propriétés
         private readonly IConfiguration _config;
 
         [BindProperty] public string FirstName { get; set; }
@@ -20,6 +21,8 @@ namespace LivinParisWebApp.Pages
         {
             _config = configuration;
         }
+        #endregion
+        #region Méthodes
 
         public void OnGet()
         {
@@ -41,8 +44,6 @@ namespace LivinParisWebApp.Pages
             try
             {
                 int userId;
-
-                // Cas 1 : On vient du processus Register
                 if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
                 {
                     var insertUserCmd = new MySqlCommand(
@@ -60,7 +61,6 @@ namespace LivinParisWebApp.Pages
                 }
                 else
                 {
-                    // Cas 2 : Utilisateur déjà connecté (via panel client)
                     userId = HttpContext.Session.GetInt32("UserId") ?? 0;
                     if (userId == 0)
                         throw new Exception("Utilisateur non connecté.");
@@ -94,5 +94,6 @@ namespace LivinParisWebApp.Pages
         {
             return RedirectToPage("/ChoixCC");
         }
+        #endregion
     }
 }
